@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+</head>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    canvas {
+        display: block;
+    }
+</style>
+
+<body>
+    <script>
+        function move(sprite) {
+            sprite.y += 5;
+        }
+
+
+        const app = new PIXI.Application({
+            antialias: true,
+        });
+        document.body.appendChild(app.view);
+        // app.renderer.resize(window.innerWidth, window.innerHeight);
+        let jline = new PIXI.Graphics();
+        jline.beginFill(0xffffff);
+        jline.drawRect(0, 0, 800, 2);
+        let note = new PIXI.Graphics();
+        note.beginFill(0xffffff);
+        note.drawRect(0, 0, 70, 2);
+        let cursor = new PIXI.Graphics();
+        cursor.beginFill(0x7a7a7a);
+        cursor.drawRect(0, 0, 2, 500);
+        var notes = new PIXI.Sprite(app.renderer.generateTexture(note));
+        var jlines = new PIXI.Sprite(app.renderer.generateTexture(jline));
+        var cursors = new PIXI.Sprite(app.renderer.generateTexture(cursor));
+        notes.anchor.set(0.5);
+        cursors.anchor.set(0.5, 1);
+        notes.x = 400;
+        notes.y = 0;
+        cursors.x = 400;
+        cursors.y = 500;
+        jlines.x = 0;
+        jlines.y = 500;
+        app.stage.addChild(jlines);
+        app.stage.addChild(notes);
+        app.stage.addChild(cursors);
+        // test
+        const start = async () => {
+            let started = false;
+            let tstarted = NaN;
+            setInterval(() => {
+                let t = new Date().getTime();
+                move(notes);
+                if (started == false) {
+                    started = true;
+                    tstarted = new Date().getTime();
+                }
+                if (notes.y == jlines.y) {
+                    console.log(`${t} - ${tstarted}`)
+                    console.log(t - tstarted)
+                }
+                if (notes.y > 600){
+                    notes.destroy()
+                    console.log("ded")
+                }
+            }, 10);
+
+        };
+        start();
+    </script>
+</body>
+
+</html>
