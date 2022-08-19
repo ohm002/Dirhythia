@@ -1,3 +1,10 @@
+<!-- TODO LIST: -->
+<!-- NOTELOCK SYSTEM [] -->
+<!-- HIT ANIMATION [WIP] -->
+<!-- JUDGING SYSTEM [WIP] -->
+<!-- AUDIO PLAYBACK [] -->
+<!-- HOLD NOTE SYSTEM []   -->
+<!-- CURSOR NOTE SYSTEM [] -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="./library/parser.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
 </head>
 
@@ -23,68 +31,105 @@
 
 <body>
     <script>
-        function move(sprite) {
-            sprite.y += 5;
-        }
-
-
-        const app = new PIXI.Application({
-            antialias: true,
-        });
-        document.body.appendChild(app.view);
-        function update(tstamp){
-            let stime = 0;
-            let etime = 1000;
-            app.stage.getChildByName("1").y = (((tstamp - stime) / (etime - stime)) * (500));
-            if (app.stage.getChildByName("1").y > 800){
-                // app.stage.getChildByName("1").destroy();
-            }
-        }
-        function rulesets(){
-            document.onkeydown = function(){
-                if (currentstamp <= 1100 && currentstamp >= 900){
-                    console.log("you hit it")
+        dat = fetch('/file.dirhythia')
+            .then((response) => response.text())
+            .then((data) => {
+                return data;
+            });
+        async function start() {
+            let chartdata = parse(await dat);
+            const app = new PIXI.Application({
+                antialias: true,
+            });
+            document.body.appendChild(app.view);
+            chartdata.forEach(element => {
+                const stime = element['st'];
+                const pos = element['pos'];
+                let note = new PIXI.Graphics();
+                note.beginFill(0xffffff);
+                note.drawRect(0, 0, 100, 2);
+                var notes = new PIXI.Sprite(app.renderer.generateTexture(note));
+                notes.name = element['line'];
+                switch (pos) {
+                    case 2:
+                        notes.anchor.set(1, 0.5);
+                        break;
+                    case 1:
+                        notes.anchor.set(0, 0.5);
+                        break;
+                    default:
+                        break;
                 }
-            };
-        }
-        let jline = new PIXI.Graphics();
-        jline.beginFill(0xffffff);
-        jline.drawRect(0, 0, 800, 2);
-        let note = new PIXI.Graphics();
-        note.beginFill(0xffffff);
-        note.drawRect(0, 0, 100, 2);
-        let cursor = new PIXI.Graphics();
-        cursor.beginFill(0x7a7a7a);
-        cursor.drawRect(0, 0, 2, 500);
-        var notes = new PIXI.Sprite(app.renderer.generateTexture(note));
-        var jlines = new PIXI.Sprite(app.renderer.generateTexture(jline));
-        var cursors = new PIXI.Sprite(app.renderer.generateTexture(cursor));
-        notes.anchor.set(0,0.5);
-        cursors.anchor.set(0.5, 1);
-        notes.x = 400;
-        notes.y = 0;
-        notes.name = "1";
-        cursors.x = 400;
-        cursors.y = 500;
-        jlines.x = 0;
-        jlines.y = 500;
-        app.stage.addChild(jlines);
-        app.stage.addChild(notes);
-        app.stage.addChild(cursors);
-        let started = false;
-        let tstarted = NaN;
-        let currentstamp = 0;
-        setInterval(() => {
-            rulesets();
-            let t = new Date().getTime();
-            update(currentstamp);
-            if (started == false) {
-                started = true;
-                tstarted = new Date().getTime();
-            }
-            currentstamp = (new Date().getTime()-tstarted);
-        }, 10);
+                notes.x = 400;
+                notes.y = 0;
+                app.stage.addChild(notes);
+            });
 
+            function update(tstamp) {
+                chartdata.forEach(element => {
+                    let stime = element['st'] - 1000;
+                    let etime = element['st'];
+                    try {
+                        app.stage.getChildByName(element['line']).y = (((tstamp - stime) / (etime -
+                            stime)) * (
+                            500));
+                        if (app.stage.getChildByName(element['line']).y > 800 || element['hit']) {
+                            app.stage.getChildByName(element['line']).destroy();
+                        }
+                    } catch (error) {}
+                })
+            }
+            const style = new PIXI.TextStyle({
+                fill: '#ffffff'
+            });
+            let y = 0;
+            function rulesets() {
+                document.onkeydown = function () {
+                    chartdata.forEach(element => {
+                        if (currentstamp <= element['st'] + 200 && currentstamp >= element['st'] -
+                            200) {
+                            element['hit'] = true;
+                            const basicText = new PIXI.Sprite(app.renderer.generateTexture(new PIXI
+                                .Text('Kill Yourself', style)));
+                            basicText.x = 50;
+                            basicText.y = y;
+                            app.stage.addChild(basicText)
+                            y += 100
+                        }
+                    })
+                };
+            }
+            let jline = new PIXI.Graphics();
+            jline.beginFill(0xffffff);
+            jline.drawRect(0, 0, 800, 2);
+
+            let cursor = new PIXI.Graphics();
+            cursor.beginFill(0x7a7a7a);
+            cursor.drawRect(0, 0, 2, 500);
+            var jlines = new PIXI.Sprite(app.renderer.generateTexture(jline));
+            var cursors = new PIXI.Sprite(app.renderer.generateTexture(cursor));
+            cursors.anchor.set(0.5, 1);
+            cursors.x = 400;
+            cursors.y = 500;
+            jlines.x = 0;
+            jlines.y = 500;
+            app.stage.addChild(jlines);
+            app.stage.addChild(cursors);
+            let started = false;
+            let tstarted = NaN;
+            let currentstamp = 0;
+            setInterval(() => {
+                rulesets();
+                let t = new Date().getTime();
+                update(currentstamp);
+                if (started == false) {
+                    started = true;
+                    tstarted = new Date().getTime();
+                }
+                currentstamp = (new Date().getTime() - tstarted);
+            }, 10);
+        }
+        start();
     </script>
 </body>
 
