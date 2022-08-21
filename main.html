@@ -1,8 +1,8 @@
 <!-- TODO LIST: -->
 <!-- NOTELOCK SYSTEM [X] -->
 <!-- HIT ANIMATION [WIP] -->
-<!-- JUDGING SYSTEM [WIP] -->
-<!-- AUDIO PLAYBACK [] -->
+<!-- NEW JUDGING SYSTEM [] -->
+<!-- AUDIO PLAYBACK [WIP] -->
 <!-- HOLD NOTE SYSTEM []   -->
 <!-- 4K MODE -->
 <!-- CURSOR NOTE SYSTEM [X] -->
@@ -17,11 +17,12 @@
         <title>Document</title>
         <script src="./library/parser.js"></script>
         <script src="./library/rulesets.js"></script>
+        <script src="./library/sound.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
-<!-- <audio id="hitSound" src="games/aventura4/sfx/hit.wav""></audio> -->
+        <!-- <audio id="hitSound" src="games/aventura4/sfx/hit.wav""></audio> -->
 </head>
 
 <style>
@@ -38,8 +39,9 @@
 
 <body>
     <script>
-        var offset = 150;
-        // var offset = 150;
+        var offset = 210;
+        var inputoffset = 0;
+        sounds.load(["./hitsounds_normal-hitnormal.ogg", "audio.mp3"]);
         // var speed = ;
         dat = fetch('/file.dirhythia')
             .then((response) => response.text())
@@ -47,270 +49,275 @@
                 return data;
             });
         async function start() {
-            let chartdata = parse(await dat, offset);
-            const app = new PIXI.Application({});
-            let cursorcontainer = new PIXI.Container();
-            document.body.appendChild(app.view);
-            chartdata[0].forEach(element => {
-                const stime = element['st'];
-                const pos = element['pos'];
-                let note = new PIXI.Graphics();
-                note.beginFill(0x85b4ff);
-                note.drawRect(0, 0, 100, 10);
-                var notes = new PIXI.Sprite(app.renderer.generateTexture(note));
-                notes.name = element['line'];
-                switch (pos) {
-                    case 2:
-                        notes.anchor.set(0, 0.5);
-                        break;
-                    case 1:
-                        notes.anchor.set(1, 0.5);
-                        break;
-                    default:
-                        break;
-                }
-                notes.x = 400;
-                notes.y = 0;
-                app.stage.addChild(notes);
-            });
-            let cursorx = 400;
-            let cursory = 0;
-            let cursortime = 0;
-            // let lastctime = 0
-            let ind = 0;
-            let cursorchangelist = []
-            chartdata[1].forEach(element => {
-                cursortime = element['st'];
-                nextc = element['st'];
-                if (chartdata[1][ind + 1] != undefined) {
-                    nextc = chartdata[1][ind + 1]['st'];
-                }
-                // cursorcontainer.height += element['st'] * 0.5;
-                let note = new PIXI.Graphics();
-                note.beginFill(0xffffff);
-                note.drawRect(0, 0, element['pos'] - cursorx, 3);
-                let cursorr = new PIXI.Graphics();
-                cursorr.beginFill(0xffffff);
-                cursorr.alpha = 0.5;
-                note.alpha = 0.5;
-                cursorr.drawRect(0, 0, 3, (cursortime - nextc) * 0.5);
-                var notes = new PIXI.Sprite(app.renderer.generateTexture(note));
-                var cursorrs = new PIXI.Sprite(app.renderer.generateTexture(cursorr));
-                cursorrs.anchor.set(0, 1);
-                notes.name = element['line'] + "n";
-                cursorrs.name = element['line'] + "c";
-                if (element['pos'] > cursorx) {
-                    notes.anchor.set(0, 0);
-                } else if (element['pos'] < cursorx) {
-                    notes.anchor.set(1, 0)
-                }
-                notes.x = cursorx;
-                cursorx = element['pos'];
-                cursorrs.x = cursorx;
-                notes.y = 0;
-                cursorrs.y = 0;
-                ind += 1;
-                cursory -= element['st'] * 0.5;
-                app.stage.addChild(cursorrs);
-                app.stage.addChild(notes);
-                cursorchangelist.push({
-                    "t": element['st'],
-                    "pos": element['pos'],
-                })
-            });
-            var combo = 0;
-            const style = new PIXI.TextStyle({
-                fontFamily: 'Montserrat',
-                fontSize: 20,
-                fontWeight: 'bold',
-                fill: '#ffffff'
-            });
-            let combotexts = new PIXI.Text(combo, style);
-            combotexts.x = 400;
-            combotexts.alpha = 0.5
-            combotexts.y = 550;
-            cursorchangelist.sort(function (a, b) {
-                var keyA = a.t,
-                    keyB = b.t;
-                if (keyA < keyB) return -1;
-                if (keyA > keyB) return 1;
-                return 0;
-            });
-            console.log(cursorchangelist)
-
-            function update(tstamp) {
-                combotexts.text = combo;
+                let chartdata = parse(await dat, offset);
+                const app = new PIXI.Application({});
+                let cursorcontainer = new PIXI.Container();
+                document.body.appendChild(app.view);
                 chartdata[0].forEach(element => {
-                    let stime = element['st'] - 1000;
-                    let etime = element['st'];
-                    try {
-                        app.stage.getChildByName(element['line']).y = (((tstamp - stime) / (etime -
-                            stime)) * (
-                            500));
-                        for (let www = 0; www < cursorchangelist.length; www++) {
-                            const ele = cursorchangelist[www];
-                            if (ele['t'] > etime) {
-                                app.stage.getChildByName(element['line']).x = cursorchangelist[www - 1][
-                                    'pos'
-                                ];
-                                break;
+                    const stime = element['st'];
+                    const pos = element['pos'];
+                    let note = new PIXI.Graphics();
+                    note.beginFill(0x85b4ff);
+                    note.drawRect(0, 0, 100, 10);
+                    var notes = new PIXI.Sprite(app.renderer.generateTexture(note));
+                    notes.name = element['line'];
+                    switch (pos) {
+                        case 2:
+                            notes.anchor.set(0, 0.5);
+                            break;
+                        case 1:
+                            notes.anchor.set(1, 0.5);
+                            break;
+                        default:
+                            break;
+                    }
+                    notes.x = 400;
+                    notes.y = 0;
+                    app.stage.addChild(notes);
+                });
+                let cursorx = 400;
+                let cursory = 0;
+                let cursortime = 0;
+                // let lastctime = 0
+                let ind = 0;
+                let cursorchangelist = []
+                chartdata[1].forEach(element => {
+                    cursortime = element['st'];
+                    nextc = element['st'];
+                    if (chartdata[1][ind + 1] != undefined) {
+                        nextc = chartdata[1][ind + 1]['st'];
+                    }
+                    // cursorcontainer.height += element['st'] * 0.5;
+                    let note = new PIXI.Graphics();
+                    note.beginFill(0xffffff);
+                    note.drawRect(0, 0, element['pos'] - cursorx, 3);
+                    let cursorr = new PIXI.Graphics();
+                    cursorr.beginFill(0xffffff);
+                    cursorr.alpha = 0.5;
+                    note.alpha = 0.5;
+                    cursorr.drawRect(0, 0, 3, (cursortime - nextc) * 0.5);
+                    var notes = new PIXI.Sprite(app.renderer.generateTexture(note));
+                    var cursorrs = new PIXI.Sprite(app.renderer.generateTexture(cursorr));
+                    cursorrs.anchor.set(0, 1);
+                    notes.name = element['line'] + "n";
+                    cursorrs.name = element['line'] + "c";
+                    if (element['pos'] > cursorx) {
+                        notes.anchor.set(0, 0);
+                    } else if (element['pos'] < cursorx) {
+                        notes.anchor.set(1, 0)
+                    }
+                    notes.x = cursorx;
+                    cursorx = element['pos'];
+                    cursorrs.x = cursorx;
+                    notes.y = 0;
+                    cursorrs.y = 0;
+                    ind += 1;
+                    cursory -= element['st'] * 0.5;
+                    app.stage.addChild(cursorrs);
+                    app.stage.addChild(notes);
+                    cursorchangelist.push({
+                        "t": element['st'],
+                        "pos": element['pos'],
+                    })
+                });
+                var combo = 0;
+                const style = new PIXI.TextStyle({
+                    fontFamily: 'Montserrat',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    fill: '#ffffff'
+                });
+                let combotexts = new PIXI.Text(combo, style);
+                combotexts.x = 400;
+                combotexts.alpha = 0.5
+                combotexts.y = 550;
+                cursorchangelist.sort(function (a, b) {
+                    var keyA = a.t,
+                        keyB = b.t;
+                    if (keyA < keyB) return -1;
+                    if (keyA > keyB) return 1;
+                    return 0;
+                });
+                console.log(cursorchangelist)
+
+                function update(tstamp) {
+                    combotexts.text = combo;
+                    chartdata[0].forEach(element => {
+                        let stime = element['st'] - 1000;
+                        let etime = element['st'];
+                        try {
+                            app.stage.getChildByName(element['line']).y = (((tstamp - stime) / (etime -
+                                stime)) * (
+                                500));
+                            for (let www = 0; www < cursorchangelist.length; www++) {
+                                const ele = cursorchangelist[www];
+                                if (ele['t'] > etime) {
+                                    app.stage.getChildByName(element['line']).x = cursorchangelist[www - 1][
+                                        'pos'
+                                    ];
+                                    break;
+                                }
                             }
+                            if (app.stage.getChildByName(element['line']).y > 600 && element['hit'] == false) {
+                                combo = 0;
+                                element['hit'] = true;
+                            }
+                            if (app.stage.getChildByName(element['line']).y > 600 || element['hit']) {
+                                app.stage.getChildByName(element['line']).destroy();
+                            }
+                        } catch (error) {}
+                    })
+                    chartdata[1].forEach(element => {
+                        let stime = element['st'] - 1000;
+                        let etime = element['st'];
+                        app.stage.getChildByName(element['line'] + "c").y = (((tstamp - stime) / (etime -
+                            stime)) * (500));
+                    })
+
+                    chartdata[1].forEach(element => {
+                        let stime = element['st'] - 1000;
+                        let etime = element['st'];
+                        app.stage.getChildByName(element['line'] + "n").y = (((tstamp - stime) / (etime -
+                            stime)) * (500));
+                        if (tstamp > element['st'] && tstamp < element['st'] + 20) {
+                            cursor1s.x = element['pos'] - 50;
+                            cursor2s.x = element['pos'] + 50;
+                            cursor3s.x = element['pos'];
                         }
-                        if (app.stage.getChildByName(element['line']).y > 600 && element['hit'] == false) {
+                        if (app.stage.getChildByName(element['line'] + "n").y > 600 && element['hit'] ==
+                            false) {
                             combo = 0;
                             element['hit'] = true;
                         }
-                        if (app.stage.getChildByName(element['line']).y > 600 || element['hit']) {
-                            app.stage.getChildByName(element['line']).destroy();
-                        }
-                    } catch (error) {}
-                })
-                chartdata[1].forEach(element => {
-                    let stime = element['st'] - 1000;
-                    let etime = element['st'];
-                    app.stage.getChildByName(element['line'] + "c").y = (((tstamp - stime) / (etime -
-                        stime)) * (500));
-                })
-
-                chartdata[1].forEach(element => {
-                    let stime = element['st'] - 1000;
-                    let etime = element['st'];
-                    app.stage.getChildByName(element['line'] + "n").y = (((tstamp - stime) / (etime -
-                        stime)) * (500));
-                    if (tstamp > element['st'] && tstamp < element['st'] + 20) {
-                        cursor1s.x = element['pos'] - 50;
-                        cursor2s.x = element['pos'] + 50;
-                        cursor3s.x = element['pos'];
-                    }
-                    if (app.stage.getChildByName(element['line'] + "n").y > 600 && element['hit'] ==
-                        false) {
-                        combo = 0;
-                        element['hit'] = true;
-                    }
-                })
-            }
-
-            function rulesets(timestamp) {
-                for (let index = 0; index < chartdata[1].length; index++) {
-                    const element = chartdata[1][index];
-                    if (timestamp >= element['st'] - 10 && timestamp <= element['st'] + 10) {
-                        realx = element['pos'];
-                        break;
-                    }
+                    })
                 }
-                document.onkeydown = function (e) {
-                    var keynum = e.key;
-                    chartdata[0].forEach(element => {
-                        if (currentstamp <= element['st'] + 50 && currentstamp >= element['st'] -
-                            50) {
-                            let keyval;
-                            switch (element['pos']) {
-                                case 1:
-                                    keyval = "z";
-                                    break;
-                                case 2:
-                                    keyval = "x";
-                                    break
-                                default:
-                                    break;
-                            }
-                            if (keynum.includes(keyval)) {
-                                let nlst = true
-                                for (let ww = 0; ww < chartdata[0].length; ww++) {
-                                    const ele = chartdata[0][ww];
-                                    if (ele['st'] < element['st']) {
-                                        if (!ele['hit']) {
-                                            nlst = false;
+
+                function rulesets(timestamp) {
+                    for (let index = 0; index < chartdata[1].length; index++) {
+                        const element = chartdata[1][index];
+                        if (timestamp >= element['st'] - 10 && timestamp <= element['st'] + 10) {
+                            realx = element['pos'];
+                            break;
+                        }
+                    }
+                    document.addEventListener("keydown", (e) => {
+                        e.stopPropagation();
+                            // sounds["./hitsounds_normal-hitnormal.ogg"].play()
+                            var keynum = e.key;
+                            chartdata[0].forEach(element => {
+                                if (currentstamp <= element['st'] + 100 + inputoffset && currentstamp >=
+                                    element['st'] -
+                                    100 + inputoffset) {
+                                    let keyval;
+                                    switch (element['pos']) {
+                                        case 1:
+                                            keyval = "z";
+                                            break;
+                                        case 2:
+                                            keyval = "x";
+                                            break
+                                        default:
+                                            break;
+                                    }
+                                    if (keynum.includes(keyval)) {
+                                        let nlst = true
+                                        for (let ww = 0; ww < chartdata[0].length; ww++) {
+                                            const ele = chartdata[0][ww];
+                                            if (ele['st'] < element['st']) {
+                                                if (!ele['hit']) {
+                                                    nlst = false;
+                                                }
+                                            }
                                         }
+                                        // if (nlst) {
+                                        element['hit'] = true;
+                                        console.log(currentstamp - element['st']);
+                                        combo += 1;
+                                        // }
+
+
                                     }
                                 }
-                                if (nlst) {
-                                    element['hit'] = true;
-                                    // new Audio("./drum-hitnormal.wav").play()
-                                    combo += 1;
+                            })
+                            chartdata[1].forEach(element => {
+                                let keyval;
+                                if (currentstamp <= element['st'] + 100 + inputoffset && currentstamp >=
+                                    element['st'] -
+                                    100 + inputoffset) {
+                                    if (element['pos'] > curcurxr) {
+                                        keyval = "ArrowRight"
+                                    }
+                                    if (element['pos'] < curcurxr)(
+                                        keyval = "ArrowLeft"
+                                    )
+                                    if (keyval == keynum) {
+                                        curcurxr = element['pos'];
+                                        element['hit'] = true;
+                                        console.log(currentstamp - element['st']);
+                                        combo += 1;
+                                    }
                                 }
-
-
-                            }
-                        }
-                    })
-                    chartdata[1].forEach(element => {
-                        let keyval;
-                        if (currentstamp <= element['st'] + 50 && currentstamp >= element['st'] -
-                            50) {
-                            if (element['pos'] > curcurxr) {
-                                keyval = "ArrowRight"
-                            }
-                            if (element['pos'] < curcurxr)(
-                                keyval = "ArrowLeft"
-                            )
-                            if (keyval == keynum) {
-                                curcurxr = element['pos'];
-                                element['hit'] = true;
-                                // new Audio("./drum-hitnormal.wav").play()
-                                combo += 1;
-                            }
-                        }
-                    })
-                };
-            }
-            var realx;
-            let curcurxr = 400;
-            const blurFilter = new PIXI.filters.BlurFilter();
-            app.stage.addChild(cursorcontainer);
-            let jline = new PIXI.Graphics();
-            jline.beginFill(0xffffff);
-            jline.drawRect(0, 0, 800, 2);
-            var jlines = new PIXI.Sprite(app.renderer.generateTexture(jline));
-            jlines.x = 0;
-            jlines.y = 500;
-            let cursor1 = new PIXI.Graphics();
-            cursor1.beginFill(0xffffff);
-            cursor1.drawRect(0, 0, 10, 10);
-            let cursor3 = new PIXI.Graphics();
-            cursor3.beginFill(0xffffff);
-            cursor3.drawRect(0, 0, 15, 15);
-            var cursor1s = new PIXI.Sprite(app.renderer.generateTexture(cursor1));
-            cursor1s.x = 400 - 50;
-            cursor1s.anchor.set(0.5);
-            cursor1s.angle = 45;
-            cursor1s.y = 500;
-            var cursor2s = new PIXI.Sprite(app.renderer.generateTexture(cursor1));
-            cursor2s.x = 400 + 50;
-            cursor2s.anchor.set(0.5);
-            cursor2s.angle = 45;
-            cursor2s.y = 500;
-            var cursor3s = new PIXI.Sprite(app.renderer.generateTexture(cursor3));
-            cursor3s.x = 400;
-            cursor3s.anchor.set(0.5);
-            cursor3s.angle = 45;
-            cursor3s.y = 500;
-            app.stage.addChild(jlines);
-            app.stage.addChild(cursor1s);
-            app.stage.addChild(combotexts);
-            app.stage.addChild(cursor2s);
-            app.stage.addChild(cursor3s);
-            let started = false;
-            let tstarted = NaN;
-            let currentstamp = 0;
-            const audio = new Audio('./audio.mp3');
-            audio.load()
-            audio.play()
-            if (audio.paused != true) {
-                setInterval(() => {
-                    let t = new Date().getTime();
-                    rulesets(currentstamp);
-                    update(currentstamp);
-                    if (started == false) {
-                        started = true;
-                        tstarted = new Date().getTime();
+                            })
+                        });
                     }
-                    currentstamp = (new Date().getTime() - tstarted);
-                }, 10);
-            }
+                    var realx;
+                    let curcurxr = 400;
+                    const blurFilter = new PIXI.filters.BlurFilter();
+                    app.stage.addChild(cursorcontainer);
+                    let jline = new PIXI.Graphics();
+                    jline.beginFill(0xffffff);
+                    jline.drawRect(0, 0, 800, 2);
+                    var jlines = new PIXI.Sprite(app.renderer.generateTexture(jline));
+                    jlines.x = 0;
+                    jlines.y = 500;
+                    let cursor1 = new PIXI.Graphics();
+                    cursor1.beginFill(0xffffff);
+                    cursor1.drawRect(0, 0, 10, 10);
+                    let cursor3 = new PIXI.Graphics();
+                    cursor3.beginFill(0xffffff);
+                    cursor3.drawRect(0, 0, 15, 15);
+                    var cursor1s = new PIXI.Sprite(app.renderer.generateTexture(cursor1));
+                    cursor1s.x = 400 - 50;
+                    cursor1s.anchor.set(0.5);
+                    cursor1s.angle = 45;
+                    cursor1s.y = 500;
+                    var cursor2s = new PIXI.Sprite(app.renderer.generateTexture(cursor1));
+                    cursor2s.x = 400 + 50;
+                    cursor2s.anchor.set(0.5);
+                    cursor2s.angle = 45;
+                    cursor2s.y = 500;
+                    var cursor3s = new PIXI.Sprite(app.renderer.generateTexture(cursor3));
+                    cursor3s.x = 400;
+                    cursor3s.anchor.set(0.5);
+                    cursor3s.angle = 45;
+                    cursor3s.y = 500;
+                    app.stage.addChild(jlines);
+                    app.stage.addChild(cursor1s);
+                    app.stage.addChild(combotexts);
+                    app.stage.addChild(cursor2s);
+                    app.stage.addChild(cursor3s);
+                    let started = false;
+                    let tstarted = NaN;
+                    let currentstamp = 0;
+                    sounds.whenLoaded = function () {
+                        sounds['audio.mp3'].play()
+                        if (sounds['audio.mp3'].playing == true) {
+                            setInterval(() => {
+                                let t = new Date().getTime();
+                                rulesets(currentstamp);
+                                update(currentstamp);
+                                if (started == false) {
+                                    started = true;
+                                    tstarted = new Date().getTime();
+                                }
+                                currentstamp = (new Date().getTime() - tstarted);
+                            }, 10);
+                        }
+                    }
 
-        }
-        start();
+
+                }
+                start();
     </script>
 </body>
 
