@@ -1,9 +1,9 @@
 import { Stage } from '@inlet/react-pixi'
 import LoadBeatmapButton from './components/ui/LoadBeatmapButton'
+import PlayField from './PlayField'
 
 export default function App() {
 	// load map
-
 	return (
 		<>
 			<div className="py-3">
@@ -11,7 +11,9 @@ export default function App() {
 			</div>
 
 			<div>
-				<Stage className="block"></Stage>
+				<Stage className="block" width={800} height={600}>
+					<PlayField />
+				</Stage>
 			</div>
 		</>
 	)

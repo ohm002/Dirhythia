@@ -6,7 +6,7 @@ export default function LoadBeatmapButton() {
 	const handleSelectFile: ChangeEventHandler<HTMLInputElement> = (e) => {
 		e.preventDefault()
 
-		// if (fileInput.current !== null) alert(`Selected file - ${fileInput.current.files[0].name}`)
+		if (fileInput.current !== null) alert(`Selected file - ${fileInput.current['files'][0]['name']}`);
 		console.log(fileInput.current)
 	}
 
