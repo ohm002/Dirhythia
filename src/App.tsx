@@ -1,20 +1,20 @@
 import { Stage } from '@inlet/react-pixi'
-import LoadBeatmapButton from './components/ui/LoadBeatmapButton'
-import PlayField from './PlayField'
+import { createContext } from 'react'
+import PlayField from './components/game/PlayField'
+import beatmap from './data/beatmap'
+import { HEIGHT, WIDTH } from './libs/options'
+import { HitObject } from './types/HitObject'
+
+export const HitObjectsContext = createContext<HitObject[]>([])
 
 export default function App() {
-	// load map
-	return (
-		<>
-			<div className="py-3">
-				<LoadBeatmapButton />
-			</div>
-
-			<div>
-				<Stage className="block" width={800} height={600}>
-					<PlayField />
-				</Stage>
-			</div>
-		</>
-	)
+  return (
+    <>
+      <Stage className="block" width={WIDTH} height={HEIGHT}>
+        <HitObjectsContext.Provider value={beatmap.hitObjects}>
+          <PlayField />
+        </HitObjectsContext.Provider>
+      </Stage>
+    </>
+  )
 }
