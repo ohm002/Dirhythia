@@ -9,6 +9,7 @@ export default function PlayField() {
           e.preventDefault()
 
           // retry logic
+          // stop eventlistener in  each column
           break
       }
     }
@@ -24,10 +25,10 @@ export default function PlayField() {
     <>
     // cursor logic
     <Container x={400}>
-      <Column />
-      <Column />
-      <Column />
-      <Column />
+      <Column i={0}/>
+      <Column i={1}/>
+      <Column i={2}/>
+      <Column i={3}/>
       </Container>
     </>
   )
