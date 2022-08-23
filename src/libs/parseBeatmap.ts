@@ -1,16 +1,11 @@
 import { Beatmap } from '../types/Beatmap'
-import { HitSound } from '../types/HitSound'
 
 export function parseBeatmap(data: string): Beatmap {
   const beatmap = JSON.parse(data) as Beatmap
 
-  const { audioPath, metadata, hitObjects, timingPoints, mode } = beatmap
+  const { audioPath, metadata, hitObjects, timingPoints } = beatmap
 
   const validAudioPath = typeof audioPath == 'string'
-
-  const validMode = typeof mode.startTime == 'number' && 
-  mode.every(({mode}) => ['2k', '4k'].includes(mode))
-  ['2k', '4k'].includes(mode)
 
   const validMetadata =
     typeof metadata.title == 'string' &&
@@ -63,7 +58,7 @@ export function parseBeatmap(data: string): Beatmap {
     )
 
   const validBeatmap =
-    validAudioPath && validMetadata && validTimingPoints && validHitObjects && validMode
+    validAudioPath && validMetadata && validTimingPoints && validHitObjects
 
   if (!validBeatmap) throw new Error('Invalid beatmap')
 
