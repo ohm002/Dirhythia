@@ -22,10 +22,13 @@ export default function PlayField() {
 
   return (
     <>
+    // cursor logic
+    <Container x={400}>
       <Column />
       <Column />
       <Column />
       <Column />
+      </Container>
     </>
   )
 }
