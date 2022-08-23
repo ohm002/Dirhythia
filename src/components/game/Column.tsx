@@ -1,6 +1,14 @@
 import { Container, useTick } from '@inlet/react-pixi'
 import { useEffect } from 'react'
-import { COL_WIDTH, PLAYFIELD_WIDTH, WIDTH } from '../../libs/options'
+import {
+  COL_1_KEY,
+  COL_2_KEY,
+  COL_3_KEY,
+  COL_4_KEY,
+  COL_WIDTH,
+  PLAYFIELD_WIDTH,
+  WIDTH,
+} from '../../libs/options'
 import { useAppSelector } from '../../libs/redux/hooks'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
@@ -21,22 +29,46 @@ type ColumnProps = {
 }
 
 export default function Column(props: ColumnProps) {
-  const colkey = i == 0 ?  COL_1_KEY : i == 1 ? COL_2_KEY : i == 2 ? COL_3_KEY : i == 3 ? COL_4_KEY :
   useEffect(() => {
-    const handlekeydown = (e: KeyboardEvent) => {
-      e.preventDefault()
+    const handleKeydown = (e: KeyboardEvent) => {
       switch (e.key) {
-        case colkey:
-          console.log("col" + i);
-          switch (hitobjects.type) {
-            case 'note':
-              // note logic
-            case 'hold':
-              // hold logic
+        case COL_1_KEY:
+          e.preventDefault()
+
+          if (props.i == 1) {
+            // triggle click
           }
+          break
+        case COL_2_KEY:
+          e.preventDefault()
+
+          if (props.i == 1) {
+            // triggle click
+          }
+          break
+        case COL_3_KEY:
+          e.preventDefault()
+
+          if (props.i == 1) {
+            // triggle click
+          }
+          break
+        case COL_4_KEY:
+          e.preventDefault()
+
+          if (props.i == 1) {
+            // triggle click
+          }
+          break
       }
     }
+    document.addEventListener('keydown', handleKeydown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeydown)
+    }
   })
+
   // todo handle col 1 keydown, check if it match the note start time
   // for hold note:
   //  check if the keydown match the note starttime,
