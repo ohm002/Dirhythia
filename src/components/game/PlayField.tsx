@@ -16,6 +16,7 @@ export default function PlayField(props: PlayFieldProps) {
           break
         case '`':
           // retry logic
+          // stop eventlistener in  each column
           break
       }
     }
