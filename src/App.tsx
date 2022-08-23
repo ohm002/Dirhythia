@@ -4,10 +4,10 @@ import beatmap from './data/beatmap'
 import { HEIGHT, WIDTH } from './libs/options'
 import { gamePlay, gameQuit } from './libs/redux/features/gameStateSlice'
 import { useAppDispatch } from './libs/redux/hooks'
-import ReduxStage from './libs/ReduxStage'
+import ReduxStage from './libs/redux/ReduxStage'
 
 export default function App() {
-  const [volume, setVolume] = useState(20)
+  const [volume, setVolume] = useState(10)
   const dispatch = useAppDispatch()
 
   const { audioPath } = beatmap
@@ -30,7 +30,6 @@ export default function App() {
   const handleQuit: MouseEventHandler = (e) => {
     audio.pause()
     audio.currentTime = 0
-    dispatch(gameQuit())
   }
 
   return (

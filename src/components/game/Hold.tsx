@@ -4,10 +4,10 @@ import { useState } from 'react'
 import { interpolate } from '../../libs/interpolate'
 import {
   COL_WIDTH,
-  HEIGHT,
   HOLD_WIDTH,
   NOTE_HEIGHT,
   NOTE_TRAVEL_DURATION,
+  NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
   SCROLL_SPEED,
 } from '../../libs/options'
 import { useAppSelector } from '../../libs/redux/hooks'
@@ -21,15 +21,13 @@ type HoldProps = {
 }
 
 export default function Hold(props: HoldProps) {
-  const [y, setY] = useState(0)
   const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
   const isPlaying = useAppSelector((state) => state.gameState.isPlaying)
 
   const holdDuration = props.endTime - props.startTime
-  const beatDuration = 60000 / props.timingPoint.bpm
-  const holdBeats = holdDuration / beatDuration
-  // 1 beat takes a full screen height
-  const height = HEIGHT * holdBeats + NOTE_HEIGHT
+  const height = Math.round((holdDuration * SCROLL_SPEED) / 1000)
+  const [y, setY] = useState(-height)
+  const [alpha, setAlpha] = useState(1)
 
   useTick(() => {
     if (isPlaying) {
@@ -37,16 +35,29 @@ export default function Hold(props: HoldProps) {
       setY(
         interpolate(
           currentTime,
-          [props.startTime - NOTE_TRAVEL_DURATION, props.startTime],
-          [0, 480 + NOTE_HEIGHT]
+          [
+            props.startTime -
+              NOTE_TRAVEL_DURATION +
+              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+          ],
+          [-height, 480]
         )
       )
-      console.log(currentTime, props.startTime)
+      setAlpha(
+        interpolate(
+          currentTime,
+          [
+            props.endTime, props.endTime+NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION
+          ],
+          [1, 0]
+        )
+      )
     }
   })
 
   return (
-    <Container>
+    <Container alpha={alpha}>
       <Sprite
         texture={Texture.WHITE}
         x={props.x}
@@ -59,7 +70,7 @@ export default function Hold(props: HoldProps) {
       <Sprite
         texture={Texture.WHITE}
         x={props.x}
-        y={y - NOTE_HEIGHT}
+        y={y + height}
         anchor={[0.5, 1]}
         width={HOLD_WIDTH}
         height={height}
@@ -68,7 +79,7 @@ export default function Hold(props: HoldProps) {
       <Sprite
         texture={Texture.WHITE}
         x={props.x}
-        y={y - height}
+        y={y + height}
         anchor={[0.5, 1]}
         width={COL_WIDTH}
         height={NOTE_HEIGHT}

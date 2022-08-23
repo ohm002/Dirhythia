@@ -1,4 +1,4 @@
-import { Container, useTick } from '@inlet/react-pixi'
+import { Container } from '@inlet/react-pixi'
 import { useEffect } from 'react'
 import {
   COL_1_KEY,
@@ -9,7 +9,6 @@ import {
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
-import { useAppSelector } from '../../libs/redux/hooks'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
 import Hold from './Hold'
@@ -30,6 +29,8 @@ type ColumnProps = {
 
 export default function Column(props: ColumnProps) {
   useEffect(() => {
+    const checkIfPlayerClickMatchesNote = () => {}
+
     const handleKeydown = (e: KeyboardEvent) => {
       switch (e.key) {
         case COL_1_KEY:
@@ -42,21 +43,21 @@ export default function Column(props: ColumnProps) {
         case COL_2_KEY:
           e.preventDefault()
 
-          if (props.i == 1) {
+          if (props.i == 2) {
             // triggle click
           }
           break
         case COL_3_KEY:
           e.preventDefault()
 
-          if (props.i == 1) {
+          if (props.i == 3) {
             // triggle click
           }
           break
         case COL_4_KEY:
           e.preventDefault()
 
-          if (props.i == 1) {
+          if (props.i == 4) {
             // triggle click
           }
           break
@@ -76,7 +77,7 @@ export default function Column(props: ColumnProps) {
   //  release timing is not fun to play
 
   const x =
-    (WIDTH - PLAYFIELD_WIDTH) / 2 + COL_WIDTH * (props.i - 1) + COL_WIDTH / 2
+    (WIDTH - PLAYFIELD_WIDTH) / 2 + (COL_WIDTH + 3) * (props.i - 1) + COL_WIDTH / 2
 
   return (
     <Container position={[0, 0]}>
