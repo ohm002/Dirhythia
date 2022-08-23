@@ -1,5 +1,6 @@
 import { HitObject } from './HitObject'
 import { Metadata } from './Metadata'
+import {Mode} from  './Mode'
 import { TimingPoint } from './TimingPoint'
 
 export type Beatmap = {
@@ -19,4 +20,5 @@ export type Beatmap = {
 	 * Hit objects (note/ hold).
 	 */
 	hitObjects: HitObject[]
+	mode: Mode[]
 }

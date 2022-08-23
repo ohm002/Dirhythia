@@ -10,6 +10,10 @@ const beatmap: Beatmap = {
 		creator: 'Laquarius',
 		difficult: 'Easy',
 	},
+	mode:[{
+		type: '2k',
+		startTime : 562,
+	}],
 	hitObjects: [
 		{
 			type: 'note',
