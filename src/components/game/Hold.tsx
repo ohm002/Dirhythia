@@ -3,6 +3,7 @@ import { Texture } from 'pixi.js'
 import { useState } from 'react'
 import { interpolate } from '../../libs/interpolate'
 import {
+  OFFSET,
   COL_WIDTH,
   HOLD_WIDTH,
   NOTE_HEIGHT,
@@ -31,7 +32,7 @@ export default function Hold(props: HoldProps) {
 
   useTick(() => {
     if (isPlaying) {
-      const currentTime = Date.now() - playStartTime
+      const currentTime = Date.now() - playStartTime + OFFSET
       setY(
         interpolate(
           currentTime,
@@ -48,7 +49,8 @@ export default function Hold(props: HoldProps) {
         interpolate(
           currentTime,
           [
-            props.endTime, props.endTime+NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION
+            props.endTime,
+            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
           [1, 0]
         )
@@ -58,14 +60,14 @@ export default function Hold(props: HoldProps) {
 
   return (
     <Container alpha={alpha}>
-      <Sprite
+      {/* <Sprite
         texture={Texture.WHITE}
         x={props.x}
         y={y}
         anchor={[0.5, 1]}
         width={COL_WIDTH}
         height={NOTE_HEIGHT}
-      />
+      /> */}
 
       <Sprite
         texture={Texture.WHITE}

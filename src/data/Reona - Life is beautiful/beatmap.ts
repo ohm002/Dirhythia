@@ -1,4 +1,4 @@
-import { Beatmap } from '../types/Beatmap'
+import { Beatmap } from '../../types/Beatmap'
 
 const beatmap: Beatmap = {
   audioPath: 'https://dreamybull.s-ul.eu/5phIFXAu',

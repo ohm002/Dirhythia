@@ -9,6 +9,7 @@ import {
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
+import { useAppSelector } from '../../libs/redux/hooks'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
 import Hold from './Hold'
@@ -28,8 +29,15 @@ type ColumnProps = {
 }
 
 export default function Column(props: ColumnProps) {
+  const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
+  const currentTime = Date.now() - playStartTime
+
   useEffect(() => {
-    const checkIfPlayerClickMatchesNote = () => {}
+    const checkIfPlayerClickMatchesNote = () => {
+      // if (props.hitObjects.startTime){
+      // judgement logic
+      // }
+    }
 
     const handleKeydown = (e: KeyboardEvent) => {
       switch (e.key) {
@@ -37,7 +45,7 @@ export default function Column(props: ColumnProps) {
           e.preventDefault()
 
           if (props.i == 1) {
-            // triggle click
+            console.log(1)
           }
           break
         case COL_2_KEY:
@@ -77,7 +85,9 @@ export default function Column(props: ColumnProps) {
   //  release timing is not fun to play
 
   const x =
-    (WIDTH - PLAYFIELD_WIDTH) / 2 + (COL_WIDTH + 3) * (props.i - 1) + COL_WIDTH / 2
+    (WIDTH - PLAYFIELD_WIDTH) / 2 +
+    (COL_WIDTH + 3) * (props.i - 1) +
+    COL_WIDTH / 2
 
   return (
     <Container position={[0, 0]}>

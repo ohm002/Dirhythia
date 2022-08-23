@@ -3,6 +3,7 @@ import { Texture } from 'pixi.js'
 import { useState } from 'react'
 import { interpolate } from '../../libs/interpolate'
 import {
+  OFFSET,
   COL_WIDTH,
   NOTE_HEIGHT,
   NOTE_TRAVEL_DURATION,
@@ -23,7 +24,7 @@ export default function Note(props: NoteProps) {
 
   useTick(() => {
     if (isPlaying) {
-      const currentTime = Date.now() - playStartTime
+      const currentTime = Date.now() - playStartTime + OFFSET
 
       setY(
         interpolate(
@@ -42,7 +43,8 @@ export default function Note(props: NoteProps) {
           currentTime,
           [
             // 100 will be changed to the time od expires
-            props.startTime+50, props.startTime+NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION
+            props.startTime + 50,
+            props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
           [1, 0]
         )
