@@ -1,14 +1,15 @@
 import { MouseEventHandler, useMemo, useState } from 'react'
 import PlayField from './components/game/PlayField'
-import beatmap from './data/Virtual Self - Particle Arts/beatmap'
-// import beatmap from './data/Reona - Life is beautiful/beatmap'
+// import beatmap from './data/Virtual Self - Particle Arts/beatmap'
+import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { HEIGHT, WIDTH } from './libs/options'
 import { gamePlay, gameQuit } from './libs/redux/features/gameStateSlice'
-import { useAppDispatch } from './libs/redux/hooks'
+import { useAppDispatch, useAppSelector } from './libs/redux/hooks'
 import ReduxStage from './libs/redux/ReduxStage'
 
 export default function App() {
   const [volume, setVolume] = useState(10)
+  const score = useAppSelector((state) => state.gameState.score)
   const dispatch = useAppDispatch()
 
   const { audioPath } = beatmap
@@ -52,6 +53,7 @@ export default function App() {
           onChange={(e) => setVolume(parseInt(e.target.value))}
         />
       </div>
+      <div>Score: {score}</div>
       <ReduxStage className="block" width={WIDTH} height={HEIGHT}>
         <PlayField beatmap={beatmap} />
       </ReduxStage>
