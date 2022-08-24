@@ -60,6 +60,7 @@ export default function Column(props: ColumnProps) {
   const effectVolume = useAppSelector(
     (state) => state.gameSettingsState.effectVolume
   )
+  // doesnt reset on game retry
   const [nextObjIndex, setNextObjIndex] = useState(0)
   const [lastClickedIndex, setLastClickedIndex] = useState(-1)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
@@ -73,32 +74,26 @@ export default function Column(props: ColumnProps) {
 
   // still laggy af
   useEffect(() => {
-    // find the hit object that player tried to click
-    const findClickedNote = (currentTime: number): HitObject | undefined => {
-      const clickedHitObject =
-        nextObj.startTime >= currentTime - maxAcceptableOffset &&
-        nextObj.startTime <= currentTime + maxAcceptableOffset
-          ? nextObj
-          : undefined
-
-      return clickedHitObject
-    }
-
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key == getColKey(props.i)) {
         e.preventDefault()
 
         const currentTime = Date.now() - playStartTime
-        const clickedNote = findClickedNote(currentTime)
+        // find the hit object that player tried to click
+        const clickedHitObject =
+          nextObj.startTime >= currentTime - maxAcceptableOffset &&
+          nextObj.startTime <= currentTime + maxAcceptableOffset
+            ? nextObj
+            : undefined
 
-        if (clickedNote) {
+        if (clickedHitObject) {
           setLastClickedIndex(lastClickedIndex + 1)
           // play the hs
           playHitSound(effectVolume, timingPointOfNextObj.defaultSampleSet)
 
-          const offset = Math.abs(clickedNote.startTime - currentTime)
+          const offset = Math.abs(clickedHitObject.startTime - currentTime)
 
-          if (clickedNote.type == 'note') {
+          if (clickedHitObject.type == 'note') {
             // dont dispatch if clicked nothing
             if (offset <= hitWindow300) {
               dispatch(hit(300))
@@ -120,7 +115,7 @@ export default function Column(props: ColumnProps) {
     return () => {
       document.removeEventListener('keydown', handleKeydown)
     }
-  })
+  }, [nextObj])
 
   useTick(() => {
     if (isPlaying) {

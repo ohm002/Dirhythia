@@ -1,4 +1,4 @@
-import { MouseEventHandler, useMemo, useState } from 'react'
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react'
 import PlayField from './components/game/PlayField'
 // import beatmap from './data/Virtual Self - Particle Arts/beatmap'
 import beatmap from './data/Reona - Life is beautiful/beatmap'
@@ -11,6 +11,9 @@ import {
   gamePause,
   gamePlay,
   gameQuit,
+  gameRetry,
+  setAudioPath,
+  setAudioVolume,
 } from './libs/redux/features/gameStateSlice'
 import { useAppDispatch, useAppSelector } from './libs/redux/hooks'
 import ReduxStage from './libs/redux/ReduxStage'
@@ -27,30 +30,33 @@ export default function App() {
   const dispatch = useAppDispatch()
 
   const { audioPath } = beatmap
-  const audio = useMemo(() => new Audio(audioPath), [audioPath])
-  audio.volume = musicVolume / 100
-  audio.onplay = () => {
+
+  const handlePlay: MouseEventHandler = (e) => {
+    dispatch(setAudioPath(audioPath))
+    dispatch(setAudioVolume(musicVolume / 100))
     dispatch(gamePlay())
   }
 
-  audio.onpause = () => {
-    if ((audio.currentTime = 0)) {
-      dispatch(gameQuit())
-    } else {
-      dispatch(gamePause())
-    }
-  }
-
-  const handlePlay: MouseEventHandler = (e) => {
-    if (audio.HAVE_ENOUGH_DATA) {
-      audio.play()
-    }
-  }
-
   const handleQuit: MouseEventHandler = (e) => {
-    audio.currentTime = 0
-    audio.pause()
+    dispatch(gameQuit())
   }
+
+  useEffect(() => {
+    const handleRetry = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case '`':
+          // retry logic
+          dispatch(gameRetry())
+          break
+      }
+    }
+
+    document.addEventListener('keydown', handleRetry)
+
+    return () => {
+      document.removeEventListener('keydown', handleRetry)
+    }
+  }, [])
 
   return (
     <>
@@ -68,7 +74,10 @@ export default function App() {
           max={100}
           step={10}
           value={musicVolume}
-          onChange={(e) => dispatch(setMusicVolume(parseInt(e.target.value)))}
+          onChange={(e) => {
+            dispatch(setMusicVolume(parseInt(e.target.value)))
+            dispatch(setAudioVolume(parseInt(e.target.value) / 100))
+          }}
         />
       </div>
       <div>

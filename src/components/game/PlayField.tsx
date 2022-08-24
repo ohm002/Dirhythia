@@ -10,23 +10,6 @@ type PlayFieldProps = {
 }
 
 export default function PlayField(props: PlayFieldProps) {
-  useEffect(() => {
-    const handleRetry = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case '`':
-          // retry logic
-          // stop eventlistener in  each column
-          break
-      }
-    }
-
-    document.addEventListener('keydown', handleRetry)
-
-    return () => {
-      document.removeEventListener('keydown', handleRetry)
-    }
-  })
-
   return (
     <>
       <Sprite
