@@ -1,5 +1,5 @@
 import { Container, useTick } from '@inlet/react-pixi'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   COL_1_KEY,
   COL_2_KEY,
@@ -9,7 +9,7 @@ import {
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
-import { hit, hitlist } from '../../libs/redux/features/gameStateSlice'
+import { hit } from '../../libs/redux/features/gameStateSlice'
 import { useAppDispatch, useAppSelector } from '../../libs/redux/hooks'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
@@ -31,43 +31,34 @@ type ColumnProps = {
   timingPoints: TimingPoint[]
 }
 
+const getColKey = (i: number) => {
+  switch (i) {
+    case 1:
+      return COL_1_KEY
+
+    case 2:
+      return COL_2_KEY
+
+    case 3:
+      return COL_3_KEY
+
+    case 4:
+      return COL_4_KEY
+  }
+}
+
 export default function Column(props: ColumnProps) {
   const dispatch = useAppDispatch()
   const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
-  const objlist = useAppSelector((state) => state.gameState.hitlist)
+  const isPlaying = useAppSelector((state) => state.gameState.isPlaying)
+  const [nextObjIndex, setNextObjIndex] = useState(0)
 
   useEffect(() => {
-    const getColKey = () => {
-      switch (props.i) {
-        case 1:
-          return COL_1_KEY
-
-        case 2:
-          return COL_2_KEY
-
-        case 3:
-          return COL_3_KEY
-
-        case 4:
-          return COL_4_KEY
-      }
-    }
-    const checkmiss = (clickedList: Array<HitObject>) => {
-      props.hitObjects.every((e) => {
-        let clicked = false
-        clickedList.every((e2) => {
-          clicked = true
-            ? e2.startTime == e.startTime && e2.column == e.column
-            : false
-        })
-        if (clicked) console.log('miss on ', e)
-      })
-    }
-    // }
     // find the hit object that player tried to click
     const findClickedNote = (currentTime: number): HitObject | undefined => {
       const maxAcceptableOffset = 100 // ms
 
+      // inefficient
       const clickedHitObject = props.hitObjects.find(
         (h) =>
           h.startTime + maxAcceptableOffset >= currentTime &&
@@ -77,7 +68,7 @@ export default function Column(props: ColumnProps) {
     }
 
     const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key == getColKey()) {
+      if (e.key == getColKey(props.i)) {
         e.preventDefault()
 
         const currentTime = Date.now() - playStartTime
@@ -92,12 +83,14 @@ export default function Column(props: ColumnProps) {
           const offset = Math.abs(clickedNote.startTime - currentTime)
 
           if (clickedNote.type == 'note') {
-            // dispatch(combo())
-            // dispatch(hitlist(clickedNote))
-            let hitval = hitWindow300 > offset ? 300 : hitWindow300 < offset && offset <= hitWindow100 ? 100 : 
-            hitWindow100 < offset && offset <= hitWindow50 ? 50 
-            : 0
-            dispatch(hit(hitval))
+            // dont dispatch if clicked nothing
+            if (offset <= hitWindow300) {
+              dispatch(hit(300))
+            } else if (hitWindow300 < offset && offset <= hitWindow100) {
+              dispatch(hit(100))
+            } else if (hitWindow100 < offset && offset <= hitWindow50) {
+              dispatch(hit(50))
+            }
           } else {
             // todo handle hold note
             // probably will need to add `isHolding` state
@@ -110,6 +103,12 @@ export default function Column(props: ColumnProps) {
 
     return () => {
       document.removeEventListener('keydown', handleKeydown)
+    }
+  })
+
+  useTick(() => {
+    if (isPlaying) {
+      const currentTime = Date.now() - playStartTime
     }
   })
 
