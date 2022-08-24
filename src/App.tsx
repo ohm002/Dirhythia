@@ -4,6 +4,10 @@ import PlayField from './components/game/PlayField'
 import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { HEIGHT, WIDTH } from './libs/options'
 import {
+  setEffectVolume,
+  setMusicVolume,
+} from './libs/redux/features/gameSettingsSlice'
+import {
   gamePause,
   gamePlay,
   gameQuit,
@@ -12,14 +16,19 @@ import { useAppDispatch, useAppSelector } from './libs/redux/hooks'
 import ReduxStage from './libs/redux/ReduxStage'
 
 export default function App() {
-  const [volume, setVolume] = useState(10)
+  const musicVolume = useAppSelector(
+    (state) => state.gameSettingsState.musicVolume
+  )
+  const effectVolume = useAppSelector(
+    (state) => state.gameSettingsState.effectVolume
+  )
   const score = useAppSelector((state) => state.gameState.score)
   const combo = useAppSelector((state) => state.gameState.combo)
   const dispatch = useAppDispatch()
 
   const { audioPath } = beatmap
   const audio = useMemo(() => new Audio(audioPath), [audioPath])
-  audio.volume = volume / 100
+  audio.volume = musicVolume / 100
   audio.onplay = () => {
     dispatch(gamePlay())
   }
@@ -52,14 +61,25 @@ export default function App() {
         Quit
       </button>
       <div>
-        Volume:{' '}
+        Music:{' '}
         <input
           type="number"
           min={0}
           max={100}
           step={10}
-          value={volume}
-          onChange={(e) => setVolume(parseInt(e.target.value))}
+          value={musicVolume}
+          onChange={(e) => dispatch(setMusicVolume(parseInt(e.target.value)))}
+        />
+      </div>
+      <div>
+        Effect:{' '}
+        <input
+          type="number"
+          min={0}
+          max={100}
+          step={10}
+          value={effectVolume}
+          onChange={(e) => dispatch(setEffectVolume(parseInt(e.target.value)))}
         />
       </div>
       <div>Score: {score}</div>

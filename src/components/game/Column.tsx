@@ -10,7 +10,7 @@ import {
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
-import { hit } from '../../libs/redux/features/gameStateSlice'
+import { hit, miss } from '../../libs/redux/features/gameStateSlice'
 import { useAppDispatch, useAppSelector } from '../../libs/redux/hooks'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
@@ -57,7 +57,11 @@ export default function Column(props: ColumnProps) {
   const dispatch = useAppDispatch()
   const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
   const isPlaying = useAppSelector((state) => state.gameState.isPlaying)
+  const effectVolume = useAppSelector(
+    (state) => state.gameSettingsState.effectVolume
+  )
   const [nextObjIndex, setNextObjIndex] = useState(0)
+  const [lastClickedIndex, setLastClickedIndex] = useState(-1)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
   const timingPointOfNextObj = useMemo(
     () =>
@@ -67,6 +71,7 @@ export default function Column(props: ColumnProps) {
     [nextObj]
   )
 
+  // still laggy af
   useEffect(() => {
     // find the hit object that player tried to click
     const findClickedNote = (currentTime: number): HitObject | undefined => {
@@ -87,8 +92,9 @@ export default function Column(props: ColumnProps) {
         const clickedNote = findClickedNote(currentTime)
 
         if (clickedNote) {
+          setLastClickedIndex(lastClickedIndex + 1)
           // play the hs
-          playHitSound(timingPointOfNextObj.defaultSampleSet)
+          playHitSound(effectVolume, timingPointOfNextObj.defaultSampleSet)
 
           const offset = Math.abs(clickedNote.startTime - currentTime)
 
@@ -119,18 +125,19 @@ export default function Column(props: ColumnProps) {
   useTick(() => {
     if (isPlaying) {
       const currentTime = Date.now() - playStartTime
-      console.log(nextObj.startTime)
 
       if (
         currentTime > nextObj.startTime + maxAcceptableOffset &&
         nextObjIndex < props.hitObjects.length - 1
       ) {
         setNextObjIndex(nextObjIndex + 1)
+
+        // miss
+        if (nextObjIndex - 1 > lastClickedIndex) dispatch(miss())
       }
-
-      // if (currentTime > currentTimingPoint.time) {
-
-      // }
+    } else {
+      if (nextObjIndex != 0) setNextObjIndex(0)
+      if (lastClickedIndex != -1) setLastClickedIndex(-1)
     }
   })
 

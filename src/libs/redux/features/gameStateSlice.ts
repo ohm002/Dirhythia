@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { HitObject } from '../../../types/HitObject'
 
 export type GameState = {
   playStartTime: number
@@ -23,6 +22,9 @@ export const gameStateSlice = createSlice({
       state.score += action.payload
       state.combo += 1
     },
+    miss: (state) => {
+      state.combo = 0
+    },
     gamePause: (state) => {
       state.isPlaying = false
     },
@@ -43,7 +45,7 @@ export const gameStateSlice = createSlice({
   },
 })
 
-export const { hit, gamePlay, gameQuit, gamePause, gameResume } =
+export const { hit, miss, gamePlay, gameQuit, gamePause, gameResume } =
   gameStateSlice.actions
 
 export default gameStateSlice.reducer

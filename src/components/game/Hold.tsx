@@ -33,10 +33,10 @@ export default function Hold(props: HoldProps) {
   const holdDuration = props.endTime - props.startTime
   const height = Math.round((holdDuration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
-  // const hitted = 
+  // const hitted =
   const [alpha, setAlpha] = useState(1)
 
-  
+
   useTick(() => {
     if (isPlaying) {
       const currentTime = Date.now() - playStartTime + OFFSET
