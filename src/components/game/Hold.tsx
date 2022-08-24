@@ -1,0 +1,91 @@
+import { Container, Sprite, useTick } from '@inlet/react-pixi'
+import { Texture } from 'pixi.js'
+import { useState } from 'react'
+import { interpolate } from '../../libs/interpolate'
+import {
+  OFFSET,
+  COL_WIDTH,
+  HOLD_WIDTH,
+  NOTE_HEIGHT,
+  NOTE_TRAVEL_DURATION,
+  NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+  SCROLL_SPEED,
+} from '../../libs/options'
+import { useAppSelector } from '../../libs/redux/hooks'
+import { TimingPoint } from '../../types/TimingPoint'
+
+type HoldProps = {
+  x: number
+  startTime: number
+  endTime: number
+  timingPoint: TimingPoint
+}
+
+export default function Hold(props: HoldProps) {
+  const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
+  const isPlaying = useAppSelector((state) => state.gameState.isPlaying)
+
+  const holdDuration = props.endTime - props.startTime
+  const height = Math.round((holdDuration * SCROLL_SPEED) / 1000)
+  const [y, setY] = useState(-height)
+  const [alpha, setAlpha] = useState(1)
+
+  useTick(() => {
+    if (isPlaying) {
+      const currentTime = Date.now() - playStartTime + OFFSET
+      setY(
+        interpolate(
+          currentTime,
+          [
+            props.startTime -
+              NOTE_TRAVEL_DURATION +
+              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+          ],
+          [-height, 480]
+        )
+      )
+      setAlpha(
+        interpolate(
+          currentTime,
+          [
+            props.endTime,
+            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+          ],
+          [1, 0]
+        )
+      )
+    }
+  })
+
+  return (
+    <Container alpha={alpha}>
+      {/* <Sprite
+        texture={Texture.WHITE}
+        x={props.x}
+        y={y}
+        anchor={[0.5, 1]}
+        width={COL_WIDTH}
+        height={NOTE_HEIGHT}
+      /> */}
+
+      <Sprite
+        texture={Texture.WHITE}
+        x={props.x}
+        y={y + height}
+        anchor={[0.5, 1]}
+        width={HOLD_WIDTH}
+        height={height}
+      />
+
+      <Sprite
+        texture={Texture.WHITE}
+        x={props.x}
+        y={y + height}
+        anchor={[0.5, 1]}
+        width={COL_WIDTH}
+        height={NOTE_HEIGHT}
+      />
+    </Container>
+  )
+}
