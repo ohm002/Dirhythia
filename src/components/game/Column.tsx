@@ -1,5 +1,6 @@
 import { Container, useTick } from '@inlet/react-pixi'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { playHitSound } from '../../libs/hitsounds'
 import {
   COL_1_KEY,
   COL_2_KEY,
@@ -46,24 +47,35 @@ const getColKey = (i: number) => {
       return COL_4_KEY
   }
 }
+// OD 5 equivalent
+const maxAcceptableOffset = 150 // ms
+const hitWindow300 = 50 // ms
+const hitWindow100 = 100 // ms
+const hitWindow50 = maxAcceptableOffset // ms
 
 export default function Column(props: ColumnProps) {
   const dispatch = useAppDispatch()
   const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
   const isPlaying = useAppSelector((state) => state.gameState.isPlaying)
   const [nextObjIndex, setNextObjIndex] = useState(0)
+  const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
+  const timingPointOfNextObj = useMemo(
+    () =>
+      props.timingPoints
+        .filter((t) => t.time <= nextObj.startTime)
+        .sort((t1, t2) => t2.time - t1.time)[0],
+    [nextObj]
+  )
 
   useEffect(() => {
     // find the hit object that player tried to click
     const findClickedNote = (currentTime: number): HitObject | undefined => {
-      const maxAcceptableOffset = 100 // ms
+      const clickedHitObject =
+        nextObj.startTime >= currentTime - maxAcceptableOffset &&
+        nextObj.startTime <= currentTime + maxAcceptableOffset
+          ? nextObj
+          : undefined
 
-      // inefficient
-      const clickedHitObject = props.hitObjects.find(
-        (h) =>
-          h.startTime + maxAcceptableOffset >= currentTime &&
-          h.startTime - maxAcceptableOffset <= currentTime
-      )
       return clickedHitObject
     }
 
@@ -75,10 +87,8 @@ export default function Column(props: ColumnProps) {
         const clickedNote = findClickedNote(currentTime)
 
         if (clickedNote) {
-          // todo: play the hs
-          const hitWindow300 = 20 // ms
-          const hitWindow100 = 60 // ms
-          const hitWindow50 = 100 // ms
+          // play the hs
+          playHitSound(timingPointOfNextObj.defaultSampleSet)
 
           const offset = Math.abs(clickedNote.startTime - currentTime)
 
@@ -109,6 +119,18 @@ export default function Column(props: ColumnProps) {
   useTick(() => {
     if (isPlaying) {
       const currentTime = Date.now() - playStartTime
+      console.log(nextObj.startTime)
+
+      if (
+        currentTime > nextObj.startTime + maxAcceptableOffset &&
+        nextObjIndex < props.hitObjects.length - 1
+      ) {
+        setNextObjIndex(nextObjIndex + 1)
+      }
+
+      // if (currentTime > currentTimingPoint.time) {
+
+      // }
     }
   })
 

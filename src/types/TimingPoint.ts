@@ -1,3 +1,5 @@
+import { SampleSet } from './SampleSet'
+
 export type TimingPoint = {
   /**
    * Start time of the timing section,
@@ -15,7 +17,7 @@ export type TimingPoint = {
   /**
    * Default sample set for hit objects
    */
-  defaultSampleSet: 'soft' | 'normal' | 'drum'
+  defaultSampleSet: SampleSet
   /**
    * Volume percentage for hit objects.
    */

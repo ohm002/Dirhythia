@@ -13,10 +13,6 @@ export default function PlayField(props: PlayFieldProps) {
   useEffect(() => {
     const handleRetry = (e: KeyboardEvent) => {
       switch (e.key) {
-        case 'F5':
-          e.preventDefault()
-
-          break
         case '`':
           // retry logic
           // stop eventlistener in  each column

@@ -3,7 +3,11 @@ import PlayField from './components/game/PlayField'
 // import beatmap from './data/Virtual Self - Particle Arts/beatmap'
 import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { HEIGHT, WIDTH } from './libs/options'
-import { gamePlay, gameQuit } from './libs/redux/features/gameStateSlice'
+import {
+  gamePause,
+  gamePlay,
+  gameQuit,
+} from './libs/redux/features/gameStateSlice'
 import { useAppDispatch, useAppSelector } from './libs/redux/hooks'
 import ReduxStage from './libs/redux/ReduxStage'
 
@@ -21,7 +25,11 @@ export default function App() {
   }
 
   audio.onpause = () => {
-    dispatch(gameQuit())
+    if ((audio.currentTime = 0)) {
+      dispatch(gameQuit())
+    } else {
+      dispatch(gamePause())
+    }
   }
 
   const handlePlay: MouseEventHandler = (e) => {
@@ -31,8 +39,8 @@ export default function App() {
   }
 
   const handleQuit: MouseEventHandler = (e) => {
-    audio.pause()
     audio.currentTime = 0
+    audio.pause()
   }
 
   return (
