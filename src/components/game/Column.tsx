@@ -1,4 +1,4 @@
-import { Container } from '@inlet/react-pixi'
+import { Container, useTick } from '@inlet/react-pixi'
 import { useEffect } from 'react'
 import {
   COL_1_KEY,
@@ -9,7 +9,7 @@ import {
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
-import { hit } from '../../libs/redux/features/gameStateSlice'
+import { hit, hitlist } from '../../libs/redux/features/gameStateSlice'
 import { useAppDispatch, useAppSelector } from '../../libs/redux/hooks'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
@@ -34,6 +34,7 @@ type ColumnProps = {
 export default function Column(props: ColumnProps) {
   const dispatch = useAppDispatch()
   const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
+  const objlist = useAppSelector((state) => state.gameState.hitlist)
 
   useEffect(() => {
     const getColKey = () => {
@@ -51,7 +52,18 @@ export default function Column(props: ColumnProps) {
           return COL_4_KEY
       }
     }
-
+    const checkmiss = (clickedList: Array<HitObject>) => {
+      props.hitObjects.every((e) => {
+        let clicked = false
+        clickedList.every((e2) => {
+          clicked = true
+            ? e2.startTime == e.startTime && e2.column == e.column
+            : false
+        })
+        if (clicked) console.log('miss on ', e)
+      })
+    }
+    // }
     // find the hit object that player tried to click
     const findClickedNote = (currentTime: number): HitObject | undefined => {
       const maxAcceptableOffset = 100 // ms
@@ -72,8 +84,6 @@ export default function Column(props: ColumnProps) {
         const clickedNote = findClickedNote(currentTime)
 
         if (clickedNote) {
-          console.log(clickedNote, currentTime);
-
           // todo: play the hs
           const hitWindow300 = 20 // ms
           const hitWindow100 = 60 // ms
@@ -82,13 +92,12 @@ export default function Column(props: ColumnProps) {
           const offset = Math.abs(clickedNote.startTime - currentTime)
 
           if (clickedNote.type == 'note') {
-            if (offset <= hitWindow300) {
-              dispatch(hit(300))
-            } else if (hitWindow300 < offset && offset <= hitWindow100) {
-              dispatch(hit(100))
-            } else if (hitWindow100 < offset && offset <= hitWindow50) {
-              dispatch(hit(50))
-            }
+            // dispatch(combo())
+            // dispatch(hitlist(clickedNote))
+            let hitval = hitWindow300 > offset ? 300 : hitWindow300 < offset && offset <= hitWindow100 ? 100 : 
+            hitWindow100 < offset && offset <= hitWindow50 ? 50 
+            : 0
+            dispatch(hit(hitval))
           } else {
             // todo handle hold note
             // probably will need to add `isHolding` state

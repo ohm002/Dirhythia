@@ -14,6 +14,7 @@ import {
 } from '../../libs/options'
 import { useAppSelector } from '../../libs/redux/hooks'
 import { TimingPoint } from '../../types/TimingPoint'
+import { HitObject } from '../../types/HitObject'
 
 type HoldProps = {
   x: number
@@ -21,16 +22,21 @@ type HoldProps = {
   endTime: number
   timingPoint: TimingPoint
 }
-
+// function HitEffect(hitobject : HitObject){
+//   if (hitobject.startTime == props.startTime && hitobject.column == props.x){
+//     console.log("effect on ", hitobject)
+//   }
+// }
 export default function Hold(props: HoldProps) {
   const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
   const isPlaying = useAppSelector((state) => state.gameState.isPlaying)
-
   const holdDuration = props.endTime - props.startTime
   const height = Math.round((holdDuration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
+  // const hitted = 
   const [alpha, setAlpha] = useState(1)
 
+  
   useTick(() => {
     if (isPlaying) {
       const currentTime = Date.now() - playStartTime + OFFSET
@@ -46,6 +52,7 @@ export default function Hold(props: HoldProps) {
           [-height, 480]
         )
       )
+      // if ()
       setAlpha(
         interpolate(
           currentTime,
@@ -70,15 +77,15 @@ export default function Hold(props: HoldProps) {
         height={height + NOTE_HEIGHT}
       />
 
-      <Sprite
+      {/* <Sprite
         texture={Texture.WHITE}
         tint={0x000000}
         x={props.x}
-        y={y + height}
+        y={y + height+20}
         anchor={[0.5, 1]}
-        width={2}
-        height={height }
-      />
+        width={1}
+        height={height-20 }
+      /> */}
       <Sprite
         texture={Texture.WHITE}
         x={props.x}

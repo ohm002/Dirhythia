@@ -10,6 +10,8 @@ import ReduxStage from './libs/redux/ReduxStage'
 export default function App() {
   const [volume, setVolume] = useState(10)
   const score = useAppSelector((state) => state.gameState.score)
+  const combo = useAppSelector((state) => state.gameState.combo)
+  const hitlist = useAppSelector((state) => state.gameState.hitlist)
   const dispatch = useAppDispatch()
 
   const { audioPath } = beatmap
@@ -36,6 +38,14 @@ export default function App() {
 
   return (
     <>
+      <button
+        className="border border-black py-2 px-3"
+        onClick={() => {
+          console.log(hitlist)
+        }}
+      >
+        LOg
+      </button>
       <button className="border border-black py-2 px-3" onClick={handlePlay}>
         Play
       </button>
@@ -54,6 +64,7 @@ export default function App() {
         />
       </div>
       <div>Score: {score}</div>
+      <div>Combo: {combo}</div>
       <ReduxStage className="block" width={WIDTH} height={HEIGHT}>
         <PlayField beatmap={beatmap} />
       </ReduxStage>
