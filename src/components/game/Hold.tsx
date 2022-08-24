@@ -61,24 +61,24 @@ export default function Hold(props: HoldProps) {
 
   return (
     <Container alpha={alpha}>
-      {/* <Sprite
-        texture={Texture.WHITE}
-        x={props.x}
-        y={y}
-        anchor={[0.5, 1]}
-        width={COL_WIDTH}
-        height={NOTE_HEIGHT}
-      /> */}
-
       <Sprite
         texture={Texture.WHITE}
         x={props.x}
         y={y + height}
         anchor={[0.5, 1]}
         width={HOLD_WIDTH}
-        height={height}
+        height={height + NOTE_HEIGHT}
       />
 
+      <Sprite
+        texture={Texture.WHITE}
+        tint={0x000000}
+        x={props.x}
+        y={y + height}
+        anchor={[0.5, 1]}
+        width={2}
+        height={height }
+      />
       <Sprite
         texture={Texture.WHITE}
         x={props.x}
