@@ -9,7 +9,8 @@ import {
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
-import { useAppSelector } from '../../libs/redux/hooks'
+import { hit } from '../../libs/redux/features/gameStateSlice'
+import { useAppDispatch, useAppSelector } from '../../libs/redux/hooks'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
 import Hold from './Hold'
@@ -24,51 +25,76 @@ type ColumnProps = {
    * Index of the column (1-indexed).
    */
   i: number
-
+  /**
+   * Beatmap's all timing points.
+   */
   timingPoints: TimingPoint[]
 }
 
 export default function Column(props: ColumnProps) {
+  const dispatch = useAppDispatch()
   const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
-  const currentTime = Date.now() - playStartTime
 
   useEffect(() => {
-    const checkIfPlayerClickMatchesNote = () => {
-      // if (props.hitObjects.startTime){
-      // judgement logic
-      // }
+    const getColKey = () => {
+      switch (props.i) {
+        case 1:
+          return COL_1_KEY
+
+        case 2:
+          return COL_2_KEY
+
+        case 3:
+          return COL_3_KEY
+
+        case 4:
+          return COL_4_KEY
+      }
+    }
+
+    // find the hit object that player tried to click
+    const findClickedNote = (currentTime: number): HitObject | undefined => {
+      const maxAcceptableOffset = 100 // ms
+
+      const clickedHitObject = props.hitObjects.find(
+        (h) =>
+          h.startTime + maxAcceptableOffset >= currentTime &&
+          h.startTime - maxAcceptableOffset <= currentTime
+      )
+      return clickedHitObject
     }
 
     const handleKeydown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case COL_1_KEY:
-          e.preventDefault()
+      if (e.key == getColKey()) {
+        e.preventDefault()
 
-          if (props.i == 1) {
-            console.log(1)
-          }
-          break
-        case COL_2_KEY:
-          e.preventDefault()
+        const currentTime = Date.now() - playStartTime
+        const clickedNote = findClickedNote(currentTime)
 
-          if (props.i == 2) {
-            // triggle click
-          }
-          break
-        case COL_3_KEY:
-          e.preventDefault()
+        if (clickedNote) {
+          console.log(clickedNote, currentTime);
 
-          if (props.i == 3) {
-            // triggle click
-          }
-          break
-        case COL_4_KEY:
-          e.preventDefault()
+          // todo: play the hs
+          const hitWindow300 = 20 // ms
+          const hitWindow100 = 60 // ms
+          const hitWindow50 = 100 // ms
 
-          if (props.i == 4) {
-            // triggle click
+          const offset = Math.abs(clickedNote.startTime - currentTime)
+
+          if (clickedNote.type == 'note') {
+            if (offset <= hitWindow300) {
+              dispatch(hit(300))
+            } else if (hitWindow300 < offset && offset <= hitWindow100) {
+              dispatch(hit(100))
+            } else if (hitWindow100 < offset && offset <= hitWindow50) {
+              dispatch(hit(50))
+            }
+          } else {
+            // todo handle hold note
+            // probably will need to add `isHolding` state
+            // early release will not count
           }
-          break
+        }
       }
     }
     document.addEventListener('keydown', handleKeydown)
@@ -77,12 +103,6 @@ export default function Column(props: ColumnProps) {
       document.removeEventListener('keydown', handleKeydown)
     }
   })
-
-  // todo handle col 1 keydown, check if it match the note start time
-  // for hold note:
-  //  check if the keydown match the note starttime,
-  //  check every certain milisec(possibly bpm or configured value) if there the hold note is still click (release for a short time will not trigger a miss)
-  //  release timing is not fun to play
 
   const x =
     (WIDTH - PLAYFIELD_WIDTH) / 2 +
