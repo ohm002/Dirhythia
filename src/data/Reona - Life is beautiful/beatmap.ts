@@ -371,7 +371,7 @@ const beatmap: Beatmap = {
       time: 562,
       bpm: 130,
       meter: 4,
-      defaultSampleSet: 'soft',
+      defaultSampleSet: 'normal',
       volume: 100,
     },
   ],

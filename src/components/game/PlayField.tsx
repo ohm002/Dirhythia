@@ -4,9 +4,11 @@ import { Beatmap } from '../../types/Beatmap'
 import { Texture } from 'pixi.js'
 import Column from './Column'
 import { WIDTH, JUDGEMENT_LINE_OFFSET_Y, HEIGHT } from '../../libs/options'
+import { GameState } from '../../state/GameState'
 
 type PlayFieldProps = {
   beatmap: Beatmap
+  game: GameState
 }
 
 export default function PlayField(props: PlayFieldProps) {
@@ -26,6 +28,7 @@ export default function PlayField(props: PlayFieldProps) {
             (hitObject) => hitObject.column == i + 1
           )}
           timingPoints={props.beatmap.timingPoints}
+          game={props.game}
         />
       ))}
     </>

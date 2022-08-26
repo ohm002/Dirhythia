@@ -7,11 +7,11 @@ import {
   COL_3_KEY,
   COL_4_KEY,
   COL_WIDTH,
+  OFFSET,
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
-import { hit, miss } from '../../libs/redux/features/gameStateSlice'
-import { useAppDispatch, useAppSelector } from '../../libs/redux/hooks'
+import { GameState } from '../../state/GameState'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
 import Hold from './Hold'
@@ -30,6 +30,7 @@ type ColumnProps = {
    * Beatmap's all timing points.
    */
   timingPoints: TimingPoint[]
+  game: GameState
 }
 
 const getColKey = (i: number) => {
@@ -54,12 +55,9 @@ const hitWindow100 = 100 // ms
 const hitWindow50 = maxAcceptableOffset // ms
 
 export default function Column(props: ColumnProps) {
-  const dispatch = useAppDispatch()
-  const playStartTime = useAppSelector((state) => state.gameState.playStartTime)
-  const isPlaying = useAppSelector((state) => state.gameState.isPlaying)
-  const effectVolume = useAppSelector(
-    (state) => state.gameSettingsState.effectVolume
-  )
+  let playStartTime = props.game.playStartTime 
+  let isPlaying = props.game.isPlaying
+  let effectVolume = props.game.effectvolume
   // doesnt reset on game retry
   const [nextObjIndex, setNextObjIndex] = useState(0)
   const [lastClickedIndex, setLastClickedIndex] = useState(-1)
@@ -71,8 +69,8 @@ export default function Column(props: ColumnProps) {
         .sort((t1, t2) => t2.time - t1.time)[0],
     [nextObj]
   )
+  var toadd = 0
 
-  // still laggy af
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key == getColKey(props.i)) {
@@ -81,8 +79,10 @@ export default function Column(props: ColumnProps) {
         const currentTime = Date.now() - playStartTime
         // find the hit object that player tried to click
         const clickedHitObject =
-          nextObj.startTime >= currentTime - maxAcceptableOffset &&
-          nextObj.startTime <= currentTime + maxAcceptableOffset
+          nextObj.startTime  >=
+            currentTime - maxAcceptableOffset  &&
+          nextObj.startTime  <=
+            currentTime + maxAcceptableOffset 
             ? nextObj
             : undefined
 
@@ -92,20 +92,18 @@ export default function Column(props: ColumnProps) {
           playHitSound(effectVolume, timingPointOfNextObj.defaultSampleSet)
 
           const offset = Math.abs(clickedHitObject.startTime - currentTime)
-
           if (clickedHitObject.type == 'note') {
-            // dont dispatch if clicked nothing
             if (offset <= hitWindow300) {
-              dispatch(hit(300))
+              console.log(offset)
+              props.game.hit(300)
             } else if (hitWindow300 < offset && offset <= hitWindow100) {
-              dispatch(hit(100))
+              console.log(offset)
+              props.game.hit(300)
             } else if (hitWindow100 < offset && offset <= hitWindow50) {
-              dispatch(hit(50))
+              console.log(offset)
+              props.game.hit(300)
             }
           } else {
-            // todo handle hold note
-            // probably will need to add `isHolding` state
-            // early release will not count
           }
         }
       }
@@ -118,6 +116,9 @@ export default function Column(props: ColumnProps) {
   }, [nextObj])
 
   useTick(() => {
+    playStartTime = props.game.playStartTime
+    isPlaying = props.game.isPlaying
+    effectVolume = props.game.effectvolume
     if (isPlaying) {
       const currentTime = Date.now() - playStartTime
 
@@ -128,7 +129,7 @@ export default function Column(props: ColumnProps) {
         setNextObjIndex(nextObjIndex + 1)
 
         // miss
-        if (nextObjIndex - 1 > lastClickedIndex) dispatch(miss())
+        if (nextObjIndex - 1 > lastClickedIndex) props.game.miss()
       }
     } else {
       if (nextObjIndex != 0) setNextObjIndex(0)
@@ -145,7 +146,12 @@ export default function Column(props: ColumnProps) {
     <Container position={[0, 0]}>
       {props.hitObjects.map((hitObject, i) =>
         hitObject.type == 'note' ? (
-          <Note x={x} startTime={hitObject.startTime} key={i} />
+          <Note
+            x={x}
+            startTime={hitObject.startTime}
+            key={i}
+            game={props.game}
+          />
         ) : (
           <Hold
             x={x}
@@ -157,6 +163,7 @@ export default function Column(props: ColumnProps) {
                 .sort((t1, t2) => t2.time - t1.time)[0]
             }
             key={i}
+            game={props.game}
           />
         )
       )}

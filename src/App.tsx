@@ -1,44 +1,28 @@
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react'
+import { MouseEventHandler, useEffect } from 'react'
 import PlayField from './components/game/PlayField'
 // import beatmap from './data/Virtual Self - Particle Arts/beatmap'
 import beatmap from './data/Reona - Life is beautiful/beatmap'
+import { GameState } from './state/GameState'
 import { HEIGHT, WIDTH } from './libs/options'
-import {
-  setEffectVolume,
-  setMusicVolume,
-} from './libs/redux/features/gameSettingsSlice'
-import {
-  gamePause,
-  gamePlay,
-  gameQuit,
-  gameRetry,
-  setAudioPath,
-  setAudioVolume,
-} from './libs/redux/features/gameStateSlice'
-import { useAppDispatch, useAppSelector } from './libs/redux/hooks'
-import ReduxStage from './libs/redux/ReduxStage'
+import { Stage } from '@inlet/react-pixi'
+import Display from './components/game/Display'
 
 export default function App() {
-  const musicVolume = useAppSelector(
-    (state) => state.gameSettingsState.musicVolume
-  )
-  const effectVolume = useAppSelector(
-    (state) => state.gameSettingsState.effectVolume
-  )
-  const score = useAppSelector((state) => state.gameState.score)
-  const combo = useAppSelector((state) => state.gameState.combo)
-  const dispatch = useAppDispatch()
-
   const { audioPath } = beatmap
+  const GAME = new GameState(10, 10, 400, audioPath)
+  const musicVolume = GAME.audiovolume
+  const effectVolume = GAME.effectvolume
+  let combo = GAME.combo
+  let score = GAME.score
 
   const handlePlay: MouseEventHandler = (e) => {
-    dispatch(setAudioPath(audioPath))
-    dispatch(setAudioVolume(musicVolume / 100))
-    dispatch(gamePlay())
+    GAME.setAudioPath(audioPath)
+    GAME.setVolume(musicVolume / 100)
+    GAME.play()
   }
 
   const handleQuit: MouseEventHandler = (e) => {
-    dispatch(gameQuit())
+    GAME.quit()
   }
 
   useEffect(() => {
@@ -46,11 +30,14 @@ export default function App() {
       switch (e.key) {
         case '`':
           // retry logic
-          dispatch(gameRetry())
+          GAME.retry()
           break
       }
     }
 
+    setInterval(() => {
+      document.getElementById('display')!.innerHTML = GAME.combo.toString()
+    }, 10)
     document.addEventListener('keydown', handleRetry)
 
     return () => {
@@ -75,8 +62,7 @@ export default function App() {
           step={10}
           value={musicVolume}
           onChange={(e) => {
-            dispatch(setMusicVolume(parseInt(e.target.value)))
-            dispatch(setAudioVolume(parseInt(e.target.value) / 100))
+            GAME.setVolume(parseInt(e.target.value) / 100)
           }}
         />
       </div>
@@ -88,14 +74,14 @@ export default function App() {
           max={100}
           step={10}
           value={effectVolume}
-          onChange={(e) => dispatch(setEffectVolume(parseInt(e.target.value)))}
+          onChange={(e) => GAME.setEffectVolume(parseInt(e.target.value))}
         />
       </div>
-      <div>Score: {score}</div>
-      <div>Combo: {combo}</div>
-      <ReduxStage className="block" width={WIDTH} height={HEIGHT}>
-        <PlayField beatmap={beatmap} />
-      </ReduxStage>
+      <div id="display"></div>
+      <Stage width={WIDTH} height={HEIGHT}>
+        <Display game={GAME}></Display>
+        <PlayField beatmap={beatmap} game={GAME} />
+      </Stage>
     </>
   )
 }

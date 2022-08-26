@@ -11,10 +11,10 @@ export const COL_WIDTH = 70
 export const HOLD_WIDTH = COL_WIDTH
 export const NOTE_HEIGHT = 10
 export const PLAYFIELD_WIDTH = COL_WIDTH * 4
-export const SCROLL_SPEED = 400 // px per sec
+export const SCROLL_SPEED = 500 // px per sec
 export const NOTE_TRAVEL_DURATION = (HEIGHT / SCROLL_SPEED) * 1000
 export const JUDGEMENT_LINE_OFFSET_Y = 80
-export const OFFSET = -50 // ms
+export const OFFSET = -150 // ms ************** CHART OFFSET
 // if you're early, adjust down
 // if you're late, adjust up
 export const NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION =
