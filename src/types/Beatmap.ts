@@ -1,3 +1,4 @@
+import { Cursors } from './Cursors'
 import { HitObject } from './HitObject'
 import { Metadata } from './Metadata'
 import { TimingPoint } from './TimingPoint'
@@ -16,7 +17,8 @@ export type Beatmap = {
    */
   timingPoints: TimingPoint[]
   /**
-   * Hit objects (note/ hold).
+   * Hit objects (note/ hold/ cursor).
    */
   hitObjects: HitObject[]
+  cursor : Cursors[]
 }

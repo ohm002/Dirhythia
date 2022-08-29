@@ -1,7 +1,7 @@
 import { MouseEventHandler, useEffect } from 'react'
 import PlayField from './components/game/PlayField'
-// import beatmap from './data/Virtual Self - Particle Arts/beatmap'
-import beatmap from './data/Reona - Life is beautiful/beatmap'
+import beatmap from './data/Virtual Self - Particle Arts/beatmap'
+// import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { GameState } from './state/GameState'
 import { HEIGHT, WIDTH } from './libs/options'
 import { Stage } from '@inlet/react-pixi'
@@ -34,10 +34,11 @@ export default function App() {
           break
       }
     }
-
-    setInterval(() => {
-      document.getElementById('display')!.innerHTML = GAME.combo.toString()
-    }, 10)
+    // document.addEventListener('mousemove', (e: MouseEvent) => {
+    //   if (Math.abs(e.movementX) >= 30 ){
+    //     console.log(e.movementX);
+    //   }
+    // })
     document.addEventListener('keydown', handleRetry)
 
     return () => {

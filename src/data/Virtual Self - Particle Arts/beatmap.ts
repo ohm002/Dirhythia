@@ -14,15 +14,22 @@ const beatmap: Beatmap = {
   hitObjects: [
     { type: 'note', column: 1, startTime: 1151 },
     { type: 'note', column: 2, startTime: 1336 },
-    { type: 'hold', column: 3, startTime: 1522, endTime: 2262 },
     { type: 'note', column: 2, startTime: 1522 },
+    { type: 'note', column: 3, startTime: 1522 },
+    { type: 'note', column: 1, startTime: 2633 },
+    { type: 'note', column: 2, startTime: 2818 },
+    { type: 'note', column: 2, startTime: 3003 },
+    { type: 'note', column: 1, startTime: 3003 },
+  ],
+  cursor: [
+    {x:0.25, startTime: 3003},
   ],
   timingPoints: [
     {
-      time: 1522,
+      time: 1151,
       bpm: 162,
       meter: 4,
-      defaultSampleSet: 'soft',
+      defaultSampleSet: 'drum',
       volume: 100,
     },
   ],

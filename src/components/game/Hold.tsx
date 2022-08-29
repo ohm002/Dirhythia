@@ -18,6 +18,7 @@ type HoldProps = {
   endTime: number
   timingPoint: TimingPoint
   game: GameState
+  keys: number
 }
 export default function Hold(props: HoldProps) {
   let holdDuration = props.endTime - props.startTime

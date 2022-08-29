@@ -1,3 +1,5 @@
+import { WIDTH } from "../libs/options"
+
 const GAME_AUDIO = new Audio()
 export class GameState {
   audiovolume: number
@@ -6,6 +8,7 @@ export class GameState {
   score: number
   combo: number
   playStartTime: number
+  cursor: number
   audiopath: string
   isPlaying: boolean
 
@@ -23,6 +26,7 @@ export class GameState {
     this.combo = 0
     this.playStartTime = 0
     this.isPlaying = false
+    this.cursor = 0.5
   }
 
   play() {

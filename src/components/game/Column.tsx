@@ -1,4 +1,4 @@
-import { Container, useTick } from '@inlet/react-pixi'
+import { Container, Sprite, useTick } from '@inlet/react-pixi'
 import { useEffect, useMemo, useState } from 'react'
 import { playHitSound } from '../../libs/hitsounds'
 import {
@@ -55,7 +55,10 @@ const hitWindow100 = 100 // ms
 const hitWindow50 = maxAcceptableOffset // ms
 
 export default function Column(props: ColumnProps) {
-  let playStartTime = props.game.playStartTime 
+  if (props.hitObjects.length == 0) {
+    return null
+  }
+  let playStartTime = props.game.playStartTime
   let isPlaying = props.game.isPlaying
   let effectVolume = props.game.effectvolume
   // doesnt reset on game retry
@@ -69,7 +72,6 @@ export default function Column(props: ColumnProps) {
         .sort((t1, t2) => t2.time - t1.time)[0],
     [nextObj]
   )
-  var toadd = 0
 
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
@@ -79,10 +81,8 @@ export default function Column(props: ColumnProps) {
         const currentTime = Date.now() - playStartTime
         // find the hit object that player tried to click
         const clickedHitObject =
-          nextObj.startTime  >=
-            currentTime - maxAcceptableOffset  &&
-          nextObj.startTime  <=
-            currentTime + maxAcceptableOffset 
+          nextObj.startTime >= currentTime - maxAcceptableOffset &&
+          nextObj.startTime <= currentTime + maxAcceptableOffset
             ? nextObj
             : undefined
 
@@ -149,6 +149,7 @@ export default function Column(props: ColumnProps) {
           <Note
             x={x}
             startTime={hitObject.startTime}
+            keys={i}
             key={i}
             game={props.game}
           />
@@ -162,6 +163,7 @@ export default function Column(props: ColumnProps) {
                 .filter((t) => t.time <= hitObject.startTime)
                 .sort((t1, t2) => t2.time - t1.time)[0]
             }
+            keys={i}
             key={i}
             game={props.game}
           />

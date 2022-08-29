@@ -14,9 +14,11 @@ type NoteProps = {
   x: number
   startTime: number
   game: GameState
+  keys: number
 }
 
 export default function Note(props: NoteProps) {
+  console.log(props.keys == 1 || props.keys == 0 ? "#ffffff" :  "#fe0000")
   const [y, setY] = useState(0)
   const [alpha, setAlpha] = useState(1)
 
@@ -59,6 +61,7 @@ export default function Note(props: NoteProps) {
       texture={Texture.WHITE}
       x={props.x}
       y={y}
+      tint={props.keys == 1 || props.keys == 0 ? 0xffffff :  0xfe0000}
       anchor={[0.5, 1]}
       width={COL_WIDTH}
       height={NOTE_HEIGHT}

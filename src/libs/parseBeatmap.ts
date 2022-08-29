@@ -3,7 +3,7 @@ import { Beatmap } from '../types/Beatmap'
 export function parseBeatmap(data: string): Beatmap {
   const beatmap = JSON.parse(data) as Beatmap
 
-  const { audioPath, metadata, hitObjects, timingPoints } = beatmap
+  const { audioPath, metadata, hitObjects, timingPoints, cursor } = beatmap
 
   const validAudioPath = typeof audioPath == 'string'
 
@@ -49,7 +49,7 @@ export function parseBeatmap(data: string): Beatmap {
     Array.isArray(hitObjects) &&
     hitObjects.length > 0 &&
     hitObjects.every(
-      ({ type, column, startTime, endTime, hitsound }) =>
+      ({ type, column, startTime, endTime, hitsound,}) =>
         ['note', 'hold'].includes(type) &&
         typeof column == 'number' &&
         typeof startTime == 'number' &&
