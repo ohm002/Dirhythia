@@ -1,8 +1,9 @@
-import { WIDTH } from "../libs/options"
+import { WIDTH } from '../libs/options'
 
 const GAME_AUDIO = new Audio()
 export class GameState {
   audiovolume: number
+  hitlist: string[]
   effectvolume: number
   scrollspeed: number
   score: number
@@ -27,6 +28,7 @@ export class GameState {
     this.playStartTime = 0
     this.isPlaying = false
     this.cursor = 0.5
+    this.hitlist = []
   }
 
   play() {
@@ -59,13 +61,15 @@ export class GameState {
     GAME_AUDIO.currentTime = 0
   }
 
-  hit(score: number) {
+  hit(score: number, time: number, key: number) {
     this.score += score
     this.combo += 1
+    this.hitlist.push((time.toString() + key.toString()))
   }
-  
-  miss() {
+
+  miss(time: number, key: number) {
     this.combo = 0
+    this.hitlist.push((time.toString() + key.toString()))
   }
 
   setAudioPath(path: string) {

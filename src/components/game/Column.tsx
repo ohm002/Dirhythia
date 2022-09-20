@@ -94,14 +94,14 @@ export default function Column(props: ColumnProps) {
           const offset = Math.abs(clickedHitObject.startTime - currentTime)
           if (clickedHitObject.type == 'note') {
             if (offset <= hitWindow300) {
-              console.log(offset)
-              props.game.hit(300)
+              // console.log(offset)
+              props.game.hit(300, clickedHitObject.startTime, props.i)
             } else if (hitWindow300 < offset && offset <= hitWindow100) {
-              console.log(offset)
-              props.game.hit(300)
+              // console.log(offset)
+              props.game.hit(100, clickedHitObject.startTime, props.i)
             } else if (hitWindow100 < offset && offset <= hitWindow50) {
-              console.log(offset)
-              props.game.hit(300)
+              // console.log(offset)
+              props.game.hit(50, clickedHitObject.startTime, props.i)
             }
           } else {
           }
@@ -127,9 +127,6 @@ export default function Column(props: ColumnProps) {
         nextObjIndex < props.hitObjects.length - 1
       ) {
         setNextObjIndex(nextObjIndex + 1)
-
-        // miss
-        if (nextObjIndex - 1 > lastClickedIndex) props.game.miss()
       }
     } else {
       if (nextObjIndex != 0) setNextObjIndex(0)
@@ -149,7 +146,7 @@ export default function Column(props: ColumnProps) {
           <Note
             x={x}
             startTime={hitObject.startTime}
-            keys={i}
+            keys={props.i}
             key={i}
             game={props.game}
           />
@@ -163,7 +160,7 @@ export default function Column(props: ColumnProps) {
                 .filter((t) => t.time <= hitObject.startTime)
                 .sort((t1, t2) => t2.time - t1.time)[0]
             }
-            keys={i}
+            keys={props.i}
             key={i}
             game={props.game}
           />

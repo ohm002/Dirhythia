@@ -5,7 +5,7 @@ import { Texture } from 'pixi.js'
 import Column from './Column'
 import { WIDTH, JUDGEMENT_LINE_OFFSET_Y, HEIGHT } from '../../libs/options'
 import { GameState } from '../../state/GameState'
-import Cursor from './Cursor'
+// import Cursor from './Cursor'
 
 type PlayFieldProps = {
   beatmap: Beatmap
@@ -22,7 +22,7 @@ export default function PlayField(props: PlayFieldProps) {
         y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
       />
       <Container>
-        <Cursor game={props.game} cursors={props.beatmap.cursor}></Cursor>
+        {/* <Cursor game={props.game} cursors={props.beatmap.cursor}></Cursor> */}
         {[...Array(4)].map((_, i) => (
           <Column
             i={i + 1}

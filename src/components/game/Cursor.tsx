@@ -32,9 +32,8 @@ export default function Cursor(props: Props) {
             ? props.cursors[index + 1].startTime
             : 10000
         if (currentTime >= element.startTime && nexttime >= currentTime) {
-          console.log( props.game.cursor)
-		  props.game.cursor = element.x
-		  setX(element.x)
+          props.game.cursor = element.x
+          setX(element.x)
         }
       }
     }
