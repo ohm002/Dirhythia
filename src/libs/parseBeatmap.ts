@@ -1,4 +1,5 @@
 import { Beatmap } from '../types/Beatmap'
+import { OFFSET } from './options'
 
 export function parseBeatmap(data: string): Beatmap {
   const beatmap = JSON.parse(data) as Beatmap
@@ -49,7 +50,7 @@ export function parseBeatmap(data: string): Beatmap {
     Array.isArray(hitObjects) &&
     hitObjects.length > 0 &&
     hitObjects.every(
-      ({ type, column, startTime, endTime, hitsound,}) =>
+      ({ type, column, startTime, endTime, hitsound }) =>
         ['note', 'hold'].includes(type) &&
         typeof column == 'number' &&
         typeof startTime == 'number' &&
@@ -62,5 +63,13 @@ export function parseBeatmap(data: string): Beatmap {
 
   if (!validBeatmap) throw new Error('Invalid beatmap')
 
+  console.log(OFFSET)
+  beatmap.timingPoints.forEach((e) => {
+    e.time = e.time + OFFSET
+  })
+  beatmap.hitObjects.forEach((w) => {
+    w.startTime = w.startTime + OFFSET
+    if (w.endTime) w.endTime = w.endTime + OFFSET
+  })
   return beatmap
 }

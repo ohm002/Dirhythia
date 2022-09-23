@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { interpolate } from '../../libs/interpolate'
 import {
   COL_WIDTH,
+  HEIGHT,
+  JUDGEMENT_LINE_OFFSET_Y,
   NOTE_HEIGHT,
   NOTE_TRAVEL_DURATION,
   NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
@@ -19,66 +21,76 @@ type NoteProps = {
 }
 
 export default function Note(props: NoteProps) {
-  // let clicked = false
-  let [clicked, setclicked] = useState(0)
+  let [clicked, setclicked] = useState(false)
   const [y, setY] = useState(0)
   const [alpha, setAlpha] = useState(1)
+  const [effalpha, setEffAlpha] = useState(0)
   // const color = props.keys == 1 || props.keys == 0 ? 0xffffff : 0xfe0000
   const color = 0xffffff
-  useTick(() => {
-    let isPlaying = props.game.isPlaying
-    if (isPlaying) {
-      props.game.hitlist.forEach((element) => {
-      if (
-          element ==
-          props.startTime.toString() + (props.keys).toString()
-        ) {
-          setclicked(1)
-          // console.log(clicked)
-        }
-      })
-      let playStartTime = props.game.playStartTime
-      const currentTime = Date.now() - playStartTime + OFFSET
-      if (currentTime > props.startTime + 150 && clicked == 0) {
-        props.game.miss(props.startTime, props.keys + 1)
-      }
-    }
-  })
+  // useTick(() => {
+
+  // })
   useTick(() => {
     let playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
     if (isPlaying) {
-      const currentTime = Date.now() - playStartTime + OFFSET
+      const currentTime = Date.now() - playStartTime
+      props.game.hitlist.forEach((element) => {
+        if (element == props.startTime.toString() + props.keys.toString()) {
+          setclicked(true)
+          setAlpha(0)
+        }
+      })
+      if (currentTime > props.startTime + 150 && !clicked) {
+        props.game.miss(props.startTime, props.keys)
+      }
       setY(
         interpolate(
           currentTime,
           [
             props.startTime -
               NOTE_TRAVEL_DURATION +
-              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION +
-              OFFSET,
-            props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION + OFFSET,
+              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+            props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
           [0, 480]
         )
       )
-
-      setAlpha(
-        interpolate(
-          currentTime,
-          [
-            // 100 will be changed to the time od expires
-            props.startTime + 50 + OFFSET,
-            props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION + OFFSET,
-          ],
-          [1, 0]
+      if (!clicked) {
+        setAlpha(
+          interpolate(
+            currentTime,
+            [
+              // 100 will be changed to the time od expires
+              props.startTime + 50,
+              props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+            ],
+            [1, 0]
+          )
         )
-      )
+      } else {
+        setEffAlpha(
+          interpolate(
+            currentTime,
+            [props.startTime + 50, props.startTime + 1050],
+            [0.5, 0]
+          )
+        )
+      }
     }
   })
 
   return (
     <Container>
+      <Sprite
+        texture={Texture.WHITE}
+        x={props.x}
+        y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
+        width={40}
+        height={40}
+        alpha={effalpha}
+        anchor={[0.5, 0.5]}
+      />
       <Sprite
         texture={Texture.WHITE}
         x={props.x}
@@ -88,20 +100,6 @@ export default function Note(props: NoteProps) {
         width={COL_WIDTH}
         height={NOTE_HEIGHT}
         alpha={alpha}
-      />
-
-      <Text
-        text={clicked.toString()}
-        anchor={0.5}
-        x={props.x}
-        y={y}
-        style={
-          new TextStyle({
-            align: 'center',
-            fontSize: 20,
-            fill: '#fe0000',
-          })
-        }
       />
     </Container>
   )

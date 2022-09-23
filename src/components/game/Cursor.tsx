@@ -24,7 +24,7 @@ export default function Cursor(props: Props) {
     let playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
     if (isPlaying) {
-      const currentTime = Date.now() - playStartTime + OFFSET
+      const currentTime = Date.now() - playStartTime
       for (let index = 0; index < props.cursors.length; index++) {
         const element = props.cursors[index]
         const nexttime =

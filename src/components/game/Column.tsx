@@ -1,12 +1,15 @@
 import { Container, Sprite, useTick } from '@inlet/react-pixi'
+import { Texture } from 'pixi.js'
 import { useEffect, useMemo, useState } from 'react'
 import { playHitSound } from '../../libs/hitsounds'
+import { interpolate } from '../../libs/interpolate'
 import {
   COL_1_KEY,
   COL_2_KEY,
   COL_3_KEY,
   COL_4_KEY,
   COL_WIDTH,
+  NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
   OFFSET,
   PLAYFIELD_WIDTH,
   WIDTH,
@@ -63,21 +66,10 @@ export default function Column(props: ColumnProps) {
   let effectVolume = props.game.effectvolume
   // doesnt reset on game retry
   const [nextObjIndex, setNextObjIndex] = useState(0)
-  const [lastClickedIndex, setLastClickedIndex] = useState(-1)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
-  const timingPointOfNextObj = useMemo(
-    () =>
-      props.timingPoints
-        .filter((t) => t.time <= nextObj.startTime)
-        .sort((t1, t2) => t2.time - t1.time)[0],
-    [nextObj]
-  )
-
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key == getColKey(props.i)) {
-        e.preventDefault()
-
         const currentTime = Date.now() - playStartTime
         // find the hit object that player tried to click
         const clickedHitObject =
@@ -87,23 +79,15 @@ export default function Column(props: ColumnProps) {
             : undefined
 
         if (clickedHitObject) {
-          setLastClickedIndex(lastClickedIndex + 1)
-          // play the hs
-          playHitSound(effectVolume, timingPointOfNextObj.defaultSampleSet)
-
           const offset = Math.abs(clickedHitObject.startTime - currentTime)
-          if (clickedHitObject.type == 'note') {
-            if (offset <= hitWindow300) {
-              // console.log(offset)
-              props.game.hit(300, clickedHitObject.startTime, props.i)
-            } else if (hitWindow300 < offset && offset <= hitWindow100) {
-              // console.log(offset)
-              props.game.hit(100, clickedHitObject.startTime, props.i)
-            } else if (hitWindow100 < offset && offset <= hitWindow50) {
-              // console.log(offset)
-              props.game.hit(50, clickedHitObject.startTime, props.i)
-            }
-          } else {
+          if (nextObjIndex != props.hitObjects.length - 1)
+            setNextObjIndex(nextObjIndex + 1)
+          if (offset <= hitWindow300) {
+            props.game.hit(300, clickedHitObject.startTime, props.i)
+          } else if (hitWindow300 < offset && offset <= hitWindow100) {
+            props.game.hit(100, clickedHitObject.startTime, props.i)
+          } else if (hitWindow100 < offset && offset <= hitWindow50) {
+            props.game.hit(50, clickedHitObject.startTime, props.i)
           }
         }
       }
@@ -119,19 +103,6 @@ export default function Column(props: ColumnProps) {
     playStartTime = props.game.playStartTime
     isPlaying = props.game.isPlaying
     effectVolume = props.game.effectvolume
-    if (isPlaying) {
-      const currentTime = Date.now() - playStartTime
-
-      if (
-        currentTime > nextObj.startTime + maxAcceptableOffset &&
-        nextObjIndex < props.hitObjects.length - 1
-      ) {
-        setNextObjIndex(nextObjIndex + 1)
-      }
-    } else {
-      if (nextObjIndex != 0) setNextObjIndex(0)
-      if (lastClickedIndex != -1) setLastClickedIndex(-1)
-    }
   })
 
   const x =

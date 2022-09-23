@@ -3,12 +3,20 @@ import PlayField from './components/game/PlayField'
 // import beatmap from './data/Virtual Self - Particle Arts/beatmap'
 import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { GameState } from './state/GameState'
-import { HEIGHT, WIDTH } from './libs/options'
+import { HEIGHT, OFFSET, WIDTH } from './libs/options'
 import { Stage } from '@inlet/react-pixi'
 import Display from './components/game/Display'
+import { parseBeatmap } from './libs/parseBeatmap'
 
 export default function App() {
   const { audioPath } = beatmap
+  beatmap.timingPoints.forEach((e) => {
+    e.time = e.time + OFFSET
+  })
+  beatmap.hitObjects.forEach((w) => {
+    w.startTime = w.startTime + OFFSET
+    if (w.endTime) w.endTime = w.endTime + OFFSET
+  })
   const GAME = new GameState(10, 10, 400, audioPath)
   const musicVolume = GAME.audiovolume
   const effectVolume = GAME.effectvolume
@@ -45,7 +53,6 @@ export default function App() {
       document.removeEventListener('keydown', handleRetry)
     }
   }, [])
-
   return (
     <>
       <button className="border border-black py-2 px-3" onClick={handlePlay}>
@@ -83,6 +90,7 @@ export default function App() {
         <Display game={GAME}></Display>
         <PlayField beatmap={beatmap} game={GAME} />
       </Stage>
+      <div id="log"></div>
     </>
   )
 }

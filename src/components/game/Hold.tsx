@@ -30,16 +30,15 @@ export default function Hold(props: HoldProps) {
     let playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
       if (isPlaying) {
-      const currentTime = Date.now() - playStartTime + OFFSET 
+      const currentTime = Date.now() - playStartTime 
       setY(
         interpolate(
           currentTime,
           [
             props.startTime -
               NOTE_TRAVEL_DURATION +
-              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION +
-              OFFSET,
-            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION + OFFSET,
+              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
           [-height, 480]
         )
@@ -49,8 +48,8 @@ export default function Hold(props: HoldProps) {
         interpolate(
           currentTime,
           [
-            props.endTime + OFFSET,
-            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION + OFFSET,
+            props.endTime,
+            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
           [1, 0]
         )
