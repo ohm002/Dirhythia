@@ -366,6 +366,7 @@ const beatmap: Beatmap = {
       endTime: 15331,
     },
   ],
+  cursor: [],
   timingPoints: [
     {
       time: 562,

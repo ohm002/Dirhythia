@@ -18,8 +18,8 @@ function getHeight() {
   );
 }
 
-export const WIDTH = getWidth()
-export const HEIGHT = getHeight()
+export const WIDTH = 800
+export const HEIGHT = 600
 export const COL_1_KEY = 'd'
 export const COL_2_KEY = 'f'
 export const COL_3_KEY = 'j'
