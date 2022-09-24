@@ -36,11 +36,31 @@ export default function Cursor(props: Props) {
   const [nextObjIndex, setNextObjIndex] = useState(0)
   let playStartTime = props.game.playStartTime
   const nextObj = useMemo(() => props.cursors[nextObjIndex], [nextObjIndex])
+  useTick(() => {
+    playStartTime = props.game.playStartTime
+    let isPlaying = props.game.isPlaying
+    if (isPlaying) {
+      const currentTime = Date.now() - playStartTime
+      for (let index = 0; index < props.cursors.length; index++) {
+        const element = props.cursors[index]
+        const nexttime =
+          props.cursors[index + 1] != undefined
+            ? props.cursors[index + 1].startTime
+            : 10000
+        // CHANGE 10000 TO SONG LENGTH
+        if (currentTime >= element.startTime && nexttime >= currentTime) {
+          props.game.cursor = element.x
+          setX(element.x)
+        }
+      }
+    }
+  })
   useEffect(() => {
     if (nextObj && props.cursors[nextObjIndex - 1])
       if (props.cursors[nextObjIndex - 1].x - nextObj.x == 0)
         setNextObjIndex(nextObjIndex + 1)
     const handleKeydown = (e: KeyboardEvent) => {
+      console.log(nextObj.x, x)
       if (
         e.key ==
         getColKey(
@@ -76,31 +96,15 @@ export default function Cursor(props: Props) {
       }
     }
     document.addEventListener('keydown', handleKeydown)
-
+    // document.addEventListener('mousemove', (e: MouseEvent) => {
+    //   // if (Math.abs(e.movementX) >= 50 &&){
+    //     console.log(e.movementX);
+    //   // }
+    // })
     return () => {
       document.removeEventListener('keydown', handleKeydown)
     }
-  }, [nextObj])
-
-  useTick(() => {
-    playStartTime = props.game.playStartTime
-    let isPlaying = props.game.isPlaying
-    if (isPlaying) {
-      const currentTime = Date.now() - playStartTime
-      for (let index = 0; index < props.cursors.length; index++) {
-        const element = props.cursors[index]
-        const nexttime =
-          props.cursors[index + 1] != undefined
-            ? props.cursors[index + 1].startTime
-            : 10000
-        // CHANGE 10000 TO SONG LENGTH
-        if (currentTime >= element.startTime && nexttime >= currentTime) {
-          props.game.cursor = element.x
-          setX(element.x)
-        }
-      }
-    }
-  })
+  }, [nextObj, x])
   return (
     <Sprite
       texture={Texture.WHITE}
