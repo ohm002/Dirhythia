@@ -4,7 +4,9 @@ import { useState } from 'react'
 import { interpolate } from '../../libs/interpolate'
 import {
   COL_WIDTH,
+  HEIGHT,
   HOLD_WIDTH,
+  JUDGEMENT_LINE_OFFSET_Y,
   NOTE_HEIGHT,
   NOTE_TRAVEL_DURATION,
   NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION, OFFSET, SCROLL_SPEED
@@ -40,7 +42,7 @@ export default function Hold(props: HoldProps) {
               NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
             props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
-          [-height, 480]
+          [-height, HEIGHT]
         )
       )
       // if ()

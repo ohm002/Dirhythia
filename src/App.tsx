@@ -1,7 +1,7 @@
 import { MouseEventHandler, useEffect } from 'react'
 import PlayField from './components/game/PlayField'
-// import beatmap from './data/Virtual Self - Particle Arts/beatmap'
-import beatmap from './data/Reona - Life is beautiful/beatmap'
+import beatmap from './data/Virtual Self - Particle Arts/beatmap'
+// import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { GameState } from './state/GameState'
 import { HEIGHT, OFFSET, WIDTH } from './libs/options'
 import { Stage } from '@inlet/react-pixi'
@@ -17,14 +17,31 @@ export default function App() {
     w.startTime = w.startTime + OFFSET
     if (w.endTime) w.endTime = w.endTime + OFFSET
   })
-  const GAME = new GameState(10, 10, 400, audioPath)
+  let maxscore = 0
+  beatmap.hitObjects.forEach((e) => {
+    maxscore += 300
+  })
+
+  beatmap.cursor.forEach((e, i) => {
+    if (beatmap.cursor[i - 1]) {
+      if (beatmap.cursor[i - 1].x != e.x) {
+        console.log(beatmap.cursor[i - 1].x, e.x)
+        maxscore += 300
+      }
+    } else {
+      maxscore += 300
+    }
+  })
+  const GAME = new GameState(10, 10, 400, audioPath, maxscore)
+  GAME.setAudioPath(audioPath)
+  GAME.audio.load()
   const musicVolume = GAME.audiovolume
+  const songlength = GAME.audio.duration
   const effectVolume = GAME.effectvolume
   let combo = GAME.combo
   let score = GAME.score
 
   const handlePlay: MouseEventHandler = (e) => {
-    GAME.setAudioPath(audioPath)
     GAME.setVolume(musicVolume / 100)
     GAME.play()
   }

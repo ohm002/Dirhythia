@@ -17,6 +17,7 @@ import {
 import { GameState } from '../../state/GameState'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
+import CursorNote from './CursorNote'
 import Hold from './Hold'
 import Note from './Note'
 
@@ -77,7 +78,6 @@ export default function Column(props: ColumnProps) {
           nextObj.startTime <= currentTime + maxAcceptableOffset
             ? nextObj
             : undefined
-
         if (clickedHitObject) {
           const offset = Math.abs(clickedHitObject.startTime - currentTime)
           if (nextObjIndex != props.hitObjects.length - 1)

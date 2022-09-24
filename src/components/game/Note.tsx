@@ -25,11 +25,10 @@ export default function Note(props: NoteProps) {
   const [y, setY] = useState(0)
   const [alpha, setAlpha] = useState(1)
   const [effalpha, setEffAlpha] = useState(0)
-  // const color = props.keys == 1 || props.keys == 0 ? 0xffffff : 0xfe0000
-  const color = 0xffffff
-  // useTick(() => {
-
-  // })
+  let color = 0xa2c0dd
+  if (props.keys == 1 || props.keys == 2) {
+    color = 0xff6666
+  }
   useTick(() => {
     let playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
@@ -53,7 +52,7 @@ export default function Note(props: NoteProps) {
               NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
             props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
-          [0, 480]
+          [0, HEIGHT]
         )
       )
       if (!clicked) {

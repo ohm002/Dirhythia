@@ -4,10 +4,12 @@ const GAME_AUDIO = new Audio()
 export class GameState {
   // data: JSON
   audiovolume: number
+  audio: any
   hitlist: string[]
   effectvolume: number
   scrollspeed: number
   score: number
+  maxscore: number
   combo: number
   playStartTime: number
   cursor: number
@@ -18,7 +20,8 @@ export class GameState {
     volume: number,
     effect: number,
     scrollspeed: number,
-    audiopath: string
+    audiopath: string,
+    maxscore: number
   ) {
     // this.data = [
     //   {
@@ -36,11 +39,13 @@ export class GameState {
     // 7 : ISPLAYING
     // 8 : CURSOR
     // 9 : HITLIST
+    this.audio = GAME_AUDIO
     this.audiopath = audiopath
     this.audiovolume = volume
     this.effectvolume = effect
     this.scrollspeed = scrollspeed
     this.score = 0
+    this.maxscore = maxscore
     this.combo = 0
     this.playStartTime = 0
     this.isPlaying = false
