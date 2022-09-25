@@ -1,4 +1,5 @@
 import { WIDTH } from '../libs/options'
+import { Beatmap } from '../types/Beatmap'
 
 const GAME_AUDIO = new Audio()
 export class GameState {
@@ -15,13 +16,15 @@ export class GameState {
   cursor: number
   audiopath: string
   isPlaying: boolean
+  beatmap: Beatmap
 
   constructor(
     volume: number,
     effect: number,
     scrollspeed: number,
     audiopath: string,
-    maxscore: number
+    maxscore: number,
+    beatmap: Beatmap
   ) {
     // this.data = [
     //   {
@@ -39,6 +42,7 @@ export class GameState {
     // 7 : ISPLAYING
     // 8 : CURSOR
     // 9 : HITLIST
+    this.beatmap = beatmap
     this.audio = GAME_AUDIO
     this.audiopath = audiopath
     this.audiovolume = volume
@@ -59,6 +63,7 @@ export class GameState {
     this.score = 0
     this.combo = 0
     this.playStartTime = Date.now()
+    this.hitlist = []
 
     GAME_AUDIO.currentTime = 0
     GAME_AUDIO.play()
@@ -87,9 +92,20 @@ export class GameState {
   }
 
   hit(score: number, time: number, key: number) {
-    this.score += score
-    this.combo += 1
-    this.hitlist.push(time.toString() + key.toString())
+    let valid = true
+    this.hitlist.forEach((element) => {
+      if (element == time.toString() + key.toString() && key < 6) {
+        valid = false
+      }
+    })
+    if (valid) {
+      this.score += score
+      this.combo += 1
+      this.hitlist.push(time.toString() + key.toString())
+      return true
+    } else {
+      return false
+    }
   }
 
   miss(time: number, key: number) {

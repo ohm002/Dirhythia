@@ -2,6 +2,8 @@ import { Beatmap } from '../types/Beatmap'
 import { OFFSET } from './options'
 
 export function parseBeatmap(data: string): Beatmap {
+  // todo :
+  // sort by time in case someone fuck up the order
   const beatmap = JSON.parse(data) as Beatmap
 
   const { audioPath, metadata, hitObjects, timingPoints, cursor } = beatmap

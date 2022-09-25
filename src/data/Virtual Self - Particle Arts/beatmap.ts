@@ -12,9 +12,9 @@ const beatmap: Beatmap = {
     difficult: 'Easy',
   },
   hitObjects: [
-    // { type: 'note', column: 1, startTime: 1151 },
-    // { type: 'note', column: 2, startTime: 1336 },
-    // { type: 'note', column: 2, startTime: 1522 },
+    { type: 'note', column: 2, startTime: 1151 },
+    { type: 'note', column: 3, startTime: 1336 },
+    { type: 'note', column: 3, startTime: 1522 },
     // { type: 'note', column: 3, startTime: 1522 },
     // { type: 'note', column: 1, startTime: 2633 },
     // { type: 'note', column: 2, startTime: 2818 },
@@ -23,7 +23,7 @@ const beatmap: Beatmap = {
   ],
   cursor: [
     { x: 0.25, startTime: 1151 },
-    { x: 0.35, startTime: 1336 },
+    { x: 0.75, startTime: 1336 },
     { x: 0.25, startTime: 1522 },
     { x: 0.25, startTime: 4000},
   ],

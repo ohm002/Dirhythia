@@ -1,6 +1,7 @@
 import { MouseEventHandler, useEffect } from 'react'
 import PlayField from './components/game/PlayField'
-import beatmap from './data/Virtual Self - Particle Arts/beatmap'
+// import beatmap from './data/Virtual Self - Particle Arts/beatmap'
+import beatmap from './data/void(Mournfinale) - World Vanquisher/beatmap'
 // import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { GameState } from './state/GameState'
 import { HEIGHT, OFFSET, WIDTH } from './libs/options'
@@ -17,6 +18,9 @@ export default function App() {
     w.startTime = w.startTime + OFFSET
     if (w.endTime) w.endTime = w.endTime + OFFSET
   })
+  beatmap.cursor.forEach((w) => {
+    w.startTime = w.startTime + OFFSET
+  })
   let maxscore = 0
   beatmap.hitObjects.forEach((e) => {
     maxscore += 300
@@ -32,9 +36,12 @@ export default function App() {
       maxscore += 300
     }
   })
-  const GAME = new GameState(10, 10, 400, audioPath, maxscore)
+  const GAME = new GameState(10, 10, 400, audioPath, maxscore, beatmap)
   GAME.setAudioPath(audioPath)
   GAME.audio.load()
+  GAME.audio.onloadedmetadata = function () {
+    console.log("Audio is loaded")
+  };
   const musicVolume = GAME.audiovolume
   const songlength = GAME.audio.duration
   const effectVolume = GAME.effectvolume
@@ -99,8 +106,8 @@ export default function App() {
       </div>
       <div id="display"></div>
       <Stage width={WIDTH} height={HEIGHT}>
-        <Display game={GAME}></Display>
         <PlayField beatmap={beatmap} game={GAME} />
+        <Display game={GAME}></Display>
       </Stage>
       <div id="log"></div>
     </>

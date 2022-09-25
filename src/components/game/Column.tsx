@@ -1,4 +1,5 @@
 import { Container, Sprite, useTick } from '@inlet/react-pixi'
+import { current } from '@reduxjs/toolkit'
 import { Texture } from 'pixi.js'
 import { useEffect, useMemo, useState } from 'react'
 import { playHitSound } from '../../libs/hitsounds'
@@ -65,12 +66,13 @@ export default function Column(props: ColumnProps) {
   let playStartTime = props.game.playStartTime
   let isPlaying = props.game.isPlaying
   let effectVolume = props.game.effectvolume
+
   // doesnt reset on game retry
   const [nextObjIndex, setNextObjIndex] = useState(0)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key == getColKey(props.i)) {
+      if (e.key == getColKey(props.i) && nextObj != undefined) {
         const currentTime = Date.now() - playStartTime
         // find the hit object that player tried to click
         const clickedHitObject =
@@ -80,8 +82,8 @@ export default function Column(props: ColumnProps) {
             : undefined
         if (clickedHitObject) {
           const offset = Math.abs(clickedHitObject.startTime - currentTime)
-          if (nextObjIndex != props.hitObjects.length - 1)
-            setNextObjIndex(nextObjIndex + 1)
+          setNextObjIndex(nextObjIndex + 1)
+
           if (offset <= hitWindow300) {
             props.game.hit(300, clickedHitObject.startTime, props.i)
           } else if (hitWindow300 < offset && offset <= hitWindow100) {
@@ -99,10 +101,57 @@ export default function Column(props: ColumnProps) {
     }
   }, [nextObj])
 
+  const [input, setInput] = useState(0)
+  useEffect(() => {
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key == getColKey(props.i)) {
+        setInput(1)
+      }
+    })
+    document.addEventListener('keyup', (e: KeyboardEvent) => {
+      if (e.key == getColKey(props.i)) {
+        setInput(0)
+      }
+    })
+  }, [input])
+
+  const [checkHold, setcheckHold] = useState(-1)
   useTick(() => {
-    playStartTime = props.game.playStartTime
     isPlaying = props.game.isPlaying
     effectVolume = props.game.effectvolume
+    if (isPlaying) {
+      playStartTime = props.game.playStartTime
+      const currentTime = Date.now() - playStartTime
+      let currenthold = props.hitObjects
+        .filter((t) => {
+          return (
+            t.endTime != undefined &&
+            t.startTime <= currentTime &&
+            t.endTime >= currentTime &&
+            t.type == 'hold' &&
+            t.column == props.i
+          )
+        })
+        .sort((t1, t2) => t2.startTime - t1.startTime)[0]
+      if (currenthold != undefined) {
+        if (checkHold < currenthold.startTime) {
+          setcheckHold(currenthold.startTime)
+        } else if (currentTime >= checkHold) {
+          setcheckHold(checkHold + 60000 / 170 / 2)
+          if (input == 1) {
+            props.game.hit(300, currenthold.startTime, props.i + 5)
+          } else {
+            props.game.miss(currenthold.startTime, props.i + 5)
+          }
+        }
+      }
+      if (nextObj != undefined) {
+        if (currentTime > nextObj.startTime + 150) {
+          props.game.miss(nextObj.startTime, props.i)
+          setNextObjIndex(nextObjIndex + 1)
+        }
+      }
+    }
   })
 
   const x =

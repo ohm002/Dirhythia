@@ -75,11 +75,23 @@ export default function CursorNote(props: CursorNoteProps) {
     <Container>
       <Sprite
         texture={Texture.WHITE}
+        tint={0x1f1f1f}
+        width={PLAYFIELD_WIDTH + 30}
+        height={height}
         x={Math.round(
           WIDTH / 2 - PLAYFIELD_WIDTH / 2 + props.x * PLAYFIELD_WIDTH
         )}
         y={y + height}
-        anchor={lastpos>startpos ? [0, 1] : [1, 0] }
+        anchor={[0.5,1]}
+        alpha={1}
+      />
+      <Sprite
+        texture={Texture.WHITE}
+        x={Math.round(
+          WIDTH / 2 - PLAYFIELD_WIDTH / 2 + props.x * PLAYFIELD_WIDTH
+        )}
+        y={y + height}
+        anchor={lastpos > startpos ? [0, 1] : [1, 0]}
         width={Math.abs(lastpos - startpos) * PLAYFIELD_WIDTH}
         height={2}
       />

@@ -10,6 +10,8 @@ import {
   NOTE_TRAVEL_DURATION,
   NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
   OFFSET,
+  PLAYFIELD_WIDTH,
+  WIDTH,
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 
@@ -25,14 +27,33 @@ export default function Note(props: NoteProps) {
   const [y, setY] = useState(0)
   const [alpha, setAlpha] = useState(1)
   const [effalpha, setEffAlpha] = useState(0)
-  let color = 0xa2c0dd
+  let color = 0xff6666
+  const [cursorx, setcursorx] = useState(
+    WIDTH / 2 - PLAYFIELD_WIDTH / 2 + 0.5 * PLAYFIELD_WIDTH
+  )
   if (props.keys == 1 || props.keys == 2) {
-    color = 0xff6666
+    color = 0xa2c0dd
   }
   useTick(() => {
     let playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
     if (isPlaying) {
+      if (props.game.beatmap.cursor.length > 0) {
+        let depth = -1
+        for (let w = 0; w < props.game.beatmap.cursor.length; w++) {
+          const element = props.game.beatmap.cursor[w]
+          if (props.startTime < element.startTime) {
+            break
+          }
+          depth++
+        }
+        if (depth > -1) 
+        setcursorx(
+          WIDTH / 2 -
+            PLAYFIELD_WIDTH / 2 +
+            props.game.beatmap.cursor[depth].x * PLAYFIELD_WIDTH
+        )
+      }
       const currentTime = Date.now() - playStartTime
       props.game.hitlist.forEach((element) => {
         if (element == props.startTime.toString() + props.keys.toString()) {
@@ -40,9 +61,7 @@ export default function Note(props: NoteProps) {
           setAlpha(0)
         }
       })
-      if (currentTime > props.startTime + 150 && !clicked) {
-        props.game.miss(props.startTime, props.keys)
-      }
+      
       setY(
         interpolate(
           currentTime,
@@ -67,23 +86,23 @@ export default function Note(props: NoteProps) {
             [1, 0]
           )
         )
-      } else {
-        setEffAlpha(
-          interpolate(
-            currentTime,
-            [props.startTime + 50, props.startTime + 1050],
-            [0.5, 0]
-          )
-        )
-      }
+      } 
+      // else {
+      //   setEffAlpha(
+      //     interpolate(
+      //       currentTime,
+      //       [props.startTime + 50, props.startTime + 1050],
+      //       [0.5, 0]
+      //     )
+      //   )
+      // }
     }
   })
-
   return (
     <Container>
       <Sprite
         texture={Texture.WHITE}
-        x={props.x}
+        x={cursorx - WIDTH / 2 + props.x}
         y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
         width={40}
         height={40}
@@ -92,7 +111,7 @@ export default function Note(props: NoteProps) {
       />
       <Sprite
         texture={Texture.WHITE}
-        x={props.x}
+        x={cursorx - WIDTH / 2 + props.x}
         y={y}
         tint={color}
         anchor={[0.5, 1]}

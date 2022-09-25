@@ -21,30 +21,14 @@ type PlayFieldProps = {
 export default function PlayField(props: PlayFieldProps) {
   return (
     <>
-      <Sprite
-        texture={Texture.WHITE}
-        width={WIDTH}
-        height={1}
-        y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
-      />
       <Container>
-        <Sprite
-          texture={Texture.WHITE}
-          width={PLAYFIELD_WIDTH + 30}
-          height={HEIGHT}
-          x={WIDTH / 2}
-          y={HEIGHT / 2}
-          anchor={0.5}
-          alpha={0.1}
-        />
-        <Cursor game={props.game} cursors={props.beatmap.cursor}></Cursor>
         <CursorNote
-            x={0.5}
-            beatmap={props.beatmap}
-            key={-1}
-            i={-1}
-            game={props.game}
-          />
+          x={0.5}
+          beatmap={props.beatmap}
+          key={-1}
+          i={-1}
+          game={props.game}
+        />
         {props.beatmap.cursor.map((hitObject, i) => (
           <CursorNote
             x={hitObject.x}
@@ -66,6 +50,13 @@ export default function PlayField(props: PlayFieldProps) {
           />
         ))}
       </Container>
+      <Sprite
+        texture={Texture.WHITE}
+        width={WIDTH}
+        height={1}
+        y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
+      />
+      <Cursor game={props.game} cursors={props.beatmap.cursor}></Cursor>
     </>
   )
 }
