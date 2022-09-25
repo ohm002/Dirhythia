@@ -116,7 +116,6 @@ export default function Column(props: ColumnProps) {
   }, [input])
 
   const [checkHold, setcheckHold] = useState(-1)
-  let checkHoldd = -1
 
   useTick(() => {
     isPlaying = props.game.isPlaying
