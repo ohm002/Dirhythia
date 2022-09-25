@@ -101,44 +101,44 @@ export default function Column(props: ColumnProps) {
     }
   }, [nextObj])
 
-  const [input, setInput] = useState(0)
+  const [input, setInput] = useState(false)
   useEffect(() => {
     document.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key == getColKey(props.i)) {
-        setInput(1)
+        setInput(true)
       }
     })
     document.addEventListener('keyup', (e: KeyboardEvent) => {
       if (e.key == getColKey(props.i)) {
-        setInput(0)
+        setInput(false)
       }
     })
   }, [input])
 
   const [checkHold, setcheckHold] = useState(-1)
+  let checkHoldd = -1
+
   useTick(() => {
     isPlaying = props.game.isPlaying
     effectVolume = props.game.effectvolume
     if (isPlaying) {
       playStartTime = props.game.playStartTime
       const currentTime = Date.now() - playStartTime
-      let currenthold = props.hitObjects
-        .filter((t) => {
-          return (
-            t.endTime != undefined &&
-            t.startTime <= currentTime &&
-            t.endTime >= currentTime &&
-            t.type == 'hold' &&
-            t.column == props.i
-          )
-        })
-        .sort((t1, t2) => t2.startTime - t1.startTime)[0]
+      let currenthold = props.hitObjects.filter((t) => {
+        return (
+          t.endTime != undefined &&
+          t.type == 'hold' &&
+          t.startTime <= currentTime &&
+          t.endTime >= currentTime &&
+          t.column == props.i
+        )
+      })[0]
       if (currenthold != undefined) {
         if (checkHold < currenthold.startTime) {
           setcheckHold(currenthold.startTime)
         } else if (currentTime >= checkHold) {
           setcheckHold(checkHold + 60000 / 170 / 2)
-          if (input == 1) {
+          if (input) {
             props.game.hit(300, currenthold.startTime, props.i + 5)
           } else {
             props.game.miss(currenthold.startTime, props.i + 5)
