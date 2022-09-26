@@ -29,7 +29,6 @@ export default function App() {
   beatmap.cursor.forEach((e, i) => {
     if (beatmap.cursor[i - 1]) {
       if (beatmap.cursor[i - 1].x != e.x) {
-        console.log(beatmap.cursor[i - 1].x, e.x)
         maxscore += 300
       }
     } else {

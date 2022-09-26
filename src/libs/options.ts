@@ -20,20 +20,20 @@ function getHeight() {
 
 export const WIDTH = 800
 export const HEIGHT = 600
-export const COL_1_KEY = 'd'
-export const COL_2_KEY = 'f'
-export const COL_3_KEY = 'j'
-export const COL_4_KEY = 'k'
+export const COL_1_KEY = 'a'
+export const COL_2_KEY = 's'
+export const COL_3_KEY = 'd'
+export const COL_4_KEY = 'f'
 export const CURSOR_LEFT_KEY = 'u'
 export const CURSOR_RIGHT_KEY = 'i'
 export const COL_WIDTH = 70
 export const HOLD_WIDTH = COL_WIDTH
 export const NOTE_HEIGHT = 10
 export const PLAYFIELD_WIDTH = COL_WIDTH * 4
-export const SCROLL_SPEED = 500 // px per sec
+export const SCROLL_SPEED = 1000 // px per sec
 export const NOTE_TRAVEL_DURATION = (HEIGHT / SCROLL_SPEED) * 1000
 export const JUDGEMENT_LINE_OFFSET_Y = 80
-export const OFFSET = 0 // ms ************** CHART OFFSET
+export const OFFSET = 100 // ms ************** CHART OFFSET
 // if you're early, adjust down
 // if you're late, adjust up
 export const NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION =

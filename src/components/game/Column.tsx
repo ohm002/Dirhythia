@@ -117,20 +117,17 @@ export default function Column(props: ColumnProps) {
 
   const [checkHold, setcheckHold] = useState(-1)
 
+  let holds = props.hitObjects.filter((t) => {
+    return t.type == 'hold' && t.column == props.i
+  })
   useTick(() => {
     isPlaying = props.game.isPlaying
     effectVolume = props.game.effectvolume
     if (isPlaying) {
       playStartTime = props.game.playStartTime
       const currentTime = Date.now() - playStartTime
-      let currenthold = props.hitObjects.filter((t) => {
-        return (
-          t.endTime != undefined &&
-          t.type == 'hold' &&
-          t.startTime <= currentTime &&
-          t.endTime >= currentTime &&
-          t.column == props.i
-        )
+      let currenthold = holds.filter((t) => {
+        return t.startTime <= currentTime && t.endTime >= currentTime
       })[0]
       if (currenthold != undefined) {
         if (checkHold < currenthold.startTime) {
