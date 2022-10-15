@@ -69,21 +69,22 @@ export default function Column(props: ColumnProps) {
 
   // doesnt reset on game retry
   const [nextObjIndex, setNextObjIndex] = useState(0)
+  const [alpha, setalpha] = useState(0)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key == getColKey(props.i) && nextObj != undefined) {
-        const currentTime = Date.now() - playStartTime
+      const currentTime = Date.now() - playStartTime
         // find the hit object that player tried to click
         const clickedHitObject =
           nextObj.startTime >= currentTime - maxAcceptableOffset &&
           nextObj.startTime <= currentTime + maxAcceptableOffset
             ? nextObj
             : undefined
-        if (clickedHitObject) {
+      // console.log(nextObj)
+      if (clickedHitObject) {
           const offset = Math.abs(clickedHitObject.startTime - currentTime)
           setNextObjIndex(nextObjIndex + 1)
-
           if (offset <= hitWindow300) {
             props.game.hit(300, clickedHitObject.startTime, props.i)
           } else if (hitWindow300 < offset && offset <= hitWindow100) {
@@ -106,11 +107,13 @@ export default function Column(props: ColumnProps) {
     document.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key == getColKey(props.i)) {
         setInput(true)
+        setalpha(1)
       }
     })
     document.addEventListener('keyup', (e: KeyboardEvent) => {
       if (e.key == getColKey(props.i)) {
         setInput(false)
+        setalpha(0)
       }
     })
   }, [input])
@@ -129,6 +132,7 @@ export default function Column(props: ColumnProps) {
       let currenthold = holds.filter((t) => {
         return t.startTime <= currentTime && t.endTime >= currentTime
       })[0]
+      let clear = true
       if (currenthold != undefined) {
         if (checkHold < currenthold.startTime) {
           setcheckHold(currenthold.startTime)
@@ -144,6 +148,7 @@ export default function Column(props: ColumnProps) {
       if (nextObj != undefined) {
         if (currentTime > nextObj.startTime + 150) {
           props.game.miss(nextObj.startTime, props.i)
+          console.log(nextObj)
           setNextObjIndex(nextObjIndex + 1)
         }
       }
@@ -157,6 +162,15 @@ export default function Column(props: ColumnProps) {
 
   return (
     <Container position={[0, 0]}>
+      <Sprite
+        texture={Texture.WHITE}
+        x={x}
+        y={600}
+        anchor={[0.5, 1]}
+        width={50}
+        height={50}
+        alpha={alpha}
+      />
       {props.hitObjects.map((hitObject, i) =>
         hitObject.type == 'note' ? (
           <Note
