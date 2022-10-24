@@ -13,7 +13,6 @@ import {
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import { Cursors } from '../../types/Cursors'
-import { current } from '@reduxjs/toolkit'
 import { useEffect, useMemo, useState } from 'react'
 
 type Props = {
@@ -46,8 +45,8 @@ export default function Cursor(props: Props) {
         const nexttime =
           props.cursors[index + 1] != undefined
             ? props.cursors[index + 1].startTime
-            : props.game.audio.duration*1000
-      if (currentTime >= element.startTime && nexttime >= currentTime) {
+            : props.game.audio.duration * 1000
+        if (currentTime >= element.startTime && nexttime >= currentTime) {
           setX(element.x)
         }
       }
@@ -62,14 +61,7 @@ export default function Cursor(props: Props) {
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
       if (nextObj != undefined)
-        if (
-          e.key ==
-          getColKey(
-            props.cursors[nextObjIndex - 1] == undefined
-              ? x - nextObj.x
-              : props.cursors[nextObjIndex - 1].x - nextObj.x
-          )
-        ) {
+        if (e.key == getColKey(props.cursors[nextObjIndex - 1] == undefined? x - nextObj.x: props.cursors[nextObjIndex - 1].x - nextObj.x)) {
           const currentTime = Date.now() - playStartTime
           // find the hit object that player tried to click
           const clickedHitObject =
@@ -91,6 +83,7 @@ export default function Cursor(props: Props) {
         }
     }
     document.addEventListener('keypress', handleKeydown)
+
     function validmouse(i: number) {
       if (nextObj) {
         if (x > nextObj.x && i < 0) {

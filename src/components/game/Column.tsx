@@ -71,66 +71,44 @@ export default function Column(props: ColumnProps) {
   const [nextObjIndex, setNextObjIndex] = useState(0)
   const [alpha, setalpha] = useState(0)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
-  useEffect(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key == getColKey(props.i) && nextObj != undefined) {
-      const currentTime = Date.now() - playStartTime
-        // find the hit object that player tried to click
-        const clickedHitObject =
-          nextObj.startTime >= currentTime - maxAcceptableOffset &&
-          nextObj.startTime <= currentTime + maxAcceptableOffset
-            ? nextObj
-            : undefined
-      // console.log(nextObj)
-      if (clickedHitObject) {
-          const offset = Math.abs(clickedHitObject.startTime - currentTime)
-          setNextObjIndex(nextObjIndex + 1)
-          if (offset <= hitWindow300) {
-            props.game.hit(300, clickedHitObject.startTime, props.i)
-          } else if (hitWindow300 < offset && offset <= hitWindow100) {
-            props.game.hit(100, clickedHitObject.startTime, props.i)
-          } else if (hitWindow100 < offset && offset <= hitWindow50) {
-            props.game.hit(50, clickedHitObject.startTime, props.i)
-          }
-        }
-      }
-    }
-    document.addEventListener('keydown', handleKeydown)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeydown)
-    }
-  }, [nextObj])
-
-  const [input, setInput] = useState(false)
-  useEffect(() => {
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key == getColKey(props.i)) {
-        setInput(true)
-        setalpha(1)
-      }
-    })
-    document.addEventListener('keyup', (e: KeyboardEvent) => {
-      if (e.key == getColKey(props.i)) {
-        setInput(false)
-        setalpha(0)
-      }
-    })
-  }, [input])
-
   const [checkHold, setcheckHold] = useState(-1)
 
   let holds = props.hitObjects.filter((t) => {
     return t.type == 'hold' && t.column == props.i
   })
   useTick(() => {
+    if (props.game.key[props.i - 1][0] == '1' && nextObj != undefined) {
+      const currentTime = Date.now() - playStartTime
+      // find the hit object that player tried to click
+      const clickedHitObject =
+        nextObj.startTime >= currentTime - maxAcceptableOffset &&
+        nextObj.startTime <= currentTime + maxAcceptableOffset
+          ? nextObj
+          : undefined
+      // console.log(nextObj)
+      if (clickedHitObject) {
+        const offset = Math.abs(clickedHitObject.startTime - currentTime)
+        setNextObjIndex(nextObjIndex + 1)
+        if (offset <= hitWindow300) {
+          props.game.hit(300, clickedHitObject.startTime, props.i)
+        } else if (hitWindow300 < offset && offset <= hitWindow100) {
+          props.game.hit(100, clickedHitObject.startTime, props.i)
+        } else if (hitWindow100 < offset && offset <= hitWindow50) {
+          props.game.hit(50, clickedHitObject.startTime, props.i)
+        }
+      }
+    }
     isPlaying = props.game.isPlaying
     effectVolume = props.game.effectvolume
     if (isPlaying) {
       playStartTime = props.game.playStartTime
       const currentTime = Date.now() - playStartTime
       let currenthold = holds.filter((t) => {
-        return t.startTime <= currentTime && t.endTime >= currentTime
+        return (
+          t.endTime != undefined &&
+          t.startTime <= currentTime &&
+          t.endTime >= currentTime
+        )
       })[0]
       let clear = true
       if (currenthold != undefined) {
@@ -138,7 +116,7 @@ export default function Column(props: ColumnProps) {
           setcheckHold(currenthold.startTime)
         } else if (currentTime >= checkHold) {
           setcheckHold(checkHold + 60000 / 170 / 2)
-          if (input) {
+          if (props.game.key[props.i - 1][1] == '1' ) {
             props.game.hit(300, currenthold.startTime, props.i + 5)
           } else {
             props.game.miss(currenthold.startTime, props.i + 5)
@@ -148,7 +126,6 @@ export default function Column(props: ColumnProps) {
       if (nextObj != undefined) {
         if (currentTime > nextObj.startTime + 150) {
           props.game.miss(nextObj.startTime, props.i)
-          console.log(nextObj)
           setNextObjIndex(nextObjIndex + 1)
         }
       }

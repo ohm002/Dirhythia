@@ -2,6 +2,8 @@ import { WIDTH } from '../libs/options'
 import { Beatmap } from '../types/Beatmap'
 
 const GAME_AUDIO = new Audio()
+
+
 export class GameState {
   // data: JSON
   audiovolume: number
@@ -16,6 +18,7 @@ export class GameState {
   cursor: number
   audiopath: string
   isPlaying: boolean
+  key: string[]
   beatmap: Beatmap
 
   constructor(
@@ -43,6 +46,7 @@ export class GameState {
     // 8 : CURSOR
     // 9 : HITLIST
     this.beatmap = beatmap
+    this.key = ['00', '00', '00', '00', '00', '00']
     this.audio = GAME_AUDIO
     this.audiopath = audiopath
     this.audiovolume = volume

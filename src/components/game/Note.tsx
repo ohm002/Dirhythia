@@ -88,13 +88,14 @@ export default function Note(props: NoteProps) {
         )
       } 
       // else {
-      //   setEffAlpha(
-      //     interpolate(
-      //       currentTime,
-      //       [props.startTime + 50, props.startTime + 1050],
-      //       [0.5, 0]
-      //     )
-      //   )
+      //   // setEffAlpha(
+      //   //   interpolate(
+      //   //     currentTime,
+      //   //     [props.startTime, props.startTime + 1000],
+      //   //     [1, 0]
+      //   //   )
+      //   // )
+      //   // console.log(effalpha)
       // }
     }
   })

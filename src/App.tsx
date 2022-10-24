@@ -4,7 +4,17 @@ import PlayField from './components/game/PlayField'
 import beatmap from './data/void(Mournfinale) - World Vanquisher/beatmap'
 // import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { GameState } from './state/GameState'
-import { HEIGHT, OFFSET, WIDTH } from './libs/options'
+import {
+  HEIGHT,
+  OFFSET,
+  WIDTH,
+  COL_1_KEY,
+  COL_2_KEY,
+  COL_3_KEY,
+  COL_4_KEY,
+  CURSOR_LEFT_KEY,
+  CURSOR_RIGHT_KEY,
+} from './libs/options'
 import { Stage } from '@inlet/react-pixi'
 import Display from './components/game/Display'
 import { parseBeatmap } from './libs/parseBeatmap'
@@ -39,8 +49,8 @@ export default function App() {
   GAME.setAudioPath(audioPath)
   GAME.audio.load()
   GAME.audio.onloadedmetadata = function () {
-    console.log("Audio is loaded")
-  };
+    console.log('Audio is loaded')
+  }
   const musicVolume = GAME.audiovolume
   const songlength = GAME.audio.duration
   const effectVolume = GAME.effectvolume
@@ -57,6 +67,45 @@ export default function App() {
   }
 
   useEffect(() => {
+    document.addEventListener('keyup', (e: KeyboardEvent) => {
+      let key
+      if (e.key == COL_1_KEY) {
+        key = 0
+      } else if (e.key == COL_2_KEY) {
+        key = 1
+      } else if (e.key == COL_3_KEY) {
+        key = 2
+      } else if (e.key == COL_4_KEY) {
+        key = 3
+      } else if (e.key == CURSOR_LEFT_KEY) {
+        key = 4
+      } else if (e.key == CURSOR_RIGHT_KEY) {
+        key = 5
+      }
+      GAME.key[key] = '00'
+    })
+
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      let key
+      if (e.key == COL_1_KEY) {
+        key = 0
+      } else if (e.key == COL_2_KEY) {
+        key = 1
+      } else if (e.key == COL_3_KEY) {
+        key = 2
+      } else if (e.key == COL_4_KEY) {
+        key = 3
+      } else if (e.key == CURSOR_LEFT_KEY) {
+        key = 4
+      } else if (e.key == CURSOR_RIGHT_KEY) {
+        key = 5
+      }
+      if (e.repeat) {
+        GAME.key[key] = '1' + GAME.key[key][1]
+      } else {
+        GAME.key[key] = '11'
+      }
+    })
     const handleRetry = (e: KeyboardEvent) => {
       switch (e.key) {
         case '`':
