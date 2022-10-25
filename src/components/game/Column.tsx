@@ -71,7 +71,8 @@ export default function Column(props: ColumnProps) {
   const [nextObjIndex, setNextObjIndex] = useState(0)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
   const [checkHold, setcheckHold] = useState(-1)
-
+  const hitsound = new Audio()
+  hitsound.src = '../'
   let holds = props.hitObjects.filter((t) => {
     return t.type == 'hold' && t.column == props.i
   })
@@ -88,7 +89,6 @@ export default function Column(props: ColumnProps) {
           nextObj.startTime <= currentTime + maxAcceptableOffset
             ? nextObj
             : undefined
-        // console.log(nextObj)
         if (clickedHitObject) {
           const offset = Math.abs(clickedHitObject.startTime - currentTime)
           setNextObjIndex(nextObjIndex + 1)

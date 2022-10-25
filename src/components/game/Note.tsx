@@ -1,6 +1,8 @@
 import { Container, Sprite, useTick, Text } from '@inlet/react-pixi'
 import { Texture, TextStyle } from 'pixi.js'
+import React from 'react'
 import { useState } from 'react'
+import { playHitSound } from '../../libs/hitsounds'
 import { interpolate } from '../../libs/interpolate'
 import {
   COL_WIDTH,
@@ -14,7 +16,6 @@ import {
   WIDTH,
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
-
 type NoteProps = {
   x: number
   startTime: number
@@ -90,7 +91,9 @@ export default function Note(props: NoteProps) {
           )
         )
       } else {
-        setEffAlpha(interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0]))
+        setEffAlpha(
+          interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0])
+        )
         setAlpha(0)
       }
     }

@@ -18,6 +18,7 @@ import {
 import { Stage, useTick } from '@inlet/react-pixi'
 import Display from './components/game/Display'
 import { parseBeatmap } from './libs/parseBeatmap'
+import { loadhitound } from './libs/hitsounds'
 
 export default function App() {
   const { audioPath } = beatmap
@@ -46,11 +47,6 @@ export default function App() {
   })
   const GAME = new GameState(10, 10, 400, audioPath, maxscore, beatmap)
   GAME.setAudioPath(audioPath)
-  GAME.audio.load()
-  GAME.audio.onloadedmetadata = function () {
-    console.log('Audio is loaded')
-  }
-
   const musicVolume = GAME.audiovolume
   const songlength = GAME.audio.duration
   const effectVolume = GAME.effectvolume

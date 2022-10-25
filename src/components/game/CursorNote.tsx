@@ -31,6 +31,7 @@ type CursorNoteProps = {
 
 export default function CursorNote(props: CursorNoteProps) {
   let isPlaying = props.game.isPlaying
+  // console.log(props.game.audio.duration)
   let effectVolume = props.game.effectvolume
   let endTime =
     props.beatmap.cursor[props.i + 1] != undefined
@@ -54,8 +55,7 @@ export default function CursorNote(props: CursorNoteProps) {
   let currentTime = 0
 
   useTick(() => {
-    let playStartTime = props.game.playStartTime
-    currentTime = Date.now() - playStartTime
+    currentTime = props.game.currenttime
     let isPlaying = props.game.isPlaying
     if (isPlaying) {
       setY(
@@ -72,6 +72,7 @@ export default function CursorNote(props: CursorNoteProps) {
       )
     }
   })
+    // WIDTH / 2 - PLAYFIELD_WIDTH / 2 + props.x * PLAYFIELD_WIDTH
   return (
     <Container>
       <Sprite
@@ -79,18 +80,14 @@ export default function CursorNote(props: CursorNoteProps) {
         tint={0x1f1f1f}
         width={PLAYFIELD_WIDTH + 30}
         height={height}
-        x={Math.round(
-          WIDTH / 2 - PLAYFIELD_WIDTH / 2 + props.x * PLAYFIELD_WIDTH
-        )}
+        x={interpolate(props.x, [0, 1],[WIDTH / 2 - PLAYFIELD_WIDTH/2,WIDTH / 2 + PLAYFIELD_WIDTH/2])}
         y={y + height}
         anchor={[0.5, 1]}
         alpha={1}
       />
       <Sprite
         texture={Texture.WHITE}
-        x={Math.round(
-          WIDTH / 2 - PLAYFIELD_WIDTH / 2 + props.x * PLAYFIELD_WIDTH
-        )}
+        x={interpolate(props.x, [0, 1],[WIDTH / 2 - PLAYFIELD_WIDTH/2,WIDTH / 2 + PLAYFIELD_WIDTH/2])}
         y={y + height}
         anchor={lastpos > startpos ? [0, 1] : [1, 0]}
         width={Math.abs(lastpos - startpos) * PLAYFIELD_WIDTH}
@@ -98,9 +95,7 @@ export default function CursorNote(props: CursorNoteProps) {
       />
       <Sprite
         texture={Texture.WHITE}
-        x={Math.round(
-          WIDTH / 2 - PLAYFIELD_WIDTH / 2 + props.x * PLAYFIELD_WIDTH
-        )}
+        x={interpolate(props.x, [0, 1],[WIDTH / 2 - PLAYFIELD_WIDTH/2,WIDTH / 2 + PLAYFIELD_WIDTH/2])}
         y={y + height}
         anchor={[0.5, 1]}
         width={2}
