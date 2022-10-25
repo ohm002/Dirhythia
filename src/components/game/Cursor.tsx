@@ -35,12 +35,11 @@ export default function Cursor(props: Props) {
   const [nextObjIndex, setNextObjIndex] = useState(0)
   let playStartTime = props.game.playStartTime
   const nextObj = useMemo(() => props.cursors[nextObjIndex], [nextObjIndex])
-  let currentTime = Date.now()
   useTick(() => {
     playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
     if (isPlaying) {
-      currentTime = Date.now() - playStartTime
+      const currentTime = props.game.currenttime
       for (let index = 0; index < props.cursors.length; index++) {
         const element = props.cursors[index]
         const nexttime =
@@ -62,14 +61,7 @@ export default function Cursor(props: Props) {
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
       if (nextObj != undefined)
-        if (
-          e.key ==
-          getColKey(
-            props.cursors[nextObjIndex - 1] == undefined
-              ? x - nextObj.x
-              : props.cursors[nextObjIndex - 1].x - nextObj.x
-          )
-        ) {
+        if (e.key == getColKey(props.cursors[nextObjIndex - 1] == undefined? x - nextObj.x: props.cursors[nextObjIndex - 1].x - nextObj.x)) {
           const currentTime = Date.now() - playStartTime
           // find the hit object that player tried to click
           const clickedHitObject =

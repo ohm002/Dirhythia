@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Container, Sprite } from '@inlet/react-pixi'
+import { Container, Sprite, useTick } from '@inlet/react-pixi'
 import { Beatmap } from '../../types/Beatmap'
 import { Texture } from 'pixi.js'
 import Column from './Column'
@@ -12,6 +12,7 @@ import {
 import { GameState } from '../../state/GameState'
 import Cursor from './Cursor'
 import CursorNote from './CursorNote'
+import React from 'react'
 
 type PlayFieldProps = {
   beatmap: Beatmap
@@ -19,6 +20,12 @@ type PlayFieldProps = {
 }
 
 export default function PlayField(props: PlayFieldProps) {
+  useTick(() => {
+    if (props.game.isPlaying) {
+      var currentTime = Date.now() - props.game.playStartTime
+      props.game.currenttime = currentTime
+    }
+  })
   return (
     <>
       <Container>

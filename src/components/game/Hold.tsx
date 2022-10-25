@@ -32,7 +32,7 @@ export default function Hold(props: HoldProps) {
     let playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
       if (isPlaying) {
-      const currentTime = Date.now() - playStartTime 
+        const currentTime = props.game.currenttime
       setY(
         interpolate(
           currentTime,

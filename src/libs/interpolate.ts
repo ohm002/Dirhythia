@@ -11,7 +11,7 @@ export function interpolate(
   if (outputMin === outputMax) return outputMin
 
   return (
-    Math.round(((input - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) +
-    outputMin)
+    ((input - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) +
+    outputMin
   )
 }

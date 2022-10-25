@@ -69,7 +69,6 @@ export default function Column(props: ColumnProps) {
 
   // doesnt reset on game retry
   const [nextObjIndex, setNextObjIndex] = useState(0)
-  const [alpha, setalpha] = useState(0)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
   const [checkHold, setcheckHold] = useState(-1)
 
@@ -81,7 +80,7 @@ export default function Column(props: ColumnProps) {
     if (isPlaying) {
       effectVolume = props.game.effectvolume
       playStartTime = props.game.playStartTime
-      const currentTime = Date.now() - playStartTime
+      const currentTime = props.game.currenttime
       if (props.game.key[props.i - 1][0] == '1' && nextObj != undefined) {
         // find the hit object that player tried to click
         const clickedHitObject =
@@ -111,12 +110,11 @@ export default function Column(props: ColumnProps) {
           t.endTime >= currentTime
         )
       })[0]
-      let clear = true
       if (currenthold != undefined) {
         if (checkHold < currenthold.startTime) {
           setcheckHold(currenthold.startTime)
         } else if (currentTime >= checkHold) {
-          setcheckHold(checkHold + 60000 / 170 / 2)
+          setcheckHold(checkHold + 60000 / 170)
           if (props.game.key[props.i - 1][1] == '0') {
             props.game.miss(currenthold.startTime, props.i + 5)
           }
@@ -138,15 +136,6 @@ export default function Column(props: ColumnProps) {
 
   return (
     <Container position={[0, 0]}>
-      <Sprite
-        texture={Texture.WHITE}
-        x={x}
-        y={600}
-        anchor={[0.5, 1]}
-        width={50}
-        height={50}
-        alpha={alpha}
-      />
       {props.hitObjects.map((hitObject, i) =>
         hitObject.type == 'note' ? (
           <Note

@@ -23,6 +23,7 @@ export class GameState {
   audiopath: string
   isPlaying: boolean
   key: string[]
+  currenttime: number
   beatmap: Beatmap
 
   constructor(
@@ -62,6 +63,7 @@ export class GameState {
     this.playStartTime = 0
     this.isPlaying = false
     this.cursor = 0.5
+    this.currenttime = 0
     this.hitlist = []
   }
 
@@ -87,7 +89,6 @@ export class GameState {
     GAME_AUDIO.currentTime = 0
     GAME_AUDIO.play()
   }
-
   quit() {
     this.isPlaying = false
     this.score = 0

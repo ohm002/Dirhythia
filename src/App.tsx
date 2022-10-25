@@ -15,7 +15,7 @@ import {
   CURSOR_LEFT_KEY,
   CURSOR_RIGHT_KEY,
 } from './libs/options'
-import { Stage } from '@inlet/react-pixi'
+import { Stage, useTick } from '@inlet/react-pixi'
 import Display from './components/game/Display'
 import { parseBeatmap } from './libs/parseBeatmap'
 
@@ -35,7 +35,6 @@ export default function App() {
   beatmap.hitObjects.forEach((e) => {
     maxscore += 300
   })
-
   beatmap.cursor.forEach((e, i) => {
     if (beatmap.cursor[i - 1]) {
       if (beatmap.cursor[i - 1].x != e.x) {
@@ -51,6 +50,7 @@ export default function App() {
   GAME.audio.onloadedmetadata = function () {
     console.log('Audio is loaded')
   }
+
   const musicVolume = GAME.audiovolume
   const songlength = GAME.audio.duration
   const effectVolume = GAME.effectvolume
@@ -99,7 +99,7 @@ export default function App() {
     })
 
     document.addEventListener('keydown', (e: KeyboardEvent) => {
-        GAME.key[getkey(e.key)] = '11'
+      GAME.key[getkey(e.key)] = '11'
     })
     const handleRetry = (e: KeyboardEvent) => {
       switch (e.key) {

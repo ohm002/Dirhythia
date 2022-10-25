@@ -26,6 +26,7 @@ export default function Note(props: NoteProps) {
   let [clicked, setclicked] = useState(false)
   const [y, setY] = useState(0)
   const [alpha, setAlpha] = useState(1)
+  const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
   let color = 0xff6666
   const [cursorx, setcursorx] = useState(
@@ -35,8 +36,8 @@ export default function Note(props: NoteProps) {
     color = 0xa2c0dd
   }
   useTick(() => {
-    let playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
+    const currentTime = props.game.currenttime
     if (isPlaying) {
       if (props.game.beatmap.cursor.length > 0) {
         let depth = -1
@@ -47,21 +48,23 @@ export default function Note(props: NoteProps) {
           }
           depth++
         }
-        if (depth > -1) 
-        setcursorx(
-          WIDTH / 2 -
-            PLAYFIELD_WIDTH / 2 +
-            props.game.beatmap.cursor[depth].x * PLAYFIELD_WIDTH
-        )
+        if (depth > -1)
+          setcursorx(
+            WIDTH / 2 -
+              PLAYFIELD_WIDTH / 2 +
+              props.game.beatmap.cursor[depth].x * PLAYFIELD_WIDTH
+          )
       }
-      const currentTime = Date.now() - playStartTime
       props.game.hitlist.forEach((element) => {
-        if (element == props.startTime.toString() + props.keys.toString()) {
+        if (
+          element == props.startTime.toString() + props.keys.toString() &&
+          clicktime == -1
+        ) {
           setclicked(true)
-          setAlpha(0)
+          setclicktime(currentTime)
         }
       })
-      
+
       setY(
         interpolate(
           currentTime,
@@ -80,23 +83,16 @@ export default function Note(props: NoteProps) {
             currentTime,
             [
               // 100 will be changed to the time od expires
-              props.startTime + 50,
-              props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+              props.startTime + 150,
+              props.startTime + 160,
             ],
             [1, 0]
           )
         )
-      } 
-      // else {
-      //   // setEffAlpha(
-      //   //   interpolate(
-      //   //     currentTime,
-      //   //     [props.startTime, props.startTime + 1000],
-      //   //     [1, 0]
-      //   //   )
-      //   // )
-      //   // console.log(effalpha)
-      // }
+      } else {
+        setEffAlpha(interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0]))
+        setAlpha(0)
+      }
     }
   })
   return (
