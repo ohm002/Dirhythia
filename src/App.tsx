@@ -65,46 +65,41 @@ export default function App() {
   const handleQuit: MouseEventHandler = (e) => {
     GAME.quit()
   }
-
+  function validkey(key) {
+    return (
+      key == COL_1_KEY ||
+      key == COL_2_KEY ||
+      key == COL_3_KEY ||
+      key == COL_4_KEY ||
+      key == CURSOR_LEFT_KEY ||
+      key == CURSOR_RIGHT_KEY
+    )
+  }
+  function getkey(key) {
+    if (key == COL_1_KEY) {
+      return 0
+    } else if (key == COL_2_KEY) {
+      return 1
+    } else if (key == COL_3_KEY) {
+      return 2
+    } else if (key == COL_4_KEY) {
+      return 3
+    } else if (key == CURSOR_LEFT_KEY) {
+      return 4
+    } else if (key == CURSOR_RIGHT_KEY) {
+      return 5
+    }
+    return NaN
+  }
   useEffect(() => {
     document.addEventListener('keyup', (e: KeyboardEvent) => {
-      let key
-      if (e.key == COL_1_KEY) {
-        key = 0
-      } else if (e.key == COL_2_KEY) {
-        key = 1
-      } else if (e.key == COL_3_KEY) {
-        key = 2
-      } else if (e.key == COL_4_KEY) {
-        key = 3
-      } else if (e.key == CURSOR_LEFT_KEY) {
-        key = 4
-      } else if (e.key == CURSOR_RIGHT_KEY) {
-        key = 5
+      if (validkey(e.key)) {
+        GAME.key[getkey(e.key)] = '00'
       }
-      GAME.key[key] = '00'
     })
 
     document.addEventListener('keydown', (e: KeyboardEvent) => {
-      let key
-      if (e.key == COL_1_KEY) {
-        key = 0
-      } else if (e.key == COL_2_KEY) {
-        key = 1
-      } else if (e.key == COL_3_KEY) {
-        key = 2
-      } else if (e.key == COL_4_KEY) {
-        key = 3
-      } else if (e.key == CURSOR_LEFT_KEY) {
-        key = 4
-      } else if (e.key == CURSOR_RIGHT_KEY) {
-        key = 5
-      }
-      if (e.repeat) {
-        GAME.key[key] = '1' + GAME.key[key][1]
-      } else {
-        GAME.key[key] = '11'
-      }
+        GAME.key[getkey(e.key)] = '11'
     })
     const handleRetry = (e: KeyboardEvent) => {
       switch (e.key) {

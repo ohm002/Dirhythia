@@ -1,6 +1,10 @@
 import { WIDTH } from '../libs/options'
 import { Beatmap } from '../types/Beatmap'
 
+
+const audioctx = new AudioContext()
+console.log(audioctx.baseLatency)
+
 const GAME_AUDIO = new Audio()
 
 

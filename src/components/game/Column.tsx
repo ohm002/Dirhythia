@@ -77,32 +77,33 @@ export default function Column(props: ColumnProps) {
     return t.type == 'hold' && t.column == props.i
   })
   useTick(() => {
-    if (props.game.key[props.i - 1][0] == '1' && nextObj != undefined) {
-      const currentTime = Date.now() - playStartTime
-      // find the hit object that player tried to click
-      const clickedHitObject =
-        nextObj.startTime >= currentTime - maxAcceptableOffset &&
-        nextObj.startTime <= currentTime + maxAcceptableOffset
-          ? nextObj
-          : undefined
-      // console.log(nextObj)
-      if (clickedHitObject) {
-        const offset = Math.abs(clickedHitObject.startTime - currentTime)
-        setNextObjIndex(nextObjIndex + 1)
-        if (offset <= hitWindow300) {
-          props.game.hit(300, clickedHitObject.startTime, props.i)
-        } else if (hitWindow300 < offset && offset <= hitWindow100) {
-          props.game.hit(100, clickedHitObject.startTime, props.i)
-        } else if (hitWindow100 < offset && offset <= hitWindow50) {
-          props.game.hit(50, clickedHitObject.startTime, props.i)
-        }
-      }
-    }
     isPlaying = props.game.isPlaying
-    effectVolume = props.game.effectvolume
     if (isPlaying) {
+      effectVolume = props.game.effectvolume
       playStartTime = props.game.playStartTime
       const currentTime = Date.now() - playStartTime
+      if (props.game.key[props.i - 1][0] == '1' && nextObj != undefined) {
+        // find the hit object that player tried to click
+        const clickedHitObject =
+          nextObj.startTime >= currentTime - maxAcceptableOffset &&
+          nextObj.startTime <= currentTime + maxAcceptableOffset
+            ? nextObj
+            : undefined
+        // console.log(nextObj)
+        if (clickedHitObject) {
+          const offset = Math.abs(clickedHitObject.startTime - currentTime)
+          setNextObjIndex(nextObjIndex + 1)
+          props.game.key[props.i - 1] = '01'
+          if (offset <= hitWindow300) {
+            props.game.hit(300, clickedHitObject.startTime, props.i)
+          } else if (hitWindow300 < offset && offset <= hitWindow100) {
+            props.game.hit(100, clickedHitObject.startTime, props.i)
+          } else if (hitWindow100 < offset && offset <= hitWindow50) {
+            props.game.hit(50, clickedHitObject.startTime, props.i)
+          }
+        }
+      }
+      // inconsistent hold amount
       let currenthold = holds.filter((t) => {
         return (
           t.endTime != undefined &&
@@ -116,9 +117,7 @@ export default function Column(props: ColumnProps) {
           setcheckHold(currenthold.startTime)
         } else if (currentTime >= checkHold) {
           setcheckHold(checkHold + 60000 / 170 / 2)
-          if (props.game.key[props.i - 1][1] == '1' ) {
-            props.game.hit(300, currenthold.startTime, props.i + 5)
-          } else {
+          if (props.game.key[props.i - 1][1] == '0') {
             props.game.miss(currenthold.startTime, props.i + 5)
           }
         }

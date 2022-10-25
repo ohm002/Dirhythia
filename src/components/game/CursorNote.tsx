@@ -50,13 +50,14 @@ export default function CursorNote(props: CursorNoteProps) {
       : startpos
   let Duration = endTime - startTime
   const height = Math.round((Duration * SCROLL_SPEED) / 1000)
-  const [y, setY] = useState(0)
+  const [y, setY] = useState(-height-2)
+  let currentTime = 0
 
   useTick(() => {
     let playStartTime = props.game.playStartTime
+    currentTime = Date.now() - playStartTime
     let isPlaying = props.game.isPlaying
     if (isPlaying) {
-      const currentTime = Date.now() - playStartTime
       setY(
         interpolate(
           currentTime,
@@ -82,7 +83,7 @@ export default function CursorNote(props: CursorNoteProps) {
           WIDTH / 2 - PLAYFIELD_WIDTH / 2 + props.x * PLAYFIELD_WIDTH
         )}
         y={y + height}
-        anchor={[0.5,1]}
+        anchor={[0.5, 1]}
         alpha={1}
       />
       <Sprite
