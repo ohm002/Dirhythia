@@ -1,4 +1,4 @@
-import { Texture } from 'pixi.js'
+import { BLEND_MODES, Texture } from 'pixi.js'
 import { Sprite, useTick } from '@inlet/react-pixi'
 import {
   WIDTH,
@@ -61,7 +61,14 @@ export default function Cursor(props: Props) {
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
       if (nextObj != undefined)
-        if (e.key == getColKey(props.cursors[nextObjIndex - 1] == undefined? x - nextObj.x: props.cursors[nextObjIndex - 1].x - nextObj.x)) {
+        if (
+          e.key ==
+          getColKey(
+            props.cursors[nextObjIndex - 1] == undefined
+              ? x - nextObj.x
+              : props.cursors[nextObjIndex - 1].x - nextObj.x
+          )
+        ) {
           const currentTime = Date.now() - playStartTime
           // find the hit object that player tried to click
           const clickedHitObject =
@@ -123,6 +130,8 @@ export default function Cursor(props: Props) {
       width={10}
       height={10}
       angle={45}
+      blendMode={BLEND_MODES.ADD}
+      alpha={0.5}
     />
   )
   // this element is the line and the square on the judgement line

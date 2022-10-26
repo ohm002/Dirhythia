@@ -8,12 +8,7 @@ const normalHitnormalAudio = new Audio(normalHitnormal)
 const softHitnormalAudio = new Audio(softHitnormal)
 const drumHitnormalAudio = new Audio(drumHitnormal)
 normalHitnormalAudio.currentTime = 0
-export async function loadhitsound() {
-  normalHitnormalAudio.load()
-  normalHitnormalAudio.currentTime = 0
-}
-
-export async function playHitSound(
+export function playHitSound(
   volume: number,
   defaultSampleSet: SampleSet,
   hitsound?: HitSound

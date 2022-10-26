@@ -1,17 +1,17 @@
-import { Container, Sprite, useTick, Text } from '@inlet/react-pixi'
-import { Texture, TextStyle } from 'pixi.js'
-import React from 'react'
+import { Container, Sprite, useTick } from '@inlet/react-pixi'
+import { BLEND_MODES } from 'pixi.js'
 import { useState } from 'react'
-import { playHitSound } from '../../libs/hitsounds'
+import hit from '../../assets/hit.png'
+import note from '../../assets/note.png'
 import { interpolate } from '../../libs/interpolate'
 import {
+  COLCOLOR,
   COL_WIDTH,
   HEIGHT,
   JUDGEMENT_LINE_OFFSET_Y,
   NOTE_HEIGHT,
   NOTE_TRAVEL_DURATION,
   NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-  OFFSET,
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
@@ -29,13 +29,10 @@ export default function Note(props: NoteProps) {
   const [alpha, setAlpha] = useState(1)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
-  let color = 0xff6666
+  let color = COLCOLOR[props.keys - 1]
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - PLAYFIELD_WIDTH / 2 + 0.5 * PLAYFIELD_WIDTH
   )
-  if (props.keys == 1 || props.keys == 2) {
-    color = 0xa2c0dd
-  }
   useTick(() => {
     let isPlaying = props.game.isPlaying
     const currentTime = props.game.currenttime
@@ -78,19 +75,17 @@ export default function Note(props: NoteProps) {
           [0, HEIGHT]
         )
       )
-      if (!clicked) {
-        setAlpha(
-          interpolate(
-            currentTime,
-            [
-              // 100 will be changed to the time od expires
-              props.startTime + 150,
-              props.startTime + 160,
-            ],
-            [1, 0]
-          )
+      setAlpha(
+        interpolate(
+          currentTime,
+          [
+            props.startTime,
+            props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+          ],
+          [1, 0]
         )
-      } else {
+      )
+      if (clicked) {
         setEffAlpha(
           interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0])
         )
@@ -101,16 +96,18 @@ export default function Note(props: NoteProps) {
   return (
     <Container>
       <Sprite
-        texture={Texture.WHITE}
+        image={hit}
         x={cursorx - WIDTH / 2 + props.x}
         y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
-        width={40}
-        height={40}
+        width={COL_WIDTH * 1.2}
+        height={NOTE_HEIGHT * 2}
         alpha={effalpha}
+        blendMode={BLEND_MODES.ADD}
+        tint={color}
         anchor={[0.5, 0.5]}
       />
       <Sprite
-        texture={Texture.WHITE}
+        image={note}
         x={cursorx - WIDTH / 2 + props.x}
         y={y}
         tint={color}

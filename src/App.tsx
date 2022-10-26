@@ -17,8 +17,8 @@ import {
 } from './libs/options'
 import { Stage, useTick } from '@inlet/react-pixi'
 import Display from './components/game/Display'
+import css from './index.css'
 import { parseBeatmap } from './libs/parseBeatmap'
-import { loadhitound } from './libs/hitsounds'
 
 export default function App() {
   const { audioPath } = beatmap
@@ -61,7 +61,7 @@ export default function App() {
   const handleQuit: MouseEventHandler = (e) => {
     GAME.quit()
   }
-  function validkey(key) {
+  function validkey(key:string) {
     return (
       key == COL_1_KEY ||
       key == COL_2_KEY ||
@@ -71,7 +71,7 @@ export default function App() {
       key == CURSOR_RIGHT_KEY
     )
   }
-  function getkey(key) {
+  function getkey(key:string) {
     if (key == COL_1_KEY) {
       return 0
     } else if (key == COL_2_KEY) {

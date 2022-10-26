@@ -1,12 +1,9 @@
-import { loadhitsound, playHitSound } from '../libs/hitsounds'
 import { WIDTH } from '../libs/options'
 import { Beatmap } from '../types/Beatmap'
-import axios from 'axios'
 
 const audioctx = new AudioContext()
 const GAME_AUDIO = new Audio()
 
-await loadhitsound()
 export class GameState {
   // data: JSON
   audiovolume: number
@@ -98,7 +95,7 @@ export class GameState {
     GAME_AUDIO.pause()
     GAME_AUDIO.currentTime = 0
   }
-  async hit(score: number, time: number, key: number) {
+  hit(score: number, time: number, key: number) {
     let valid = true
     this.hitlist.forEach((element) => {
       if (element == time.toString() + key.toString() && key < 6) {
@@ -106,7 +103,7 @@ export class GameState {
       }
     })
     if (valid) {
-      await playHitSound(10, 'normal')
+      // await playHitSound(10, 'normal')
       this.score += score
       this.combo += 1
       this.hitlist.push(time.toString() + key.toString())

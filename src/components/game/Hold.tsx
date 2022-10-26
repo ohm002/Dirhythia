@@ -1,15 +1,15 @@
 import { Container, Sprite, useTick } from '@inlet/react-pixi'
-import { Texture } from 'pixi.js'
+import { BLEND_MODES, Texture } from 'pixi.js'
 import { useState } from 'react'
+import note from '../../assets/note.png'
 import { interpolate } from '../../libs/interpolate'
 import {
+  COLCOLOR,
   COL_WIDTH,
   HEIGHT,
-  HOLD_WIDTH,
-  JUDGEMENT_LINE_OFFSET_Y,
-  NOTE_HEIGHT,
+  HOLD_WIDTH, NOTE_HEIGHT,
   NOTE_TRAVEL_DURATION,
-  NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION, OFFSET, SCROLL_SPEED
+  NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION, SCROLL_SPEED
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import { TimingPoint } from '../../types/TimingPoint'
@@ -27,9 +27,10 @@ export default function Hold(props: HoldProps) {
   const height = Math.round((holdDuration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
   const [alpha, setAlpha] = useState(1)
+  let color = COLCOLOR[props.keys-1]
+
 
   useTick(() => {
-    let playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
       if (isPlaying) {
         const currentTime = props.game.currenttime
@@ -65,27 +66,23 @@ export default function Hold(props: HoldProps) {
         texture={Texture.WHITE}
         x={props.x}
         y={y + height}
+        tint={color}
+        alpha={0.5}
         anchor={[0.5, 1]}
+        blendMode={BLEND_MODES.ADD}
         width={HOLD_WIDTH}
         height={height + NOTE_HEIGHT}
       />
 
-      {/* <Sprite
-        texture={Texture.WHITE}
-        tint={0x000000}
-        x={props.x}
-        y={y + height+20}
-        anchor={[0.5, 1]}
-        width={1}
-        height={height-20 }
-      /> */}
       <Sprite
-        texture={Texture.WHITE}
+      image={note}
         x={props.x}
         y={y + height}
+        tint={color}
         anchor={[0.5, 1]}
         width={COL_WIDTH}
         height={NOTE_HEIGHT}
+        alpha={alpha}
       />
     </Container>
   )

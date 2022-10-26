@@ -5,11 +5,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { playHitSound } from '../../libs/hitsounds'
 import { interpolate } from '../../libs/interpolate'
 import {
+  COLCOLOR,
   COL_1_KEY,
   COL_2_KEY,
   COL_3_KEY,
   COL_4_KEY,
   COL_WIDTH,
+  HEIGHT,
   NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
   OFFSET,
   PLAYFIELD_WIDTH,
@@ -129,11 +131,12 @@ export default function Column(props: ColumnProps) {
     }
   })
 
-  const x =
+  let x =
     (WIDTH - PLAYFIELD_WIDTH) / 2 +
-    (COL_WIDTH + 3) * (props.i - 1) +
+    (COL_WIDTH) * (props.i - 1) +
     COL_WIDTH / 2
-
+  // if (props.i < 3) x-=10;
+  // if (props.i > 2) x+=10;
   return (
     <Container position={[0, 0]}>
       {props.hitObjects.map((hitObject, i) =>

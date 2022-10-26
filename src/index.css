@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: LEMONMILK;
+  src: url('./src/assets/LEMONMILK-Bold.otf') format('truetype');
+}
+canvas {
+  font-family: 'LEMONMILK';
+}

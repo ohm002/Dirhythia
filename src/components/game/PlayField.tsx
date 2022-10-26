@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Container, Sprite, useTick } from '@inlet/react-pixi'
 import { Beatmap } from '../../types/Beatmap'
-import { Texture } from 'pixi.js'
+import { BLEND_MODES, filters, Texture } from 'pixi.js'
 import Column from './Column'
 import {
   WIDTH,
@@ -13,6 +13,8 @@ import { GameState } from '../../state/GameState'
 import Cursor from './Cursor'
 import CursorNote from './CursorNote'
 import React from 'react'
+import judgement from '../../assets/judgement.png'
+import bg from '../../data/void(Mournfinale) - World Vanquisher/87729274_p0.jpg'
 
 type PlayFieldProps = {
   beatmap: Beatmap
@@ -29,6 +31,14 @@ export default function PlayField(props: PlayFieldProps) {
   return (
     <>
       <Container>
+        <Sprite
+          image={bg}
+          width={WIDTH}
+          height={HEIGHT}
+          blendMode={BLEND_MODES.ADD}
+          filters={[new filters.BlurFilter(20)]}
+          alpha={0.2}
+        />
         <CursorNote
           x={0.5}
           beatmap={props.beatmap}
@@ -57,13 +67,13 @@ export default function PlayField(props: PlayFieldProps) {
           />
         ))}
       </Container>
+      <Cursor game={props.game} cursors={props.beatmap.cursor}></Cursor>
       <Sprite
-        texture={Texture.WHITE}
         width={WIDTH}
-        height={1}
+        anchor={[0, 0.5]}
+        image={judgement}
         y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
       />
-      <Cursor game={props.game} cursors={props.beatmap.cursor}></Cursor>
     </>
   )
 }

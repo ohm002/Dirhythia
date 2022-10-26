@@ -1,8 +1,11 @@
 import { Container, Sprite, useTick } from '@inlet/react-pixi'
-import { Texture } from 'pixi.js'
+import { BLEND_MODES, filters, Texture, utils } from 'pixi.js'
 import { useEffect, useMemo, useState } from 'react'
 import { interpolate } from '../../libs/interpolate'
+import vertical from '../../assets/vertical.png'
+import judgement from '../../assets/judgement.png'
 import {
+  COLCOLOR,
   COL_WIDTH,
   CURSOR_LEFT_KEY,
   CURSOR_RIGHT_KEY,
@@ -51,7 +54,7 @@ export default function CursorNote(props: CursorNoteProps) {
       : startpos
   let Duration = endTime - startTime
   const height = Math.round((Duration * SCROLL_SPEED) / 1000)
-  const [y, setY] = useState(-height-2)
+  const [y, setY] = useState(-height - 2)
   let currentTime = 0
 
   useTick(() => {
@@ -67,38 +70,153 @@ export default function CursorNote(props: CursorNoteProps) {
               NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
             endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
-          [-height, HEIGHT]
+          [-height-5, HEIGHT]
         )
       )
     }
   })
-    // WIDTH / 2 - PLAYFIELD_WIDTH / 2 + props.x * PLAYFIELD_WIDTH
+  const trackalpha = 0.3
   return (
     <Container>
       <Sprite
         texture={Texture.WHITE}
-        tint={0x1f1f1f}
-        width={PLAYFIELD_WIDTH + 30}
+        width={PLAYFIELD_WIDTH * 1.3}
         height={height}
-        x={interpolate(props.x, [0, 1],[WIDTH / 2 - PLAYFIELD_WIDTH/2,WIDTH / 2 + PLAYFIELD_WIDTH/2])}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+        )}
         y={y + height}
+        tint={0x000000}
+        // filters={[new filters.BlurFilter(2)]}
         anchor={[0.5, 1]}
         alpha={1}
       />
       <Sprite
-        texture={Texture.WHITE}
-        x={interpolate(props.x, [0, 1],[WIDTH / 2 - PLAYFIELD_WIDTH/2,WIDTH / 2 + PLAYFIELD_WIDTH/2])}
-        y={y + height}
-        anchor={lastpos > startpos ? [0, 1] : [1, 0]}
+        image={judgement}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+        )}
+        y={y + height+105}
+        tint={lastpos > startpos ? 0x57d8ff : 0xff5986}
+        anchor={lastpos > startpos ? [0, 1] : [1, 1]}
+        alpha={1}
         width={Math.abs(lastpos - startpos) * PLAYFIELD_WIDTH}
-        height={2}
+        blendMode={BLEND_MODES.ADD}
+        height={200}
       />
       <Sprite
         texture={Texture.WHITE}
-        x={interpolate(props.x, [0, 1],[WIDTH / 2 - PLAYFIELD_WIDTH/2,WIDTH / 2 + PLAYFIELD_WIDTH/2])}
+        tint={COLCOLOR[0]}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [
+            WIDTH / 2 - PLAYFIELD_WIDTH / 2 - COL_WIDTH,
+            WIDTH / 2 + PLAYFIELD_WIDTH / 2 - COL_WIDTH,
+          ]
+        )}
+        alpha={.1}
+        y={y + height}
+        anchor={[1, 1]}
+        height={height}
+        width={COL_WIDTH}
+      />
+      <Sprite
+        texture={Texture.WHITE}
+        tint={COLCOLOR[1]}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+        )}
+        alpha={trackalpha}
+        y={y + height}
+        anchor={[1, 1]}
+        height={height}
+        width={COL_WIDTH}
+      />
+      <Sprite
+        texture={Texture.WHITE}
+        tint={COLCOLOR[2]}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+        )}
+        alpha={trackalpha}
+        y={y + height}
+        anchor={[0, 1]}
+        height={height}
+        width={COL_WIDTH}
+      />
+      <Sprite
+        texture={Texture.WHITE}
+        tint={COLCOLOR[3]}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [
+            WIDTH / 2 - PLAYFIELD_WIDTH / 2 + COL_WIDTH,
+            WIDTH / 2 + PLAYFIELD_WIDTH / 2 + COL_WIDTH,
+          ]
+        )}
+        y={y + height}
+        alpha={.1}
+        anchor={[0, 1]}
+        height={height}
+        width={COL_WIDTH}
+      />
+      <Sprite
+        image={vertical}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+        )}
         y={y + height}
         anchor={[0.5, 1]}
-        width={2}
+        alpha={1}
+        blendMode={BLEND_MODES.ADD}
+        width={100}
+        height={height}
+      />
+      <Sprite
+        image={vertical}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [
+            WIDTH / 2 - PLAYFIELD_WIDTH / 2 - PLAYFIELD_WIDTH / 2,
+            WIDTH / 2 + PLAYFIELD_WIDTH / 2 - PLAYFIELD_WIDTH / 2,
+          ]
+        )}
+        y={y + height}
+        anchor={[0.5, 1]}
+        alpha={.2}
+        blendMode={BLEND_MODES.ADD}
+        width={100}
+        height={height}
+      />
+
+      <Sprite
+        image={vertical}
+        x={interpolate(
+          props.x,
+          [0, 1],
+          [
+            WIDTH / 2 - PLAYFIELD_WIDTH / 2 + PLAYFIELD_WIDTH / 2,
+            WIDTH / 2 + PLAYFIELD_WIDTH / 2 + PLAYFIELD_WIDTH / 2,
+          ]
+        )}
+        y={y + height}
+        anchor={[0.5, 1]}
+        alpha={.2}
+        blendMode={BLEND_MODES.ADD}
+        width={100}
         height={height}
       />
     </Container>
