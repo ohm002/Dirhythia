@@ -20,15 +20,15 @@ function getHeight() {
 
 export const COLCOLOR = [0xff6161, 0x3dd2ff, 0xff6161, 0x3dd2ff]
 export const WIDTH = 1200
-export const HEIGHT = 1000
+export const HEIGHT = 700
 export const COL_1_KEY = 'f'
 export const COL_2_KEY = 'g'
 export const COL_3_KEY = 'h'
 export const COL_4_KEY = 'j'
 export const CURSOR_LEFT_KEY = 'u'
 export const CURSOR_RIGHT_KEY = 'i'
-export const COL_WIDTH = 70
-export const HOLD_WIDTH = COL_WIDTH-5
+export const COL_WIDTH = 80
+export const HOLD_WIDTH = COL_WIDTH-20
 export const NOTE_HEIGHT = 20
 export const PLAYFIELD_WIDTH = COL_WIDTH * 4
 export const SCROLL_SPEED = 1000 // px per sec

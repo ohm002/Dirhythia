@@ -54,7 +54,7 @@ export default function CursorNote(props: CursorNoteProps) {
       : startpos
   let Duration = endTime - startTime
   const height = Math.round((Duration * SCROLL_SPEED) / 1000)
-  const [y, setY] = useState(-height - 2)
+  const [y, setY] = useState(-height)
   let currentTime = 0
 
   useTick(() => {
@@ -70,7 +70,7 @@ export default function CursorNote(props: CursorNoteProps) {
               NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
             endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
           ],
-          [-height-5, HEIGHT]
+          [-height, HEIGHT]
         )
       )
     }
@@ -100,7 +100,7 @@ export default function CursorNote(props: CursorNoteProps) {
           [0, 1],
           [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
         )}
-        y={y + height+105}
+        y={y + height+100}
         tint={lastpos > startpos ? 0x57d8ff : 0xff5986}
         anchor={lastpos > startpos ? [0, 1] : [1, 1]}
         alpha={1}
