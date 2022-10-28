@@ -4,11 +4,23 @@ import { Provider } from 'react-redux'
 import App from './App'
 import './index.css'
 import { AppConsumer } from '@inlet/react-pixi';
+import { parseBeatmap } from './libs/parseBeatmap'
 // import { store } from './libs/redux/store'
 
-ReactDOM.render(
-  <React.StrictMode>
-      <App mode="play"/>
-  </React.StrictMode>,
-  document.getElementById('root')
-)
+document.getElementById('chartfile')?.addEventListener('change', () => {
+  var beatmap
+  var fr = new FileReader()
+  fr.onload = function () {
+    var chart = fr.result as string
+    beatmap = parseBeatmap(chart)
+    ReactDOM.render(
+      <React.StrictMode>
+          <App mode="play" chart={beatmap}/>
+      </React.StrictMode>,
+      document.getElementById('root')
+    )
+    
+  }
+  fr.readAsText(((document.getElementById('chartfile') as HTMLInputElement).files as FileList)[0])
+})
+

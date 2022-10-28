@@ -1,7 +1,7 @@
 import { MouseEventHandler, useEffect } from 'react'
 import PlayField from './components/game/PlayField'
 // import beatmap from './data/Virtual Self - Particle Arts/beatmap'
-import beatmap from './data/void(Mournfinale) - World Vanquisher/beatmap'
+// import beatmap from './data/void(Mournfinale) - World Vanquisher/beatmap'
 // import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { GameState } from './state/GameState'
 import {
@@ -19,10 +19,13 @@ import { Stage, useTick } from '@inlet/react-pixi'
 import Display from './components/game/Display'
 import css from './index.css'
 import { parseBeatmap } from './libs/parseBeatmap'
+import { Beatmap } from './types/Beatmap'
 type AppProps = {
   mode: 'play' | 'editor'
+  chart: Beatmap
 }
 export default function App(props: AppProps) {
+  const beatmap = props.chart
   const { audioPath } = beatmap
   beatmap.timingPoints.forEach((e) => {
     e.time = e.time + OFFSET
