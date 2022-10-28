@@ -8,7 +8,7 @@ import { AppConsumer } from '@inlet/react-pixi';
 
 ReactDOM.render(
   <React.StrictMode>
-      <App mode="play"/>
+      <App mode="editor"/>
   </React.StrictMode>,
   document.getElementById('root')
 )

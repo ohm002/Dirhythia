@@ -7,6 +7,7 @@ import judgement from '../../assets/judgement.png'
 import {
   COLCOLOR,
   COL_WIDTH,
+  CURSOR_AREA,
   CURSOR_LEFT_KEY,
   CURSOR_RIGHT_KEY,
   HEIGHT,
@@ -85,7 +86,7 @@ export default function CursorNote(props: CursorNoteProps) {
         x={interpolate(
           props.x,
           [0, 1],
-          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
         y={y + height}
         tint={0x000000}
@@ -98,13 +99,13 @@ export default function CursorNote(props: CursorNoteProps) {
         x={interpolate(
           props.x,
           [0, 1],
-          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
         y={y + height+100}
         tint={lastpos > startpos ? 0x57d8ff : 0xff5986}
         anchor={lastpos > startpos ? [0, 1] : [1, 1]}
         alpha={1}
-        width={Math.abs(lastpos - startpos) * PLAYFIELD_WIDTH}
+        width={Math.abs(lastpos - startpos) * CURSOR_AREA}
         blendMode={BLEND_MODES.ADD}
         height={200}
       />
@@ -115,8 +116,8 @@ export default function CursorNote(props: CursorNoteProps) {
           props.x,
           [0, 1],
           [
-            WIDTH / 2 - PLAYFIELD_WIDTH / 2 - COL_WIDTH,
-            WIDTH / 2 + PLAYFIELD_WIDTH / 2 - COL_WIDTH,
+            WIDTH / 2 - CURSOR_AREA / 2 - COL_WIDTH,
+            WIDTH / 2 + CURSOR_AREA / 2 - COL_WIDTH,
           ]
         )}
         alpha={.1}
@@ -131,7 +132,7 @@ export default function CursorNote(props: CursorNoteProps) {
         x={interpolate(
           props.x,
           [0, 1],
-          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
         alpha={trackalpha}
         y={y + height}
@@ -145,7 +146,7 @@ export default function CursorNote(props: CursorNoteProps) {
         x={interpolate(
           props.x,
           [0, 1],
-          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
         alpha={trackalpha}
         y={y + height}
@@ -160,8 +161,8 @@ export default function CursorNote(props: CursorNoteProps) {
           props.x,
           [0, 1],
           [
-            WIDTH / 2 - PLAYFIELD_WIDTH / 2 + COL_WIDTH,
-            WIDTH / 2 + PLAYFIELD_WIDTH / 2 + COL_WIDTH,
+            WIDTH / 2 - CURSOR_AREA / 2 + COL_WIDTH,
+            WIDTH / 2 + CURSOR_AREA / 2 + COL_WIDTH,
           ]
         )}
         y={y + height}
@@ -175,7 +176,7 @@ export default function CursorNote(props: CursorNoteProps) {
         x={interpolate(
           props.x,
           [0, 1],
-          [WIDTH / 2 - PLAYFIELD_WIDTH / 2, WIDTH / 2 + PLAYFIELD_WIDTH / 2]
+          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
         y={y + height}
         anchor={[0.5, 1]}
@@ -190,8 +191,8 @@ export default function CursorNote(props: CursorNoteProps) {
           props.x,
           [0, 1],
           [
-            WIDTH / 2 - PLAYFIELD_WIDTH / 2 - PLAYFIELD_WIDTH / 2,
-            WIDTH / 2 + PLAYFIELD_WIDTH / 2 - PLAYFIELD_WIDTH / 2,
+            WIDTH / 2 - CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
+            WIDTH / 2 + CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
           ]
         )}
         y={y + height}
@@ -208,8 +209,8 @@ export default function CursorNote(props: CursorNoteProps) {
           props.x,
           [0, 1],
           [
-            WIDTH / 2 - PLAYFIELD_WIDTH / 2 + PLAYFIELD_WIDTH / 2,
-            WIDTH / 2 + PLAYFIELD_WIDTH / 2 + PLAYFIELD_WIDTH / 2,
+            WIDTH / 2 - CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
+            WIDTH / 2 + CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
           ]
         )}
         y={y + height}

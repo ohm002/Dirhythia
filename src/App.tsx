@@ -19,8 +19,10 @@ import { Stage, useTick } from '@inlet/react-pixi'
 import Display from './components/game/Display'
 import css from './index.css'
 import { parseBeatmap } from './libs/parseBeatmap'
-
-export default function App() {
+type AppProps = {
+  mode: 'play' | 'editor'
+}
+export default function App(props: AppProps) {
   const { audioPath } = beatmap
   beatmap.timingPoints.forEach((e) => {
     e.time = e.time + OFFSET
@@ -34,34 +36,30 @@ export default function App() {
   })
   let maxscore = 0
   beatmap.hitObjects.forEach((e) => {
-    maxscore += 300
+    maxscore += 100
   })
   beatmap.cursor.forEach((e, i) => {
     if (beatmap.cursor[i - 1]) {
       if (beatmap.cursor[i - 1].x != e.x) {
-        maxscore += 300
+        maxscore += 100
       }
     } else {
-      maxscore += 300
+      maxscore += 100
     }
   })
   const GAME = new GameState(10, 10, 400, audioPath, maxscore, beatmap)
   GAME.setAudioPath(audioPath)
   const musicVolume = GAME.audiovolume
-  const songlength = GAME.audio.duration
   const effectVolume = GAME.effectvolume
-  let combo = GAME.combo
-  let score = GAME.score
-
+  GAME.mode = props.mode
   const handlePlay: MouseEventHandler = (e) => {
     GAME.setVolume(musicVolume / 100)
     GAME.play()
   }
-
   const handleQuit: MouseEventHandler = (e) => {
     GAME.quit()
   }
-  function validkey(key:string) {
+  function validkey(key: string) {
     return (
       key == COL_1_KEY ||
       key == COL_2_KEY ||
@@ -71,21 +69,23 @@ export default function App() {
       key == CURSOR_RIGHT_KEY
     )
   }
-  function getkey(key:string) {
-    if (key == COL_1_KEY) {
-      return 0
-    } else if (key == COL_2_KEY) {
-      return 1
-    } else if (key == COL_3_KEY) {
-      return 2
-    } else if (key == COL_4_KEY) {
-      return 3
-    } else if (key == CURSOR_LEFT_KEY) {
-      return 4
-    } else if (key == CURSOR_RIGHT_KEY) {
-      return 5
+  function getkey(key: string) {
+    switch (key) {
+      case COL_1_KEY:
+        return 0
+      case COL_2_KEY:
+        return 1
+      case COL_3_KEY:
+        return 2
+      case COL_4_KEY:
+        return 3
+      case CURSOR_LEFT_KEY:
+        return 4
+      case CURSOR_RIGHT_KEY:
+        return 5
+      default:
+        return NaN
     }
-    return NaN
   }
   useEffect(() => {
     document.addEventListener('keyup', (e: KeyboardEvent) => {

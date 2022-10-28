@@ -65,7 +65,6 @@ export function parseBeatmap(data: string): Beatmap {
 
   if (!validBeatmap) throw new Error('Invalid beatmap')
 
-  console.log(OFFSET)
   beatmap.timingPoints.forEach((e) => {
     e.time = e.time + OFFSET
   })

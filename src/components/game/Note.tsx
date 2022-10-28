@@ -53,28 +53,34 @@ export default function Note(props: NoteProps) {
               props.game.beatmap.cursor[depth].x * PLAYFIELD_WIDTH
           )
       }
-      props.game.hitlist.forEach((element) => {
-        if (
-          element == props.startTime.toString() + props.keys.toString() &&
-          clicktime == -1
-        ) {
-          setclicked(true)
-          setclicktime(currentTime)
-        }
-      })
+      if (props.game.hitlist.length > 0)
+        props.game.hitlist.forEach((element: any) => {
+          if (
+            element.startsWith(
+              props.startTime.toString() + props.keys.toString()
+            ) &&
+            !element.endsWith('miss') &&
+            clicktime == -1
+          ) {
+            setclicked(true)
+            setclicktime(currentTime)
+          }
+        })
 
-      setY(
-        interpolate(
-          currentTime,
-          [
-            props.startTime -
-              NOTE_TRAVEL_DURATION +
-              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-            props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-          ],
-          [0, HEIGHT]
+      if (!clicked) {
+        setY(
+          interpolate(
+            currentTime,
+            [
+              props.startTime -
+                NOTE_TRAVEL_DURATION +
+                NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+              props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+            ],
+            [0, HEIGHT]
+          )
         )
-      )
+      }
       setAlpha(
         interpolate(
           currentTime,
@@ -86,6 +92,7 @@ export default function Note(props: NoteProps) {
         )
       )
       if (clicked) {
+        // hit effect
         setEffAlpha(
           interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0])
         )

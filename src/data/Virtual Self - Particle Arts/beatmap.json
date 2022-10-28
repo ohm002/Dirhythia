@@ -1,0 +1,54 @@
+{
+  "audioPath": "https://cdn.discordapp.com/attachments/671324264531492878/1011673846052552805/audio.mp3",
+  "metadata": {
+    "title": "Particle Arts (Game Ver.)",
+    "titleUnicode": "Particle Arts (Game Ver.)",
+    "artist": "Virtual Self",
+    "artistUnicode": "Virtual Self",
+    "creator": "The Virtual Machine",
+    "difficult": "Easy"
+  },
+  "hitObjects": [
+    {
+      "type": "hold",
+      "column": 3,
+      "startTime": 500,
+      "endTime": 2000
+    }
+  ],
+  "cursor": [
+    {
+      "x": 0.4,
+      "startTime": 1000
+    },
+    {
+      "x": 0.6,
+      "startTime": 1050
+    },
+    {
+      "x": 0.3,
+      "startTime": 1100
+    },
+    {
+      "x": 0.7,
+      "startTime": 1150
+    },
+    {
+      "x": 0.2,
+      "startTime": 1200
+    },
+    {
+      "x": 0.8,
+      "startTime": 1250
+    }
+  ],
+  "timingPoints": [
+    {
+      "time": 1151,
+      "bpm": 162,
+      "meter": 4,
+      "defaultSampleSet": "drum",
+      "volume": 100
+    }
+  ]
+}

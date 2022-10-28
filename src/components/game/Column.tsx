@@ -84,57 +84,60 @@ export default function Column(props: ColumnProps) {
       effectVolume = props.game.effectvolume
       playStartTime = props.game.playStartTime
       const currentTime = props.game.currenttime
-      if (props.game.key[props.i - 1][0] == '1' && nextObj != undefined) {
-        // find the hit object that player tried to click
-        const clickedHitObject =
-          nextObj.startTime >= currentTime - maxAcceptableOffset &&
-          nextObj.startTime <= currentTime + maxAcceptableOffset
-            ? nextObj
-            : undefined
-        if (clickedHitObject) {
-          const offset = Math.abs(clickedHitObject.startTime - currentTime)
-          setNextObjIndex(nextObjIndex + 1)
-          props.game.key[props.i - 1] = '01'
-          if (offset <= hitWindow300) {
-            props.game.hit(300, clickedHitObject.startTime, props.i)
-          } else if (hitWindow300 < offset && offset <= hitWindow100) {
-            props.game.hit(100, clickedHitObject.startTime, props.i)
-          } else if (hitWindow100 < offset && offset <= hitWindow50) {
-            props.game.hit(50, clickedHitObject.startTime, props.i)
+      if (props.game.mode == 'play') {
+        if (props.game.key[props.i - 1][0] == '1' && nextObj != undefined) {
+          // find the hit object that player tried to click
+          const clickedHitObject =
+            nextObj.startTime >= currentTime - maxAcceptableOffset &&
+            nextObj.startTime <= currentTime + maxAcceptableOffset
+              ? nextObj
+              : undefined
+          if (clickedHitObject) {
+            const offset = Math.abs(clickedHitObject.startTime - currentTime)
+            setNextObjIndex(nextObjIndex + 1)
+            props.game.key[props.i - 1] = '01'
+            var check = async () => {
+              if (offset <= hitWindow300) {
+                await props.game.hit("perfect", clickedHitObject.startTime, props.i)
+              } else if (hitWindow300 < offset && offset <= hitWindow100) {
+                await props.game.hit("great", clickedHitObject.startTime, props.i)
+              } else if (hitWindow100 < offset && offset <= hitWindow50) {
+                await props.game.hit("ok", clickedHitObject.startTime, props.i)
+              }
+            }
+            check()
           }
         }
-      }
-      // inconsistent hold amount
-      let currenthold = holds.filter((t) => {
-        return (
-          t.endTime != undefined &&
-          t.startTime <= currentTime &&
-          t.endTime >= currentTime
-        )
-      })[0]
-      if (currenthold != undefined) {
-        if (checkHold < currenthold.startTime) {
-          setcheckHold(currenthold.startTime)
-        } else if (currentTime >= checkHold) {
-          setcheckHold(checkHold + 60000 / 170)
-          if (props.game.key[props.i - 1][1] == '0') {
-            props.game.miss(currenthold.startTime, props.i + 5)
+        // inconsistent hold amount
+        let currenthold = holds.filter((t) => {
+          return (
+            t.endTime != undefined &&
+            t.startTime <= currentTime &&
+            t.endTime >= currentTime
+          )
+        })[0]
+        if (currenthold != undefined) {
+          if (checkHold < currenthold.startTime) {
+            setcheckHold(currenthold.startTime)
+          } else if (currentTime >= checkHold) {
+            setcheckHold(checkHold + 60000 / 170)
+            if (props.game.key[props.i - 1][1] == '0') {
+              props.game.miss(currenthold.startTime, props.i + 5)
+            }
           }
         }
-      }
-      if (nextObj != undefined) {
-        if (currentTime > nextObj.startTime + 150) {
-          props.game.miss(nextObj.startTime, props.i)
-          setNextObjIndex(nextObjIndex + 1)
+        if (nextObj != undefined) {
+          if (currentTime > nextObj.startTime + 150) {
+            props.game.miss(nextObj.startTime, props.i)
+            setNextObjIndex(nextObjIndex + 1)
+          }
         }
       }
     }
   })
 
   let x =
-    (WIDTH - PLAYFIELD_WIDTH) / 2 +
-    (COL_WIDTH) * (props.i - 1) +
-    COL_WIDTH / 2
+    (WIDTH - PLAYFIELD_WIDTH) / 2 + COL_WIDTH * (props.i - 1) + COL_WIDTH / 2
   // if (props.i < 3) x-=10;
   // if (props.i > 2) x+=10;
   return (

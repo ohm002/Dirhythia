@@ -8,7 +8,7 @@ export class GameState {
   // data: JSON
   audiovolume: number
   audio: any
-  hitlist: string[]
+  hitlist: Array<any>
   effectvolume: number
   scrollspeed: number
   score: number
@@ -17,6 +17,7 @@ export class GameState {
   playStartTime: number
   cursor: number
   audiopath: string
+  mode: string
   isPlaying: boolean
   key: string[]
   currenttime: number
@@ -60,6 +61,7 @@ export class GameState {
     this.playStartTime = 0
     this.isPlaying = false
     this.cursor = 0.5
+    this.mode = ''
     this.currenttime = 0
     this.hitlist = []
   }
@@ -95,18 +97,29 @@ export class GameState {
     GAME_AUDIO.pause()
     GAME_AUDIO.currentTime = 0
   }
-  hit(score: number, time: number, key: number) {
+  idtoscore(input: string): number {
+    switch (input) {
+      case 'perfect':
+        return 100
+      case 'great':
+        return 50
+      case 'ok':
+        return 30
+      default:
+        return 0
+    }
+  }
+  async hit(score: string, time: number, key: number) {
     let valid = true
     this.hitlist.forEach((element) => {
-      if (element == time.toString() + key.toString() && key < 6) {
+      if (element.startsWith(time.toString() + key.toString()) && key < 6) {
         valid = false
       }
     })
     if (valid) {
-      // await playHitSound(10, 'normal')
-      this.score += score
+      this.score += this.idtoscore(score)
       this.combo += 1
-      this.hitlist.push(time.toString() + key.toString())
+      this.hitlist.push(time.toString() + key.toString() + score)
       return true
     } else {
       return false
@@ -115,7 +128,7 @@ export class GameState {
 
   miss(time: number, key: number) {
     this.combo = 0
-    this.hitlist.push(time.toString() + key.toString())
+    this.hitlist.push(time.toString() + key.toString() + 'miss')
   }
 
   setAudioPath(path: string) {

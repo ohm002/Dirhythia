@@ -10,6 +10,7 @@ import {
   PLAYFIELD_WIDTH,
   CURSOR_LEFT_KEY,
   CURSOR_RIGHT_KEY,
+  CURSOR_AREA,
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import { Cursors } from '../../types/Cursors'
@@ -83,13 +84,21 @@ export default function Cursor(props: Props) {
               if (element == clickedHitObject.startTime.toString() + 5)
                 valid == false
             })
-            if (props.game.hit(300, clickedHitObject.startTime, 5)) {
-              setNextObjIndex(nextObjIndex + 1)
+            var result = async () => {
+              await props.game
+                .hit("perfect", clickedHitObject.startTime, 5)
+                .then((res) => {
+                  if (res){
+                    setNextObjIndex(nextObjIndex + 1)
+                  }
+                })
             }
+            result()
           }
         }
     }
-    document.addEventListener('keypress', handleKeydown)
+    if (props.game.mode == 'play')
+      document.addEventListener('keypress', handleKeydown)
 
     function validmouse(i: number) {
       if (nextObj) {
@@ -100,23 +109,32 @@ export default function Cursor(props: Props) {
         }
       }
     }
-    document.addEventListener('mousemove', (e: MouseEvent) => {
-      if (Math.abs(e.movementX) >= 0 && validmouse(e.movementX)) {
-        const currentTime = Date.now() - playStartTime
-        // find the hit object that player tried to click
-        const clickedHitObject =
-          nextObj.startTime >= currentTime - maxAcceptableOffset &&
-          nextObj.startTime <= currentTime + maxAcceptableOffset
-            ? nextObj
-            : undefined
-        if (clickedHitObject) {
-          const offset = Math.abs(clickedHitObject.startTime - currentTime)
-          if (props.game.hit(300, clickedHitObject.startTime, 5)) {
-            setNextObjIndex(nextObjIndex + 1)
+    if (props.game.mode == 'play') {
+      document.addEventListener('mousemove', (e: MouseEvent) => {
+        if (Math.abs(e.movementX) >= 0 && validmouse(e.movementX)) {
+          const currentTime = Date.now() - playStartTime
+          // find the hit object that player tried to click
+          const clickedHitObject =
+            nextObj.startTime >= currentTime - maxAcceptableOffset &&
+            nextObj.startTime <= currentTime + maxAcceptableOffset
+              ? nextObj
+              : undefined
+          if (clickedHitObject) {
+            const offset = Math.abs(clickedHitObject.startTime - currentTime)
+            var result = async () => {
+              await props.game
+                .hit("perfect", clickedHitObject.startTime, 5)
+                .then((res) => {
+                  if (res){
+                    setNextObjIndex(nextObjIndex + 1)
+                  }
+                })
+            }
+            result()
           }
         }
-      }
-    })
+      })
+    }
     return () => {
       document.removeEventListener('keydown', handleKeydown)
     }
@@ -124,7 +142,7 @@ export default function Cursor(props: Props) {
   return (
     <Sprite
       texture={Texture.WHITE}
-      x={WIDTH / 2 - PLAYFIELD_WIDTH / 2 + x * PLAYFIELD_WIDTH}
+      x={WIDTH / 2 - CURSOR_AREA / 2 + x * CURSOR_AREA}
       y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
       anchor={[0.5, 0.5]}
       width={10}
@@ -134,7 +152,4 @@ export default function Cursor(props: Props) {
       alpha={0.5}
     />
   )
-  // this element is the line and the square on the judgement line
-  // try look at my facebook clip no cap
-  // todo : cursor animation for 2k mode and 4k mode
 }
