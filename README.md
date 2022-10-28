@@ -1,5 +1,6 @@
 # Playing
-you can try the sample map that i made [here](https://drive.google.com/uc?id=1FS4ASArTLMMfhkIEvllvyMOTM_wvCI6r)
+you can try the sample map that i made [here](https://drive.google.com/uc?id=1FS4ASArTLMMfhkIEvllvyMOTM_wvCI6r) and upload on the file
+
 ![](https://i.imgur.com/nqlKBtJ.png)
 ![](https://i.imgur.com/8m0WZAB.png)
 
