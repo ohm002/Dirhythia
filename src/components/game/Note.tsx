@@ -7,6 +7,7 @@ import { interpolate } from '../../libs/interpolate'
 import {
   COLCOLOR,
   COL_WIDTH,
+  CURSOR_AREA,
   HEIGHT,
   JUDGEMENT_LINE_OFFSET_Y,
   NOTE_HEIGHT,
@@ -31,7 +32,7 @@ export default function Note(props: NoteProps) {
   const [effalpha, setEffAlpha] = useState(0)
   let color = COLCOLOR[props.keys - 1]
   const [cursorx, setcursorx] = useState(
-    WIDTH / 2 - PLAYFIELD_WIDTH / 2 + 0.5 * PLAYFIELD_WIDTH
+    WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
   useTick(() => {
     let isPlaying = props.game.isPlaying
@@ -49,8 +50,8 @@ export default function Note(props: NoteProps) {
         if (depth > -1)
           setcursorx(
             WIDTH / 2 -
-              PLAYFIELD_WIDTH / 2 +
-              props.game.beatmap.cursor[depth].x * PLAYFIELD_WIDTH
+            CURSOR_AREA / 2 +
+              props.game.beatmap.cursor[depth].x * CURSOR_AREA
           )
       }
       if (props.game.hitlist.length > 0)

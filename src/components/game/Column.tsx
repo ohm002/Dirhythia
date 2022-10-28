@@ -1,26 +1,17 @@
-import { Container, Sprite, useTick } from '@inlet/react-pixi'
-import { current } from '@reduxjs/toolkit'
-import { Texture } from 'pixi.js'
-import { useEffect, useMemo, useState } from 'react'
-import { playHitSound } from '../../libs/hitsounds'
-import { interpolate } from '../../libs/interpolate'
+import { Container, useTick } from '@inlet/react-pixi'
+import { useMemo, useState } from 'react'
 import {
-  COLCOLOR,
   COL_1_KEY,
   COL_2_KEY,
   COL_3_KEY,
   COL_4_KEY,
   COL_WIDTH,
-  HEIGHT,
-  NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-  OFFSET,
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
-import CursorNote from './CursorNote'
 import Hold from './Hold'
 import Note from './Note'
 

@@ -7,13 +7,13 @@ import { interpolate } from '../../libs/interpolate'
 import {
   COLCOLOR,
   COL_WIDTH,
+  CURSOR_AREA,
   HEIGHT,
   HOLD_WIDTH,
   JUDGEMENT_LINE_OFFSET_Y,
   NOTE_HEIGHT,
   NOTE_TRAVEL_DURATION,
   NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-  PLAYFIELD_WIDTH,
   SCROLL_SPEED,
   WIDTH,
 } from '../../libs/options'
@@ -38,7 +38,7 @@ export default function Hold(props: HoldProps) {
   let [clicked, setclicked] = useState(false)
 
   const [cursorx, setcursorx] = useState(
-    WIDTH / 2 - PLAYFIELD_WIDTH / 2 + 0.5 * PLAYFIELD_WIDTH
+    WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
   let color = COLCOLOR[props.keys - 1]
   useTick(() => {
@@ -57,8 +57,8 @@ export default function Hold(props: HoldProps) {
         if (depth > -1)
           setcursorx(
             WIDTH / 2 -
-              PLAYFIELD_WIDTH / 2 +
-              props.game.beatmap.cursor[depth].x * PLAYFIELD_WIDTH
+              CURSOR_AREA / 2 +
+              props.game.beatmap.cursor[depth].x * CURSOR_AREA
           )
       }
       if (props.game.hitlist.length > 0)
