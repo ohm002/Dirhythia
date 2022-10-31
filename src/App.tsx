@@ -55,9 +55,17 @@ export default function App(props: AppProps) {
   const musicVolume = GAME.audiovolume
   const effectVolume = GAME.effectvolume
   GAME.mode = props.mode
+  const clearCacheData = () => {
+    caches.keys().then((names) => {
+      names.forEach((name) => {
+        caches.delete(name);
+      });
+    });
+  };
   const handlePlay: MouseEventHandler = (e) => {
     GAME.setVolume(musicVolume / 100)
     GAME.play()
+    clearCacheData()
   }
   const handleQuit: MouseEventHandler = (e) => {
     GAME.quit()

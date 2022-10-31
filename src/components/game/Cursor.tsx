@@ -14,6 +14,7 @@ import {
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import { Cursors } from '../../types/Cursors'
+import { createWorkerFactory, useWorker } from '@shopify/react-web-worker'
 import { useEffect, useMemo, useState } from 'react'
 
 type Props = {
@@ -31,7 +32,9 @@ const getColKey = (i: number) => {
   return i > 0 ? CURSOR_LEFT_KEY : i < 0 ? CURSOR_RIGHT_KEY : undefined
 }
 
+const Worker = createWorkerFactory(() => import('../../state/stateWorker'))
 export default function Cursor(props: Props) {
+  const stateWorker = useWorker(Worker)
   const [x, setX] = useState(0.5)
   const [nextObjIndex, setNextObjIndex] = useState(0)
   let playStartTime = props.game.playStartTime
@@ -53,7 +56,7 @@ export default function Cursor(props: Props) {
       }
       if (nextObj != undefined) {
         if (currentTime > nextObj.startTime + 150) {
-          props.game.miss(nextObj.startTime, 5)
+          stateWorker.miss(nextObj.startTime, 5, props.game)
           setNextObjIndex(nextObjIndex + 1)
         }
       }
@@ -85,8 +88,8 @@ export default function Cursor(props: Props) {
                 valid == false
             })
             var result = async () => {
-              await props.game
-                .hit("perfect", clickedHitObject.startTime, 5)
+              await stateWorker
+                .hit("perfect", clickedHitObject.startTime, 5, props.game)
                 .then((res) => {
                   if (res){
                     setNextObjIndex(nextObjIndex + 1)
@@ -122,8 +125,8 @@ export default function Cursor(props: Props) {
           if (clickedHitObject) {
             const offset = Math.abs(clickedHitObject.startTime - currentTime)
             var result = async () => {
-              await props.game
-                .hit("perfect", clickedHitObject.startTime, 5)
+              await stateWorker
+                .hit("perfect", clickedHitObject.startTime, 5, props.game)
                 .then((res) => {
                   if (res){
                     setNextObjIndex(nextObjIndex + 1)

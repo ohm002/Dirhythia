@@ -15,6 +15,7 @@ import { GameState } from '../../state/GameState'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
 import Hold from './Hold'
+import { createWorkerFactory, useWorker } from '@shopify/react-web-worker'
 import Note from './Note'
 
 type ColumnProps = {
@@ -54,6 +55,7 @@ const hitWindow300 = 50 // ms
 const hitWindow100 = 100 // ms
 const hitWindow50 = maxAcceptableOffset // ms
 
+const Worker = createWorkerFactory(() => import('../../state/stateWorker'))
 export default function Column(props: ColumnProps) {
   if (props.hitObjects.length == 0) {
     return null
@@ -66,11 +68,15 @@ export default function Column(props: ColumnProps) {
   const [nextObjIndex, setNextObjIndex] = useState(0)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
   const [checkHold, setcheckHold] = useState(-1)
+  const stateWorker = useWorker(Worker)
   const hitsound = new Audio()
   hitsound.src = '../'
   let holds = props.hitObjects.filter((t) => {
     return t.type == 'hold' && t.column == props.i
   })
+  const miss = async (a: number, b: number) => {
+    await useWorker.miss(a, b, props.game)
+  }
   useTick(() => {
     isPlaying = props.game.isPlaying
     if (isPlaying) {
@@ -89,54 +95,60 @@ export default function Column(props: ColumnProps) {
             const offset = Math.abs(clickedHitObject.startTime - currentTime)
             setNextObjIndex(nextObjIndex + 1)
             props.game.key[props.i - 1] = '01'
-            var check = async () => {
+            const check = async () => {
               if (offset <= hitWindow300) {
-                await props.game.hit(
+                await stateWorker.hit(
                   'perfect',
                   clickedHitObject.startTime,
-                  props.i
+                  props.i,
+                  props.game
                 )
               } else if (hitWindow300 < offset && offset <= hitWindow100) {
-                await props.game.hit(
+                await stateWorker.hit(
                   'great',
                   clickedHitObject.startTime,
-                  props.i
+                  props.i,
+                  props.game
                 )
               } else if (hitWindow100 < offset && offset <= hitWindow50) {
-                await props.game.hit('ok', clickedHitObject.startTime, props.i)
+                await stateWorker.hit(
+                  'ok',
+                  clickedHitObject.startTime,
+                  props.i,
+                  props.game
+                )
               }
             }
             check()
           }
-        }
-        // inconsistent hold amount
-        let currenthold = holds.filter((t) => {
-          return (
-            t.endTime != undefined &&
-            t.startTime <= currentTime &&
-            t.endTime >= currentTime
-          )
-        })[0]
-        if (currenthold != undefined) {
-          if (checkHold < currenthold.startTime) {
-            setcheckHold(currenthold.startTime)
-          } else if (currentTime >= checkHold) {
-            setcheckHold(checkHold + 60000 / 170)
-            if (props.game.key[props.i - 1][1] == '0') {
-              props.game.miss(currenthold.startTime, props.i + 5)
+          // inconsistent hold amount
+          let currenthold = holds.filter((t) => {
+            return (
+              t.endTime != undefined &&
+              t.startTime <= currentTime &&
+              t.endTime >= currentTime
+            )
+          })[0]
+          if (currenthold != undefined) {
+            if (checkHold < currenthold.startTime) {
+              setcheckHold(currenthold.startTime)
+            } else if (currentTime >= checkHold) {
+              setcheckHold(checkHold + 60000 / 170)
+              if (props.game.key[props.i - 1][1] == '0') {
+                miss(currenthold.startTime, props.i + 5)
+              }
             }
           }
-        }
-        if (nextObj != undefined) {
-          if (currentTime > nextObj.startTime + 150) {
-            props.game.miss(nextObj.startTime, props.i)
-            setNextObjIndex(nextObjIndex + 1)
+          if (nextObj != undefined) {
+            if (currentTime > nextObj.startTime + 150) {
+              miss(nextObj.startTime, props.i)
+              setNextObjIndex(nextObjIndex + 1)
+            }
           }
         }
       }
     }
   })
-
   let x =
     (WIDTH - PLAYFIELD_WIDTH) / 2 + COL_WIDTH * (props.i - 1) + COL_WIDTH / 2
   // if (props.i < 3) x-=10;

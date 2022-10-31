@@ -11,6 +11,7 @@
   "dependencies": {
     "@inlet/react-pixi": "^6.8.0",
     "@reduxjs/toolkit": "^1.8.5",
+    "@shopify/react-web-worker": "^5.0.6",
     "pixi-legacy": "^1.0.2",
     "pixi.js": "^6.5.1",
     "prop-types": "^15.7.2",

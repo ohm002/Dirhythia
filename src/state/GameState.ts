@@ -109,27 +109,6 @@ export class GameState {
         return 0
     }
   }
-  async hit(score: string, time: number, key: number) {
-    let valid = true
-    this.hitlist.forEach((element) => {
-      if (element.startsWith(time.toString() + key.toString()) && key < 6) {
-        valid = false
-      }
-    })
-    if (valid) {
-      this.score += this.idtoscore(score)
-      this.combo += 1
-      this.hitlist.push(time.toString() + key.toString() +","+ score)
-      return true
-    } else {
-      return false
-    }
-  }
-
-  miss(time: number, key: number) {
-    this.combo = 0
-    this.hitlist.push(time.toString() + key.toString() + 'miss')
-  }
 
   setAudioPath(path: string) {
     this.audiopath = path
