@@ -76,7 +76,7 @@ export default function CursorNote(props: CursorNoteProps) {
       )
     }
   })
-  const trackalpha = 0.3
+  const trackalpha = 0.5
   return (
     <Container>
       <Sprite

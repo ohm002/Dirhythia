@@ -119,7 +119,7 @@ export class GameState {
     if (valid) {
       this.score += this.idtoscore(score)
       this.combo += 1
-      this.hitlist.push(time.toString() + key.toString() + score)
+      this.hitlist.push(time.toString() + key.toString() +","+ score)
       return true
     } else {
       return false

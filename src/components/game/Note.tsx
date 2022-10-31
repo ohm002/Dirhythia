@@ -1,8 +1,12 @@
-import { Container, Sprite, useTick } from '@inlet/react-pixi'
-import { BLEND_MODES } from 'pixi.js'
+import { Container, Sprite, useTick, Text } from '@inlet/react-pixi'
+import { BLEND_MODES, TextStyle } from 'pixi.js'
 import { useState } from 'react'
 import hit from '../../assets/hit.png'
 import note from '../../assets/note.png'
+import perfect from '../../assets/perfect.png'
+import great from '../../assets/great.png'
+import ok from '../../assets/ok.png'
+import miss from '../../assets/miss.png'
 import { interpolate } from '../../libs/interpolate'
 import {
   COLCOLOR,
@@ -30,6 +34,7 @@ export default function Note(props: NoteProps) {
   const [alpha, setAlpha] = useState(1)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
+  const [score, setscore] = useState('')
   let color = COLCOLOR[props.keys - 1]
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
@@ -50,7 +55,7 @@ export default function Note(props: NoteProps) {
         if (depth > -1)
           setcursorx(
             WIDTH / 2 -
-            CURSOR_AREA / 2 +
+              CURSOR_AREA / 2 +
               props.game.beatmap.cursor[depth].x * CURSOR_AREA
           )
       }
@@ -64,6 +69,7 @@ export default function Note(props: NoteProps) {
             clicktime == -1
           ) {
             setclicked(true)
+            setscore(element.split(',')[1])
             setclicktime(currentTime)
           }
         })
@@ -101,8 +107,30 @@ export default function Note(props: NoteProps) {
       }
     }
   })
+  const font = new TextStyle({
+    fontFamily: 'Courier New',
+    fontWeight: 'bold',
+    align: 'center',
+    fill: '#ffffff',
+    fontSize: 10,
+  })
+  const sprites = {
+    '': miss,
+    perfect: perfect,
+    great: great,
+    ok: ok,
+  }
   return (
     <Container>
+      <Text
+        text={score.toUpperCase()}
+        x={cursorx - WIDTH / 2 + props.x}
+        y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y + 20}
+        alpha={effalpha}
+        tint={color}
+        style={font}
+        anchor={[0.5, 0.5]}
+      />
       <Sprite
         image={hit}
         x={cursorx - WIDTH / 2 + props.x}
@@ -110,7 +138,6 @@ export default function Note(props: NoteProps) {
         width={COL_WIDTH * 1.2}
         height={NOTE_HEIGHT * 2}
         alpha={effalpha}
-        blendMode={BLEND_MODES.ADD}
         tint={color}
         anchor={[0.5, 0.5]}
       />

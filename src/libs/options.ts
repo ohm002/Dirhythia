@@ -21,10 +21,10 @@ function getHeight() {
 export const COLCOLOR = [0xff6161, 0x3dd2ff, 0xff6161, 0x3dd2ff]
 export const WIDTH = 800
 export const HEIGHT = 600
-export const COL_1_KEY = 'f'
-export const COL_2_KEY = 'g'
-export const COL_3_KEY = 'h'
-export const COL_4_KEY = 'j'
+export const COL_1_KEY = '4'
+export const COL_2_KEY = '5'
+export const COL_3_KEY = '6'
+export const COL_4_KEY = '+'
 export const CURSOR_LEFT_KEY = 'u'
 export const CURSOR_RIGHT_KEY = 'i'
 export const COL_WIDTH = WIDTH/16
@@ -35,7 +35,7 @@ export const CURSOR_AREA = WIDTH-PLAYFIELD_WIDTH*2
 export const SCROLL_SPEED = 1000 // px per sec
 export const NOTE_TRAVEL_DURATION = (HEIGHT / SCROLL_SPEED) * 1000
 export const JUDGEMENT_LINE_OFFSET_Y = 80
-export const OFFSET = 50 // ms ************** CHART OFFSET
+export const OFFSET = 0  // ms ************** CHART OFFSET
 // if you're early, adjust down
 // if you're late, adjust up
 export const NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION =

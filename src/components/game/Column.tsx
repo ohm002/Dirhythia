@@ -1,4 +1,5 @@
-import { Container, useTick } from '@inlet/react-pixi'
+import { Container, useTick, Text } from '@inlet/react-pixi'
+import { BLEND_MODES, TextStyle } from 'pixi.js'
 import { useMemo, useState } from 'react'
 import {
   COL_1_KEY,
@@ -6,6 +7,7 @@ import {
   COL_3_KEY,
   COL_4_KEY,
   COL_WIDTH,
+  HEIGHT,
   PLAYFIELD_WIDTH,
   WIDTH,
 } from '../../libs/options'
@@ -89,11 +91,19 @@ export default function Column(props: ColumnProps) {
             props.game.key[props.i - 1] = '01'
             var check = async () => {
               if (offset <= hitWindow300) {
-                await props.game.hit("perfect", clickedHitObject.startTime, props.i)
+                await props.game.hit(
+                  'perfect',
+                  clickedHitObject.startTime,
+                  props.i
+                )
               } else if (hitWindow300 < offset && offset <= hitWindow100) {
-                await props.game.hit("great", clickedHitObject.startTime, props.i)
+                await props.game.hit(
+                  'great',
+                  clickedHitObject.startTime,
+                  props.i
+                )
               } else if (hitWindow100 < offset && offset <= hitWindow50) {
-                await props.game.hit("ok", clickedHitObject.startTime, props.i)
+                await props.game.hit('ok', clickedHitObject.startTime, props.i)
               }
             }
             check()
