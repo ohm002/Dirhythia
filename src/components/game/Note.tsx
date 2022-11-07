@@ -1,5 +1,13 @@
-import { Container, Sprite, useTick, Text } from '@inlet/react-pixi'
-import { BLEND_MODES, TextStyle } from 'pixi.js'
+import { Container, Sprite, useTick, Text, useApp } from '@inlet/react-pixi'
+import {
+  BLEND_MODES,
+  Text as PIXITEXT,
+  TextStyle,
+  Sprite as SPRITE,
+  Texture,
+  Application,
+} from 'pixi.js'
+import PIXI from 'pixi.js'
 import { useState } from 'react'
 import hit from '../../assets/hit.png'
 import note from '../../assets/note.png'
@@ -21,6 +29,9 @@ import {
   WIDTH,
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
+import PlayField from './PlayField'
+import { triggereffect } from './Display'
+
 type NoteProps = {
   x: number
   startTime: number
@@ -99,7 +110,6 @@ export default function Note(props: NoteProps) {
         )
       )
       if (clicked) {
-        // hit effect
         setEffAlpha(
           interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0])
         )
@@ -107,30 +117,8 @@ export default function Note(props: NoteProps) {
       }
     }
   })
-  const font = new TextStyle({
-    fontFamily: 'Courier New',
-    fontWeight: 'bold',
-    align: 'center',
-    fill: '#ffffff',
-    fontSize: 10,
-  })
-  const sprites = {
-    '': miss,
-    perfect: perfect,
-    great: great,
-    ok: ok,
-  }
   return (
     <Container>
-      <Text
-        text={score.toUpperCase()}
-        x={cursorx - WIDTH / 2 + props.x}
-        y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y + 20}
-        alpha={effalpha}
-        tint={color}
-        style={font}
-        anchor={[0.5, 0.5]}
-      />
       <Sprite
         image={hit}
         x={cursorx - WIDTH / 2 + props.x}

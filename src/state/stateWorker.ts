@@ -1,5 +1,5 @@
+import { triggereffect } from '../components/game/Display'
 import { GameState } from './GameState'
-
 export async function hit(
   score: string,
   time: number,
@@ -12,6 +12,7 @@ export async function hit(
       valid = false
     }
   })
+  triggereffect(time, score)
   if (valid) {
     game.score += game.idtoscore(score)
     game.combo += 1

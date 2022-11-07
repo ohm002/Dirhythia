@@ -1,5 +1,5 @@
-import { Container, useTick, Text } from '@inlet/react-pixi'
-import { BLEND_MODES, TextStyle } from 'pixi.js'
+import { Container, useTick, Text, useApp } from '@inlet/react-pixi'
+import { BLEND_MODES, TextStyle, Sprite as SPRITE, Application } from 'pixi.js'
 import { useMemo, useState } from 'react'
 import {
   COL_1_KEY,
@@ -55,7 +55,6 @@ const hitWindow300 = 50 // ms
 const hitWindow100 = 100 // ms
 const hitWindow50 = maxAcceptableOffset // ms
 
-const Worker = createWorkerFactory(() => import('../../state/stateWorker'))
 export default function Column(props: ColumnProps) {
   if (props.hitObjects.length == 0) {
     return null
@@ -68,15 +67,12 @@ export default function Column(props: ColumnProps) {
   const [nextObjIndex, setNextObjIndex] = useState(0)
   const nextObj = useMemo(() => props.hitObjects[nextObjIndex], [nextObjIndex])
   const [checkHold, setcheckHold] = useState(-1)
-  const stateWorker = useWorker(Worker)
   const hitsound = new Audio()
   hitsound.src = '../'
   let holds = props.hitObjects.filter((t) => {
     return t.type == 'hold' && t.column == props.i
   })
-  const miss = async (a: number, b: number) => {
-    await useWorker.miss(a, b, props.game)
-  }
+
   useTick(() => {
     isPlaying = props.game.isPlaying
     if (isPlaying) {
@@ -97,26 +93,19 @@ export default function Column(props: ColumnProps) {
             props.game.key[props.i - 1] = '01'
             const check = async () => {
               if (offset <= hitWindow300) {
-                await stateWorker.hit(
+                await props.game.hit(
                   'perfect',
                   clickedHitObject.startTime,
-                  props.i,
-                  props.game
+                  props.i
                 )
               } else if (hitWindow300 < offset && offset <= hitWindow100) {
-                await stateWorker.hit(
+                await props.game.hit(
                   'great',
                   clickedHitObject.startTime,
-                  props.i,
-                  props.game
+                  props.i
                 )
               } else if (hitWindow100 < offset && offset <= hitWindow50) {
-                await stateWorker.hit(
-                  'ok',
-                  clickedHitObject.startTime,
-                  props.i,
-                  props.game
-                )
+                await props.game.hit('ok', clickedHitObject.startTime, props.i)
               }
             }
             check()
@@ -135,15 +124,15 @@ export default function Column(props: ColumnProps) {
             } else if (currentTime >= checkHold) {
               setcheckHold(checkHold + 60000 / 170)
               if (props.game.key[props.i - 1][1] == '0') {
-                miss(currenthold.startTime, props.i + 5)
+                props.game.miss(currenthold.startTime, props.i + 5)
               }
             }
           }
-          if (nextObj != undefined) {
-            if (currentTime > nextObj.startTime + 150) {
-              miss(nextObj.startTime, props.i)
-              setNextObjIndex(nextObjIndex + 1)
-            }
+        }
+        if (nextObj != undefined) {
+          if (currentTime > nextObj.startTime + 150) {
+            props.game.miss(nextObj.startTime, props.i)
+            setNextObjIndex(nextObjIndex + 1)
           }
         }
       }

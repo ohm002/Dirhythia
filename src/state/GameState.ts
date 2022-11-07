@@ -1,3 +1,4 @@
+import { triggereffect } from '../components/game/Display'
 import { WIDTH } from '../libs/options'
 import { Beatmap } from '../types/Beatmap'
 
@@ -21,7 +22,9 @@ export class GameState {
   isPlaying: boolean
   key: string[]
   currenttime: number
+  highestcombo: number
   beatmap: Beatmap
+  maxcombo: number
 
   constructor(
     volume: number,
@@ -29,7 +32,8 @@ export class GameState {
     scrollspeed: number,
     audiopath: string,
     maxscore: number,
-    beatmap: Beatmap
+    beatmap: Beatmap,
+    maxcombo: number
   ) {
     // this.data = [
     //   {
@@ -55,6 +59,8 @@ export class GameState {
     GAME_AUDIO.src = this.audiopath
     this.effectvolume = effect
     this.scrollspeed = scrollspeed
+    this.highestcombo = 0
+    this.maxcombo = maxcombo
     this.score = 0
     this.maxscore = maxscore
     this.combo = 0
@@ -66,6 +72,29 @@ export class GameState {
     this.hitlist = []
   }
 
+  async miss(time: number, key: number) {
+    this.combo = 0
+    this.hitlist.push(time.toString() + key.toString() + 'miss')
+  }
+
+  async hit(score: string, time: number, key: number) {
+    let valid = true
+    this.hitlist.forEach((element) => {
+      if (element.startsWith(time.toString() + key.toString()) && key < 6) {
+        valid = false
+      }
+    })
+    if (valid) {
+      this.score += this.idtoscore(score)
+      this.combo += 1
+      if (this.combo > this.highestcombo) this.highestcombo = this.combo 
+      triggereffect(time, score)
+      this.hitlist.push(time.toString() + key.toString() + ',' + score)
+      return true
+    } else {
+      return false
+    }
+  }
   play() {
     this.isPlaying = true
     this.score = 0

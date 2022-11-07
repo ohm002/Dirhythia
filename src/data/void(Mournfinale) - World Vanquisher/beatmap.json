@@ -607,99 +607,123 @@
   "cursor": [
     {
       "x": 0,
-      "startTime": 13285
+      "startTime": 13285,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 13462
+      "startTime": 13462,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 13815
+      "startTime": 13815,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 14168
+      "startTime": 14168,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 14521
+      "startTime": 14521,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 14874
+      "startTime": 14874,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 15227
+      "startTime": 15227,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 16285
+      "startTime": 16285,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 16638
+      "startTime": 16638,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 16991
+      "startTime": 16991,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 17344
+      "startTime": 17344,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 17697
+      "startTime": 17697,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 18050
+      "startTime": 18050,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 19109
+      "startTime": 19109,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 19462
+      "startTime": 19462,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 19815
+      "startTime": 19815,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 20168
+      "startTime": 20168,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 20521
+      "startTime": 20521,
+      "type": "normal"
     },
     {
       "x": 0,
-      "startTime": 20874
+      "startTime": 20874,
+      "type": "normal"
     },
     {
       "x": 1,
-      "startTime": 22462
+      "startTime": 22462,
+      "type": "slam"
     },
     {
       "x": 0,
-      "startTime": 22638
+      "startTime": 22638,
+      "type": "slam"
     },
     {
       "x": 1,
-      "startTime": 22815
+      "startTime": 22815,
+      "type": "slam"
     },
     {
       "x": 0,
-      "startTime": 22991
+      "startTime": 22991,
+      "type": "slam"
     },
     {
       "x": 0,
-      "startTime": 160109
+      "startTime": 160109,
+      "type": "normal"
     }
   ],
   "timingPoints": [

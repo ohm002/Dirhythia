@@ -1,7 +1,14 @@
 import { useEffect } from 'react'
-import { Container, Sprite, useTick } from '@inlet/react-pixi'
+import { Container, Sprite, useApp, useTick } from '@inlet/react-pixi'
 import { Beatmap } from '../../types/Beatmap'
-import { BLEND_MODES, filters, Texture } from 'pixi.js'
+import {
+  BLEND_MODES,
+  filters,
+  Texture,
+  Text,
+  TextStyle,
+  Sprite as SPRITE,
+} from 'pixi.js'
 import Column from './Column'
 import {
   WIDTH,
@@ -14,6 +21,7 @@ import Cursor from './Cursor'
 import CursorNote from './CursorNote'
 import React from 'react'
 import judgement from '../../assets/judgement.png'
+import hit from '../../assets/great.png'
 import bg from '../../data/void(Mournfinale) - World Vanquisher/87729274_p0.jpg'
 
 type PlayFieldProps = {
@@ -44,6 +52,7 @@ export default function PlayField(props: PlayFieldProps) {
           beatmap={props.beatmap}
           key={-1}
           i={-1}
+          type={'normal'}
           game={props.game}
         />
         {props.beatmap.cursor.map((hitObject, i) => (
@@ -52,6 +61,7 @@ export default function PlayField(props: PlayFieldProps) {
             beatmap={props.beatmap}
             key={i}
             i={i}
+            type={hitObject.type}
             game={props.game}
           />
         ))}

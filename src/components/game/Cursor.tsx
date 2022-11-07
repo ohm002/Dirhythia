@@ -32,9 +32,7 @@ const getColKey = (i: number) => {
   return i > 0 ? CURSOR_LEFT_KEY : i < 0 ? CURSOR_RIGHT_KEY : undefined
 }
 
-const Worker = createWorkerFactory(() => import('../../state/stateWorker'))
 export default function Cursor(props: Props) {
-  const stateWorker = useWorker(Worker)
   const [x, setX] = useState(0.5)
   const [nextObjIndex, setNextObjIndex] = useState(0)
   let playStartTime = props.game.playStartTime
@@ -50,13 +48,13 @@ export default function Cursor(props: Props) {
           props.cursors[index + 1] != undefined
             ? props.cursors[index + 1].startTime
             : props.game.audio.duration * 1000
-        if (currentTime >= element.startTime && nexttime >= currentTime) {
+        if (currentTime >= element.startTime && nexttime >= currentTime && element.type == "normal") {
           setX(element.x)
         }
       }
       if (nextObj != undefined) {
         if (currentTime > nextObj.startTime + 150) {
-          stateWorker.miss(nextObj.startTime, 5, props.game)
+          props.game.miss(nextObj.startTime, 5)
           setNextObjIndex(nextObjIndex + 1)
         }
       }
@@ -88,8 +86,8 @@ export default function Cursor(props: Props) {
                 valid == false
             })
             var result = async () => {
-              await stateWorker
-                .hit("perfect", clickedHitObject.startTime, 5, props.game)
+              await props.game
+                .hit("perfect", clickedHitObject.startTime, 5)
                 .then((res) => {
                   if (res){
                     setNextObjIndex(nextObjIndex + 1)
@@ -125,8 +123,8 @@ export default function Cursor(props: Props) {
           if (clickedHitObject) {
             const offset = Math.abs(clickedHitObject.startTime - currentTime)
             var result = async () => {
-              await stateWorker
-                .hit("perfect", clickedHitObject.startTime, 5, props.game)
+              await props.game
+                .hit("perfect", clickedHitObject.startTime, 5)
                 .then((res) => {
                   if (res){
                     setNextObjIndex(nextObjIndex + 1)
@@ -142,17 +140,5 @@ export default function Cursor(props: Props) {
       document.removeEventListener('keydown', handleKeydown)
     }
   }, [nextObj, x])
-  return (
-    <Sprite
-      texture={Texture.WHITE}
-      x={WIDTH / 2 - CURSOR_AREA / 2 + x * CURSOR_AREA}
-      y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
-      anchor={[0.5, 0.5]}
-      width={10}
-      height={10}
-      angle={45}
-      blendMode={BLEND_MODES.ADD}
-      alpha={0.5}
-    />
-  )
+  return (null)
 }

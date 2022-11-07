@@ -14,16 +14,21 @@ import {
   COL_4_KEY,
   CURSOR_LEFT_KEY,
   CURSOR_RIGHT_KEY,
+  PLAYFIELD_WIDTH,
+  JUDGEMENT_LINE_OFFSET_Y,
 } from './libs/options'
-import { Stage, useTick } from '@inlet/react-pixi'
+import { Stage, useApp, useTick } from '@inlet/react-pixi'
 import Display from './components/game/Display'
 import css from './index.css'
 import { parseBeatmap } from './libs/parseBeatmap'
 import { Beatmap } from './types/Beatmap'
+import { Application, TextStyle } from 'pixi.js'
+import { Text } from 'pixi.js'
 type AppProps = {
   mode: 'play' | 'editor'
   chart: Beatmap
 }
+
 export default function App(props: AppProps) {
   const beatmap = props.chart
   const { audioPath } = beatmap
@@ -38,19 +43,23 @@ export default function App(props: AppProps) {
     w.startTime = w.startTime + OFFSET
   })
   let maxscore = 0
+  let maxcombo = 0
   beatmap.hitObjects.forEach((e) => {
     maxscore += 100
+    maxcombo += 1
   })
   beatmap.cursor.forEach((e, i) => {
     if (beatmap.cursor[i - 1]) {
       if (beatmap.cursor[i - 1].x != e.x) {
         maxscore += 100
+        maxcombo += 1
       }
     } else {
       maxscore += 100
+      maxcombo += 1
     }
   })
-  const GAME = new GameState(10, 10, 400, audioPath, maxscore, beatmap)
+  const GAME = new GameState(10, 10, 400, audioPath, maxscore, beatmap, maxcombo)
   GAME.setAudioPath(audioPath)
   const musicVolume = GAME.audiovolume
   const effectVolume = GAME.effectvolume
@@ -58,10 +67,10 @@ export default function App(props: AppProps) {
   const clearCacheData = () => {
     caches.keys().then((names) => {
       names.forEach((name) => {
-        caches.delete(name);
-      });
-    });
-  };
+        caches.delete(name)
+      })
+    })
+  }
   const handlePlay: MouseEventHandler = (e) => {
     GAME.setVolume(musicVolume / 100)
     GAME.play()
@@ -122,6 +131,7 @@ export default function App(props: AppProps) {
       document.removeEventListener('keydown', handleRetry)
     }
   }, [])
+
   return (
     <>
       <button className="border border-black py-2 px-3" onClick={handlePlay}>

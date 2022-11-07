@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { interpolate } from '../../libs/interpolate'
 import vertical from '../../assets/vertical.png'
 import judgement from '../../assets/judgement.png'
+import judgement2 from '../../assets/judgement2.png'
 import {
   COLCOLOR,
   COL_WIDTH,
@@ -28,7 +29,8 @@ import { TimingPoint } from '../../types/TimingPoint'
 type CursorNoteProps = {
   x: number
   game: GameState
-  key: number
+  key: number,
+  type: string,
   i: number
   beatmap: Beatmap
 }
@@ -37,6 +39,7 @@ export default function CursorNote(props: CursorNoteProps) {
   let isPlaying = props.game.isPlaying
   // console.log(props.game.audio.duration)
   let effectVolume = props.game.effectvolume
+  const notex = props.x
   let endTime =
     props.beatmap.cursor[props.i + 1] != undefined
       ? props.beatmap.cursor[props.i + 1].startTime
@@ -50,9 +53,10 @@ export default function CursorNote(props: CursorNoteProps) {
   let lastpos =
     props.i == 0
       ? 0.5
-      : props.beatmap.cursor[props.i - 1] != undefined
+      : props.beatmap.cursor[props.i - 1] != undefined && props.type == "normal"
       ? props.beatmap.cursor[props.i - 1].x
       : startpos
+  const trackx = props.type == "normal" ? props.x : lastpos
   let Duration = endTime - startTime
   const height = Math.round((Duration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
@@ -84,7 +88,7 @@ export default function CursorNote(props: CursorNoteProps) {
         width={PLAYFIELD_WIDTH * 1.3}
         height={height}
         x={interpolate(
-          props.x,
+          trackx,
           [0, 1],
           [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
@@ -95,25 +99,25 @@ export default function CursorNote(props: CursorNoteProps) {
         alpha={1}
       />
       <Sprite
-        image={judgement}
+        image={judgement2}
         x={interpolate(
           props.x,
           [0, 1],
           [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
-        y={y + height+100}
+        y={y + height}
         tint={lastpos > startpos ? 0x57d8ff : 0xff5986}
         anchor={lastpos > startpos ? [0, 1] : [1, 1]}
         alpha={1}
         width={Math.abs(lastpos - startpos) * CURSOR_AREA}
         blendMode={BLEND_MODES.ADD}
-        height={200}
+        height={300}
       />
       <Sprite
         texture={Texture.WHITE}
         tint={COLCOLOR[0]}
         x={interpolate(
-          props.x,
+          trackx,
           [0, 1],
           [
             WIDTH / 2 - CURSOR_AREA / 2 - COL_WIDTH,
@@ -130,7 +134,7 @@ export default function CursorNote(props: CursorNoteProps) {
         texture={Texture.WHITE}
         tint={COLCOLOR[1]}
         x={interpolate(
-          props.x,
+          trackx,
           [0, 1],
           [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
@@ -144,7 +148,7 @@ export default function CursorNote(props: CursorNoteProps) {
         texture={Texture.WHITE}
         tint={COLCOLOR[2]}
         x={interpolate(
-          props.x,
+          trackx,
           [0, 1],
           [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
@@ -158,7 +162,7 @@ export default function CursorNote(props: CursorNoteProps) {
         texture={Texture.WHITE}
         tint={COLCOLOR[3]}
         x={interpolate(
-          props.x,
+          trackx,
           [0, 1],
           [
             WIDTH / 2 - CURSOR_AREA / 2 + COL_WIDTH,
@@ -174,7 +178,7 @@ export default function CursorNote(props: CursorNoteProps) {
       <Sprite
         image={vertical}
         x={interpolate(
-          props.x,
+          trackx,
           [0, 1],
           [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
@@ -188,7 +192,7 @@ export default function CursorNote(props: CursorNoteProps) {
       <Sprite
         image={vertical}
         x={interpolate(
-          props.x,
+          trackx,
           [0, 1],
           [
             WIDTH / 2 - CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
@@ -206,7 +210,7 @@ export default function CursorNote(props: CursorNoteProps) {
       <Sprite
         image={vertical}
         x={interpolate(
-          props.x,
+          trackx,
           [0, 1],
           [
             WIDTH / 2 - CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
