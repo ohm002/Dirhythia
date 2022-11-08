@@ -61,46 +61,6 @@ export default function Cursor(props: Props) {
     }
   })
   useEffect(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      if (nextObj != undefined)
-        if (
-          e.key ==
-          getColKey(
-            props.cursors[nextObjIndex - 1] == undefined
-              ? x - nextObj.x
-              : props.cursors[nextObjIndex - 1].x - nextObj.x
-          )
-        ) {
-          const currentTime = Date.now() - playStartTime
-          // find the hit object that player tried to click
-          const clickedHitObject =
-            nextObj.startTime >= currentTime - maxAcceptableOffset &&
-            nextObj.startTime <= currentTime + maxAcceptableOffset
-              ? nextObj
-              : undefined
-          if (clickedHitObject) {
-            const offset = Math.abs(clickedHitObject.startTime - currentTime)
-            let valid = true
-            props.game.hitlist.forEach((element) => {
-              if (element == clickedHitObject.startTime.toString() + 5)
-                valid == false
-            })
-            var result = async () => {
-              await props.game
-                .hit("perfect", clickedHitObject.startTime, 5)
-                .then((res) => {
-                  if (res){
-                    setNextObjIndex(nextObjIndex + 1)
-                  }
-                })
-            }
-            result()
-          }
-        }
-    }
-    if (props.game.mode == 'play')
-      document.addEventListener('keypress', handleKeydown)
-
     function validmouse(i: number) {
       if (nextObj) {
         if (x > nextObj.x && i < 0) {
@@ -136,9 +96,7 @@ export default function Cursor(props: Props) {
         }
       })
     }
-    return () => {
-      document.removeEventListener('keydown', handleKeydown)
-    }
+    return () => {}
   }, [nextObj, x])
   return (null)
 }

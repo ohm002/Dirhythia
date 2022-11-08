@@ -5,6 +5,7 @@ import {
   Text as PIXITEXT,
   Texture,
   Sprite as SPRITE,
+  filters,
 } from 'pixi.js'
 import { useState } from 'react'
 import { HEIGHT, WIDTH } from '../../libs/options'
@@ -27,30 +28,53 @@ const sprites = {
   ok: ok,
 }
 
-const text = SPRITE.from(miss)
-text.width = 100
-text.height = 100
+// const text = SPRITE.from(miss
+const text = new PIXITEXT(
+  '',
+  new TextStyle({
+    fontFamily: 'Courier New',
+    fontWeight: 'bold',
+    align: 'center',
+    fill: '#ffffff',
+    fontSize: 20,
+  })
+)
+text.anchor.set(0.5)
 text.name = 'scoretext'
-text.texture = Texture.from(sprites[''])
+const textblur = new PIXITEXT(
+  '',
+  new TextStyle({
+    fontFamily: 'Courier New',
+    fontWeight: 'bold',
+    align: 'center',
+    fill: '#ffffff',
+    fontSize: 20,
+  })
+)
+textblur.anchor.set(0.5)
+textblur.name = 'scoretext'
+// text.texture = Texture.from(sprites[''])
 
 let clicktime = -1
 
 export function triggereffect(time: number, score: string) {
   clicktime = time
-  text.texture = Texture.from(sprites[score] as string)
+  text.text = score.toUpperCase()
 }
 
 export default function Display(props: Props) {
   const [combo, setCombo] = useState('0')
   const app = useApp()
-  app.stage.addChild(text)
   text.x = WIDTH / 2
   text.y = HEIGHT / 2
   text.alpha = 0
+  textblur.filters = [new filters.BlurFilter(10)]
+  app.stage.addChild(text)
+  app.stage.addChild(textblur)
 
   useTick(() => {
     const currentTime = props.game.currenttime
-    text.alpha = interpolate(currentTime, [clicktime, clicktime + 100], [1, 0])
+    text.alpha = interpolate(currentTime, [clicktime, clicktime + 500], [1, 0])
     setCombo(props.game.combo.toString())
   })
 

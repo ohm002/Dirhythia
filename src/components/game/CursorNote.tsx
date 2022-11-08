@@ -29,8 +29,8 @@ import { TimingPoint } from '../../types/TimingPoint'
 type CursorNoteProps = {
   x: number
   game: GameState
-  key: number,
-  type: string,
+  key: number
+  type: string
   i: number
   beatmap: Beatmap
 }
@@ -50,13 +50,14 @@ export default function CursorNote(props: CursorNoteProps) {
   let startpos = props.beatmap.cursor[props.i]
     ? props.beatmap.cursor[props.i].x
     : 0.5
-  let lastpos =
-    props.i == 0
-      ? 0.5
-      : props.beatmap.cursor[props.i - 1] != undefined && props.type == "normal"
-      ? props.beatmap.cursor[props.i - 1].x
-      : startpos
-  const trackx = props.type == "normal" ? props.x : lastpos
+  let lastpos = 0.5
+  for (let index = 1; index < props.i + 1; index++) {
+    if (props.beatmap.cursor[props.i - index].type == 'normal') {
+      lastpos = props.beatmap.cursor[props.i - index].x
+      break
+    }
+  }
+  const trackx = props.type == 'normal' ? props.x : lastpos
   let Duration = endTime - startTime
   const height = Math.round((Duration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
@@ -124,7 +125,7 @@ export default function CursorNote(props: CursorNoteProps) {
             WIDTH / 2 + CURSOR_AREA / 2 - COL_WIDTH,
           ]
         )}
-        alpha={.1}
+        alpha={0.1}
         y={y + height}
         anchor={[1, 1]}
         height={height}
@@ -170,7 +171,7 @@ export default function CursorNote(props: CursorNoteProps) {
           ]
         )}
         y={y + height}
-        alpha={.1}
+        alpha={0.1}
         anchor={[0, 1]}
         height={height}
         width={COL_WIDTH}
@@ -201,7 +202,7 @@ export default function CursorNote(props: CursorNoteProps) {
         )}
         y={y + height}
         anchor={[0.5, 1]}
-        alpha={.2}
+        alpha={0.2}
         blendMode={BLEND_MODES.ADD}
         width={100}
         height={height}
@@ -219,7 +220,7 @@ export default function CursorNote(props: CursorNoteProps) {
         )}
         y={y + height}
         anchor={[0.5, 1]}
-        alpha={.2}
+        alpha={0.2}
         blendMode={BLEND_MODES.ADD}
         width={100}
         height={height}

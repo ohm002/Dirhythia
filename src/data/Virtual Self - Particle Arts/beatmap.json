@@ -39,8 +39,14 @@
     },
 
     {
-      "x": 0.5,
-      "startTime": 100000,
+      "x": 0,
+      "startTime": 3000,
+      "type": "normal"
+    },
+
+    {
+      "x": 0,
+      "startTime": 300000000,
       "type": "normal"
     }
   ],

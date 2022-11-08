@@ -17,7 +17,7 @@ import {
   PLAYFIELD_WIDTH,
   JUDGEMENT_LINE_OFFSET_Y,
 } from './libs/options'
-import { Stage, useApp, useTick } from '@inlet/react-pixi'
+import { Stage, useApp, useTick, Container } from '@inlet/react-pixi'
 import Display from './components/game/Display'
 import css from './index.css'
 import { parseBeatmap } from './libs/parseBeatmap'
@@ -59,7 +59,15 @@ export default function App(props: AppProps) {
       maxcombo += 1
     }
   })
-  const GAME = new GameState(10, 10, 400, audioPath, maxscore, beatmap, maxcombo)
+  const GAME = new GameState(
+    10,
+    10,
+    400,
+    audioPath,
+    maxscore,
+    beatmap,
+    maxcombo
+  )
   GAME.setAudioPath(audioPath)
   const musicVolume = GAME.audiovolume
   const effectVolume = GAME.effectvolume

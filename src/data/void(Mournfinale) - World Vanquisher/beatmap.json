@@ -703,22 +703,22 @@
     {
       "x": 1,
       "startTime": 22462,
-      "type": "slam"
+      "type": "normal"
     },
     {
       "x": 0,
       "startTime": 22638,
-      "type": "slam"
+      "type": "normal"
     },
     {
       "x": 1,
       "startTime": 22815,
-      "type": "slam"
+      "type": "normal"
     },
     {
       "x": 0,
       "startTime": 22991,
-      "type": "slam"
+      "type": "normal"
     },
     {
       "x": 0,

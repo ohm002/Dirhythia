@@ -30,6 +30,22 @@ type PlayFieldProps = {
 }
 
 export default function PlayField(props: PlayFieldProps) {
+  // const app = useApp()
+  // const observer = new ResizeObserver(([entry]) => {
+  //   function getWidth() {
+  //     return Math.max(
+  //       document.body.offsetWidth,
+  //       document.documentElement.offsetWidth,
+  //       document.documentElement.clientWidth
+  //     )
+  //   }
+  //   function getHeight() {
+  //     return Math.max(document.documentElement.clientHeight)
+  //   }
+  //   app.renderer.resize(getWidth(), getHeight())
+  //   console.log(getWidth(), getHeight(),app.renderer.width, app.renderer.height)
+  // })
+  // observer.observe(document.getElementsByTagName('html')[0])
   useTick(() => {
     if (props.game.isPlaying) {
       var currentTime = Date.now() - props.game.playStartTime
@@ -44,7 +60,7 @@ export default function PlayField(props: PlayFieldProps) {
           width={WIDTH}
           height={HEIGHT}
           blendMode={BLEND_MODES.ADD}
-          filters={[new filters.BlurFilter(20)]}
+          // filters={[new filters.BlurFilter(20)]}
           alpha={0.2}
         />
         <CursorNote
