@@ -17,38 +17,6 @@
     }
   ],
   "cursor": [
-    {
-      "x": 0,
-      "startTime": 1000,
-      "type": "slam"
-    },
-    {
-      "x": 1,
-      "startTime": 1500,
-      "type": "slam"
-    },
-    {
-      "x": 0,
-      "startTime": 2000,
-      "type": "slam"
-    },
-    {
-      "x": 1,
-      "startTime": 2500,
-      "type": "slam"
-    },
-
-    {
-      "x": 0,
-      "startTime": 3000,
-      "type": "normal"
-    },
-
-    {
-      "x": 0,
-      "startTime": 300000000,
-      "type": "normal"
-    }
   ],
   "timingPoints": [
     {

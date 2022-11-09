@@ -8,6 +8,8 @@ import {
   Text,
   TextStyle,
   Sprite as SPRITE,
+  TextureLoader,
+  Loader
 } from 'pixi.js'
 import Column from './Column'
 import {
@@ -52,17 +54,20 @@ export default function PlayField(props: PlayFieldProps) {
       props.game.currenttime = currentTime
     }
   })
+  const app = useApp()
+  const bgimage = SPRITE.from(bg)
+  app.stage.addChild(bgimage)
+  // const ratio = bgimage.width * WIDTH
+  bgimage.width = WIDTH
+  bgimage.height = HEIGHT
+  bgimage.blendMode = BLEND_MODES.ADD
+  bgimage.x = WIDTH / 2
+  bgimage.y = HEIGHT / 2
+  bgimage.anchor.set(0.5, 0.5)
+  bgimage.alpha = 0.2
   return (
     <>
       <Container>
-        <Sprite
-          image={bg}
-          width={WIDTH}
-          height={HEIGHT}
-          blendMode={BLEND_MODES.ADD}
-          // filters={[new filters.BlurFilter(20)]}
-          alpha={0.2}
-        />
         <CursorNote
           x={0.5}
           beatmap={props.beatmap}

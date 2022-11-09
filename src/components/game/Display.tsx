@@ -83,7 +83,7 @@ export default function Display(props: Props) {
       <Text
         text={combo}
         x={WIDTH - 20}
-        y={15}
+        y={0}
         blendMode={BLEND_MODES.ADD}
         anchor={[1, 0]}
         alpha={0.5}
@@ -100,17 +100,17 @@ export default function Display(props: Props) {
       <Text
         text={props.game.highestcombo + ' / ' + props.game.maxcombo}
         x={WIDTH - 20}
-        y={60}
+        y={50}
         blendMode={BLEND_MODES.ADD}
         anchor={[1, 0]}
         alpha={0.5}
         style={
           new TextStyle({
             fontFamily: 'Courier New',
-            fontWeight: 'bold',
+            // fontWeight: 'bold',
             align: 'center',
             fill: '#ffffff',
-            fontSize: 25,
+            fontSize: 20,
           })
         }
       />
@@ -135,11 +135,11 @@ export default function Display(props: Props) {
       />
       <Text
         text={
-          '( ' +
+          '(' +
           Math.round(
             (props.game.score / props.game.maxscore) * 100
           ).toString() +
-          '% )'
+          '% MAX)'
         }
         x={10}
         y={45}
@@ -149,7 +149,6 @@ export default function Display(props: Props) {
         style={
           new TextStyle({
             fontFamily: 'Courier New',
-            fontWeight: 'bold',
             align: 'center',
             fill: '#ffffff',
             fontSize: 20,

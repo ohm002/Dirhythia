@@ -80,7 +80,7 @@ export class GameState {
   async hit(score: string, time: number, key: number) {
     let valid = true
     this.hitlist.forEach((element) => {
-      if (element.startsWith(time.toString() + key.toString()) && key < 6) {
+      if (element.startsWith(time.toString() + key.toString())) {
         valid = false
       }
     })

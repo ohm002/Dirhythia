@@ -33,9 +33,10 @@ export default function Hold(props: HoldProps) {
   const height = Math.round((holdDuration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
   const [alpha, setAlpha] = useState(1)
+  const [holdfade, setHoldfade] = useState(0.5)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
-  let [clicked, setclicked] = useState(false)
+  const [clicked, setclicked] = useState('')
 
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
@@ -61,19 +62,22 @@ export default function Hold(props: HoldProps) {
               props.game.beatmap.cursor[depth].x * CURSOR_AREA
           )
       }
-      if (props.game.hitlist.length > 0)
+      if (props.game.hitlist.length > 0) {
         props.game.hitlist.forEach((element: any) => {
           if (
             element.startsWith(
               props.startTime.toString() + props.keys.toString()
-            ) &&
-            !element.endsWith('miss') &&
-            clicktime == -1
+            )
           ) {
-            setclicked(true)
-            setclicktime(currentTime)
+            if (!element.endsWith('miss') && clicktime == -1 && clicked == '') {
+              setclicked('true')
+              setclicktime(currentTime)
+            } else if (element.endsWith('miss')) {
+              setclicked('false')
+            }
           }
         })
+      }
 
       setY(
         interpolate(
@@ -97,11 +101,14 @@ export default function Hold(props: HoldProps) {
           [1, 0]
         )
       )
-      if (clicked) {
+      if (clicked == 'true') {
         setEffAlpha(
-          interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0])
+          interpolate(currentTime, [clicktime, clicktime + 500], [1, 0])
         )
         setAlpha(0)
+        setHoldfade(1)
+      } else if (clicked == 'false') {
+        setHoldfade(0.2)
       }
     }
   })
@@ -113,9 +120,8 @@ export default function Hold(props: HoldProps) {
         x={cursorx - WIDTH / 2 + props.x}
         y={y + height}
         tint={color}
-        alpha={0.5}
+        alpha={holdfade}
         anchor={[0.5, 1]}
-        blendMode={BLEND_MODES.ADD}
         width={HOLD_WIDTH}
         height={height}
       />
@@ -123,10 +129,10 @@ export default function Hold(props: HoldProps) {
         image={hit}
         x={cursorx - WIDTH / 2 + props.x}
         y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
-        width={COL_WIDTH * 1.2}
-        height={NOTE_HEIGHT * 2}
+        width={COL_WIDTH * 5}
+        height={NOTE_HEIGHT * 3}
         alpha={effalpha}
-        blendMode={BLEND_MODES.ADD}
+        blendMode={BLEND_MODES.ADD_NPM}
         tint={color}
         anchor={[0.5, 0.5]}
       />

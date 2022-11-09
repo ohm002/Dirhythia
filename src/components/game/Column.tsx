@@ -69,13 +69,17 @@ export default function Column(props: ColumnProps) {
   const [checkHold, setcheckHold] = useState(-1)
   const hitsound = new Audio()
   hitsound.src = '../'
-  let holds = props.hitObjects.filter((t) => {
-    return t.type == 'hold' && t.column == props.i
-  })
-
+  let holds = props.hitObjects
+    .filter((t) => {
+      return t.type == 'hold' && t.column == props.i
+    })
+    .sort((a, b) => {
+      return a.startTime - b.startTime
+    })
   useTick(() => {
     isPlaying = props.game.isPlaying
     if (isPlaying) {
+      // if (props.i == 1) console.log(props.game.key[props.i - 1])
       effectVolume = props.game.effectvolume
       playStartTime = props.game.playStartTime
       const currentTime = props.game.currenttime
@@ -110,24 +114,27 @@ export default function Column(props: ColumnProps) {
             }
             check()
           }
-          // inconsistent hold amount
-          let currenthold = holds.filter((t) => {
-            return (
-              t.endTime != undefined &&
-              t.startTime <= currentTime &&
-              t.endTime >= currentTime
-            )
-          })[0]
-          if (currenthold != undefined) {
-            if (checkHold < currenthold.startTime) {
-              setcheckHold(currenthold.startTime)
-            } else if (currentTime >= checkHold) {
-              setcheckHold(checkHold + 60000 / 170)
-              if (props.game.key[props.i - 1][1] == '0') {
-                props.game.miss(currenthold.startTime, props.i + 5)
-              }
+        }
+        // inconsistent hold amount
+        let currenthold = holds.filter((t) => {
+          return t.endTime != undefined && t.endTime >= currentTime
+        })[0]
+        if (currenthold != undefined) {
+          if (checkHold < currenthold.startTime) {
+            setcheckHold(currenthold.startTime + 100)
+            // change to bpm                    ^
+          } else if (currentTime >= checkHold && checkHold != -1) {
+            setcheckHold(checkHold + 100)
+            // change to bpm         ^
+            if (props.game.key[props.i - 1][1] == '0') {
+              props.game.miss(currenthold.startTime, props.i)
             }
           }
+          // if (
+          //   Math.abs(currentTime - currenthold.endTime) < 10 &&
+          //   props.game.key[props.i - 1][1] == '1'
+          // )
+          //   props.game.hit('perfect', currenthold.startTime, props.i + 6)
         }
         if (nextObj != undefined) {
           if (currentTime > nextObj.startTime + 150) {

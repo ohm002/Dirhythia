@@ -44,10 +44,16 @@ export default function App(props: AppProps) {
   })
   let maxscore = 0
   let maxcombo = 0
+
   beatmap.hitObjects.forEach((e) => {
     maxscore += 100
     maxcombo += 1
+    if (e.type == 'hold') {
+      maxscore += 100
+      maxcombo += 1
+    }
   })
+  // add slam support
   beatmap.cursor.forEach((e, i) => {
     if (beatmap.cursor[i - 1]) {
       if (beatmap.cursor[i - 1].x != e.x) {
@@ -123,7 +129,12 @@ export default function App(props: AppProps) {
     })
 
     document.addEventListener('keydown', (e: KeyboardEvent) => {
-      GAME.key[getkey(e.key)] = '11'
+      // console.log(e.repeat)
+      if (!e.repeat) {
+        GAME.key[getkey(e.key)] = '11'
+      } else {
+        GAME.key[getkey(e.key)] = '01'
+      }
     })
     const handleRetry = (e: KeyboardEvent) => {
       switch (e.key) {

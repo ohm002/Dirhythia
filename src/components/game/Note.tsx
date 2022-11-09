@@ -6,6 +6,8 @@ import {
   Sprite as SPRITE,
   Texture,
   Application,
+  Filter,
+  filters,
 } from 'pixi.js'
 import PIXI from 'pixi.js'
 import { useState } from 'react'
@@ -111,7 +113,7 @@ export default function Note(props: NoteProps) {
       )
       if (clicked) {
         setEffAlpha(
-          interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0])
+          interpolate(currentTime, [clicktime, clicktime + 500], [1, 0])
         )
         setAlpha(0)
       }
@@ -123,9 +125,10 @@ export default function Note(props: NoteProps) {
         image={hit}
         x={cursorx - WIDTH / 2 + props.x}
         y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
-        width={COL_WIDTH * 1.2}
-        height={NOTE_HEIGHT * 2}
+        width={COL_WIDTH *5}
+        height={NOTE_HEIGHT * 3}
         alpha={effalpha}
+        blendMode={BLEND_MODES.ADD_NPM}
         tint={color}
         anchor={[0.5, 0.5]}
       />
