@@ -8,15 +8,21 @@
     "creator": "The Virtual Machine",
     "difficult": "Easy"
   },
-  "hitObjects": [
-    {
-      "type": "hold",
-      "column": 3,
-      "startTime": 500,
-      "endTime": 2000
-    }
-  ],
+
+  "hitObjects": [{ "type": "note", "column": 2, "startTime": 21983 }],
   "cursor": [
+    { "type": "normal", "x": 0, "startTime": 1000 },
+    { "type": "normal", "x": 1, "startTime": 1100 },
+    { "type": "normal", "x": 0, "startTime": 1200 },
+    { "type": "normal", "x": 1, "startTime": 1300 },
+    { "type": "normal", "x": 0, "startTime": 1400 },
+    { "type": "normal", "x": 1, "startTime": 1500 },
+    { "type": "normal", "x": 0, "startTime": 1600 },
+    { "type": "normal", "x": 1, "startTime": 1700 },
+    { "type": "normal", "x": 0, "startTime": 1800 },
+    { "type": "normal", "x": 1, "startTime": 1900 },
+    { "type": "normal", "x": 0, "startTime": 2000 },
+    { "type": "normal", "x": 0, "startTime": 1000000 }
   ],
   "timingPoints": [
     {

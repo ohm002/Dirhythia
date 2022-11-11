@@ -1,5 +1,5 @@
-import { BLEND_MODES, Texture } from 'pixi.js'
-import { Sprite, useTick } from '@inlet/react-pixi'
+import { BLEND_MODES, Texture, Container as container } from 'pixi.js'
+import { Sprite, useApp, useTick } from '@inlet/react-pixi'
 import {
   WIDTH,
   HEIGHT,
@@ -37,6 +37,7 @@ export default function Cursor(props: Props) {
   const [nextObjIndex, setNextObjIndex] = useState(0)
   let playStartTime = props.game.playStartTime
   const nextObj = useMemo(() => props.cursors[nextObjIndex], [nextObjIndex])
+  const app = useApp()
   useTick(() => {
     playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying

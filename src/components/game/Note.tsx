@@ -136,7 +136,7 @@ export default function Note(props: NoteProps) {
         image={note}
         x={cursorx - WIDTH / 2 + props.x}
         y={y}
-        tint={color}
+        tint={0xffffff}
         anchor={[0.5, 1]}
         width={COL_WIDTH}
         height={NOTE_HEIGHT}

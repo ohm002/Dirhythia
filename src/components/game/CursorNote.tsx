@@ -1,5 +1,13 @@
-import { Container, Sprite, useTick } from '@inlet/react-pixi'
-import { BLEND_MODES, filters, Texture, utils } from 'pixi.js'
+import { Container, Sprite, useApp, useTick, Text } from '@inlet/react-pixi'
+import {
+  BLEND_MODES,
+  filters,
+  Texture,
+  utils,
+  Sprite as SPRITE,
+  Container as CONTAINER,
+  TextStyle,
+} from 'pixi.js'
 import { useEffect, useMemo, useState } from 'react'
 import { interpolate } from '../../libs/interpolate'
 import vertical from '../../assets/vertical.png'
@@ -25,6 +33,9 @@ import {
 import { GameState } from '../../state/GameState'
 import { Beatmap } from '../../types/Beatmap'
 import { TimingPoint } from '../../types/TimingPoint'
+import hit from '../../assets/hit.png'
+import arrowright from '../../assets/arrowright.png'
+import arrowleft from '../../assets/arrowleft.png'
 
 type CursorNoteProps = {
   x: number
@@ -39,6 +50,7 @@ export default function CursorNote(props: CursorNoteProps) {
   let isPlaying = props.game.isPlaying
   // console.log(props.game.audio.duration)
   let effectVolume = props.game.effectvolume
+  props.beatmap.cursor.sort((a, b) => a.startTime - b.startTime)
   const notex = props.x
   let endTime =
     props.beatmap.cursor[props.i + 1] != undefined
@@ -57,16 +69,58 @@ export default function CursorNote(props: CursorNoteProps) {
       break
     }
   }
-  const trackx = props.type == 'normal' ? props.x : lastpos
+  const trackx = props.type == 'normal' ? props.x : startpos
   let Duration = endTime - startTime
   const height = Math.round((Duration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
   let currentTime = 0
+  const [alpha, setAlpha] = useState(1)
+  const [clicktime, setclicktime] = useState(-1)
+  const [effalpha, setEffAlpha] = useState(0)
+  let [clicked, setclicked] = useState(false)
+  const [score, setscore] = useState('')
 
+  const arrowdelay = 20
+  const app = useApp()
+  const container = app.stage
+
+  let hiteffect = new SPRITE(Texture.WHITE)
+  hiteffect.name = props.i + 'cursorf'
+  if (container.getChildByName(props.i + 'cursorf') == null) {
+    container.addChild(hiteffect)
+    hiteffect.alpha = 0
+  } else {
+    hiteffect = container.getChildByName(props.i + 'cursorf')
+  }
+
+  hiteffect.width = 300
+  hiteffect.height = NOTE_HEIGHT * 3
+  hiteffect.blendMode = BLEND_MODES.ADD
+  hiteffect.anchor.set(lastpos > startpos ? 1 : 0, 0.5)
+  hiteffect.tint = lastpos > startpos ? 0x57d8ff : 0xff5986
   useTick(() => {
     currentTime = props.game.currenttime
     let isPlaying = props.game.isPlaying
     if (isPlaying) {
+      if (props.game.hitlist.length > 0)
+        props.game.hitlist.forEach((element: any) => {
+          if (
+            element.startsWith(startTime.toString() + '5') &&
+            !element.endsWith('miss') &&
+            clicktime == -1
+          ) {
+            setclicked(true)
+            setscore(element.split(',')[1])
+            setclicktime(currentTime)
+          }
+        })
+      if (clicked && clicktime != -1) {
+        setEffAlpha(
+          interpolate(currentTime, [clicktime, clicktime + 1000], [1, 0])
+        )
+        hiteffect.alpha = effalpha
+        setAlpha(0)
+      }
       setY(
         interpolate(
           currentTime,
@@ -82,8 +136,59 @@ export default function CursorNote(props: CursorNoteProps) {
     }
   })
   const trackalpha = 0.5
+  const a =
+    lastpos > startpos
+      ? -(PLAYFIELD_WIDTH / 2 + (PLAYFIELD_WIDTH * 0.3) / 2)
+      : PLAYFIELD_WIDTH / 2 + (PLAYFIELD_WIDTH * 0.3) / 2
+  const offsetx =
+    interpolate(
+      props.x,
+      [0, 1],
+      [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+    ) + a
+  for (
+    let i = 0;
+    i <=
+    Math.abs(Math.floor(((lastpos - startpos) * CURSOR_AREA) / arrowdelay));
+    i+=2
+  ) {
+    if (
+      container.getChildByName('arrow' + i.toString() + props.i.toString()) ==
+      null
+    ) {
+      const arrow = SPRITE.from(lastpos > startpos ? arrowleft : arrowright)
+      arrow.anchor.set(lastpos > startpos ? 1 : 0, 1)
+      arrow.alpha = 0.7
+      arrow.tint = lastpos > startpos ? 0x57d8ff : 0xff5986
+      // arrow.blendMode = BLEND_MODES.ADD
+      arrow.width = arrowdelay
+      arrow.height = arrowdelay
+      arrow.name = 'arrow' + i.toString() + props.i.toString()
+      container.addChild(arrow)
+    } else {
+      const arrow = container.getChildByName(
+        'arrow' + i.toString() + props.i.toString()
+      )
+      arrow.x = interpolate(
+        interpolate(
+          i /
+            Math.abs(
+              Math.floor(((lastpos - startpos) * CURSOR_AREA) / arrowdelay)
+            ),
+          [0, 1],
+          [lastpos, startpos]
+        ),
+        [0, 1],
+        [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+      )
+      arrow.y = y + height - 10
+    }
+  }
+
+  hiteffect.x = offsetx
+  hiteffect.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
   return (
-    <Container>
+    <Container name="cursornotecontainer">
       <Sprite
         texture={Texture.WHITE}
         width={PLAYFIELD_WIDTH * 1.3}
@@ -195,27 +300,23 @@ export default function CursorNote(props: CursorNoteProps) {
         x={interpolate(
           trackx,
           [0, 1],
-          [
-            WIDTH / 2 - CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
-            WIDTH / 2 + CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
-          ]
+          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
         )}
         y={y + height}
         anchor={[0.5, 1]}
-        alpha={0.2}
+        alpha={1}
         blendMode={BLEND_MODES.ADD}
         width={100}
         height={height}
       />
-
       <Sprite
         image={vertical}
         x={interpolate(
           trackx,
           [0, 1],
           [
-            WIDTH / 2 - CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
-            WIDTH / 2 + CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
+            WIDTH / 2 - CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
+            WIDTH / 2 + CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
           ]
         )}
         y={y + height}

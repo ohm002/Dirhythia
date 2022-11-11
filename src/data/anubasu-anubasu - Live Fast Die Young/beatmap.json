@@ -1,0 +1,50 @@
+{
+  "audioPath": "https://cdn.discordapp.com/attachments/1011804545254436864/1039889130747867176/anubasu-anubasu_-_Live_Fast_Die_Young_from_Arcaea_.mp3",
+  "metadata": {
+    "title": "Live Fast Die Young",
+    "titleUnicode": "anubasu-anubasu - Live Fast Die Young",
+    "artist": "anubasu-anubasu",
+    "artistUnicode": "anubasu-anubasu",
+    "creator": "THE FASTEST",
+    "difficult": "SPEED"
+  },
+  "hitObjects": [
+    { "type": "note", "column": 2, "startTime": 1000 },
+    { "type": "note", "column": 3, "startTime": 1000 },
+    { "type": "note", "column": 2, "startTime": 21983 },
+    { "type": "note", "column": 3, "startTime": 21983 },
+    { "type": "note", "column": 2, "startTime": 22375 },
+    { "type": "note", "column": 3, "startTime": 22375 },
+    { "type": "note", "column": 2, "startTime": 22768 },
+    { "type": "note", "column": 3, "startTime": 22768 }
+  ],
+  "cursor": [
+    { "type": "normal", "x": 0.7, "startTime": 1000 },
+    { "type": "normal", "x": 0.3, "startTime": 21983 },
+    { "type": "normal", "x": 0.6, "startTime": 22081 },
+    { "type": "normal", "x": 0.3, "startTime": 22179 },
+    { "type": "normal", "x": 0.6, "startTime": 22277 },
+    { "type": "normal", "x": 0.3, "startTime": 22375 },
+    { "type": "normal", "x": 0.6, "startTime": 22473 },
+    { "type": "normal", "x": 0.3, "startTime": 22572 },
+    { "type": "normal", "x": 0.6, "startTime": 22670 },
+    { "type": "normal", "x": 0.3, "startTime": 22768 },
+    { "type": "normal", "x": 0.6, "startTime": 22866 },
+    { "type": "normal", "x": 0.3, "startTime": 22964 },
+    { "type": "normal", "x": 0.6, "startTime": 23062 },
+    { "type": "normal", "x": 0.3, "startTime": 23160 },
+    { "type": "normal", "x": 0.6, "startTime": 23258 },
+    { "type": "normal", "x": 0.3, "startTime": 23356 },
+    { "type": "normal", "x": 0.6, "startTime": 23454 },
+    { "type": "normal", "x": 0.3, "startTime": 23552 }
+  ],
+  "timingPoints": [
+    {
+      "time": 23,
+      "bpm": 153,
+      "meter": 4,
+      "defaultSampleSet": "drum",
+      "volume": 100
+    }
+  ]
+}

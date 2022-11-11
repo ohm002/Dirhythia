@@ -9,7 +9,8 @@ import {
   TextStyle,
   Sprite as SPRITE,
   TextureLoader,
-  Loader
+  Loader,
+  Container as container,
 } from 'pixi.js'
 import Column from './Column'
 import {
