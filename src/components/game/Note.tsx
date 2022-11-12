@@ -52,6 +52,8 @@ export default function Note(props: NoteProps) {
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
+  const cursorlist = props.game.beatmap.cursor.sort((a,b) => a.startTime-b.startTime)
+
   useTick(() => {
     let isPlaying = props.game.isPlaying
     const currentTime = props.game.currenttime

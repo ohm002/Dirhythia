@@ -1,5 +1,5 @@
 import { Container, useTick, Text, useApp } from '@inlet/react-pixi'
-import { BLEND_MODES, TextStyle, Sprite as SPRITE, Application } from 'pixi.js'
+import PIXI from 'pixi.js'
 import { useMemo, useState } from 'react'
 import {
   COL_1_KEY,
@@ -15,7 +15,6 @@ import { GameState } from '../../state/GameState'
 import { HitObject } from '../../types/HitObject'
 import { TimingPoint } from '../../types/TimingPoint'
 import Hold from './Hold'
-import { createWorkerFactory, useWorker } from '@shopify/react-web-worker'
 import Note from './Note'
 
 type ColumnProps = {

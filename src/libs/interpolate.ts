@@ -15,3 +15,21 @@ export function interpolate(
     outputMin
   )
 }
+export function easeOutCubic(
+  input: number,
+  inputRange: [number, number],
+  outputRange: [number, number]
+): number {
+  const [inputMin, inputMax] = inputRange
+  const [outputMin, outputMax] = outputRange
+  // input = inputMin + Math.pow(Math.abs(inputMax - inputMin) - input, 3)
+  let inputt = (input - inputMin) / (inputMax - inputMin)
+  inputt = 1 - ((1 - inputt)**3);
+  if (input < inputMin) return outputMin
+  if (input > inputMax) return outputMax
+  if (outputMin === outputMax) return outputMin
+  return (
+    (inputt) * (outputMax - outputMin) +
+    outputMin
+  )
+}

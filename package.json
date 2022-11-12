@@ -12,11 +12,13 @@
     "@inlet/react-pixi": "^6.8.0",
     "@reduxjs/toolkit": "^1.8.5",
     "@shopify/react-web-worker": "^5.0.6",
+    "jquery": "^3.6.1",
     "pixi-legacy": "^1.0.2",
     "pixi.js": "^6.5.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-pixi": "^0.9.19",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0"
   },
@@ -28,6 +30,6 @@
     "postcss": "^8.4.16",
     "tailwindcss": "^3.1.8",
     "typescript": "^4.6.4",
-    "vite": "^3.0.7"
+    "vite": "^3.0.9"
   }
 }

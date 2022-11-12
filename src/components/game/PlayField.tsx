@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Container, Sprite, useApp, useTick } from '@inlet/react-pixi'
 import { Beatmap } from '../../types/Beatmap'
+import { TimingPoint } from '../../types/TimingPoint'
 import {
   BLEND_MODES,
   filters,
@@ -18,14 +19,16 @@ import {
   JUDGEMENT_LINE_OFFSET_Y,
   HEIGHT,
   PLAYFIELD_WIDTH,
+  NOTE_TRAVEL_DURATION,
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import Cursor from './Cursor'
-import CursorNote from './CursorNote'
+import CursorNote, { BPMLine } from './CursorNote'
 import React from 'react'
 import judgement from '../../assets/judgement.png'
 import hit from '../../assets/great.png'
 import bg from '../../data/void(Mournfinale) - World Vanquisher/87729274_p0.jpg'
+import { interpolate } from '../../libs/interpolate'
 
 type PlayFieldProps = {
   beatmap: Beatmap
@@ -49,12 +52,28 @@ export default function PlayField(props: PlayFieldProps) {
   //   console.log(getWidth(), getHeight(),app.renderer.width, app.renderer.height)
   // })
   // observer.observe(document.getElementsByTagName('html')[0])
+  const timinglist = props.game.beatmap.timingPoints.sort(
+    (a, b) => a.time - b.time
+  )
+  let currentbpm = timinglist[0]
   useTick(() => {
     if (props.game.isPlaying) {
       var currentTime = Date.now() - props.game.playStartTime
+      currentbpm = timinglist.filter((e) => e.time <= currentTime)[0]
       props.game.currenttime = currentTime
     }
   })
+  console.log(
+    props.game.beatmap.hitObjects[props.game.beatmap.hitObjects.length - 1]
+      .startTime,
+    currentbpm.time,
+    60000 / currentbpm.bpm,
+    Math.round(
+      (props.game.beatmap.hitObjects[props.game.beatmap.hitObjects.length - 1]
+        .startTime -
+        currentbpm.time )/ (60000 / currentbpm.bpm)
+    )
+  )
   const app = useApp()
   const bgimage = SPRITE.from(bg)
   app.stage.addChild(bgimage)
@@ -95,6 +114,22 @@ export default function PlayField(props: PlayFieldProps) {
               (hitObject) => hitObject.column == i + 1
             )}
             timingPoints={props.beatmap.timingPoints}
+            game={props.game}
+          />
+        ))}
+
+        {[
+          ...Array(
+            Math.round(
+              (props.game.beatmap.hitObjects[props.game.beatmap.hitObjects.length - 1]
+                .startTime -
+                currentbpm.time )/ ((60000 / currentbpm.bpm))*4
+            )
+          ),
+        ].map((_, i) => (
+          <BPMLine
+            key={i}
+            time={currentbpm.time + i * (60000 / currentbpm.bpm)*4}
             game={props.game}
           />
         ))}

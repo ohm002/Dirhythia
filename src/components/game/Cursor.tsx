@@ -1,4 +1,5 @@
-import { BLEND_MODES, Texture, Container as container } from 'pixi.js'
+// import { BLEND_MODES, Texture, Container as container } from 'pixi.js'
+import PIXI from 'pixi.js'
 import { Sprite, useApp, useTick } from '@inlet/react-pixi'
 import {
   WIDTH,
@@ -14,7 +15,6 @@ import {
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import { Cursors } from '../../types/Cursors'
-import { createWorkerFactory, useWorker } from '@shopify/react-web-worker'
 import { useEffect, useMemo, useState } from 'react'
 
 type Props = {

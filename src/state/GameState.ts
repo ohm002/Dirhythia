@@ -20,7 +20,7 @@ export class GameState {
   audiopath: string
   mode: string
   isPlaying: boolean
-  key: string[]
+  key: Array<any>
   currenttime: number
   highestcombo: number
   beatmap: Beatmap
@@ -52,7 +52,7 @@ export class GameState {
     // 8 : CURSOR
     // 9 : HITLIST
     this.beatmap = beatmap
-    this.key = ['00', '00', '00', '00', '00', '00']
+    this.key = ['00', '00', '00', '00', 0, 0]
     this.audio = GAME_AUDIO
     this.audiopath = audiopath
     this.audiovolume = volume
@@ -87,7 +87,7 @@ export class GameState {
     if (valid) {
       this.score += this.idtoscore(score)
       this.combo += 1
-      if (this.combo > this.highestcombo) this.highestcombo = this.combo 
+      if (this.combo > this.highestcombo) this.highestcombo = this.combo
       triggereffect(time, score)
       this.hitlist.push(time.toString() + key.toString() + ',' + score)
       return true
