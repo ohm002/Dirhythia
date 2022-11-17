@@ -1,6 +1,6 @@
 // import { BLEND_MODES, Texture, Container as container } from 'pixi.js'
-import PIXI from 'pixi.js'
-import { Sprite, useApp, useTick } from '@inlet/react-pixi'
+import PIXI, { TextStyle } from 'pixi.js'
+import { Sprite, useApp, useTick, Text } from '@inlet/react-pixi'
 import {
   WIDTH,
   HEIGHT,
@@ -24,9 +24,6 @@ type Props = {
 
 // OD 5 equivalent
 const maxAcceptableOffset = 150 // ms
-const hitWindow300 = 50 // ms
-const hitWindow100 = 100 // ms
-const hitWindow50 = maxAcceptableOffset // ms
 
 const getColKey = (i: number) => {
   return i > 0 ? CURSOR_LEFT_KEY : i < 0 ? CURSOR_RIGHT_KEY : undefined
@@ -34,10 +31,22 @@ const getColKey = (i: number) => {
 
 export default function Cursor(props: Props) {
   const [x, setX] = useState(0.5)
+  const [mouse, setmouse] = useState(-1)
   const [nextObjIndex, setNextObjIndex] = useState(0)
   let playStartTime = props.game.playStartTime
   const nextObj = useMemo(() => props.cursors[nextObjIndex], [nextObjIndex])
   const app = useApp()
+  function validmouse(i: number) {
+    if (nextObj) {
+      if (x > nextObj.x && i < 0) {
+        return true
+      } else if (x < nextObj.x && i > 0) {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
   useTick(() => {
     playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying
@@ -49,32 +58,25 @@ export default function Cursor(props: Props) {
           props.cursors[index + 1] != undefined
             ? props.cursors[index + 1].startTime
             : props.game.audio.duration * 1000
-        if (currentTime >= element.startTime && nexttime >= currentTime && element.type == "normal") {
+        if (
+          currentTime >= element.startTime &&
+          nexttime >= currentTime &&
+          element.type == 'normal'
+        ) {
           setX(element.x)
         }
       }
-      if (nextObj != undefined) {
-        if (currentTime > nextObj.startTime + 150) {
-          props.game.miss(nextObj.startTime, 5)
-          setNextObjIndex(nextObjIndex + 1)
-        }
-      }
-    }
-  })
-  useEffect(() => {
-    function validmouse(i: number) {
-      if (nextObj) {
-        if (x > nextObj.x && i < 0) {
-          return true
-        } else if (x < nextObj.x && i > 0) {
-          return true
-        }
-      }
-    }
-    if (props.game.mode == 'play') {
-      document.addEventListener('mousemove', (e: MouseEvent) => {
-        if (Math.abs(e.movementX) >= 0 && validmouse(e.movementX)) {
-          const currentTime = Date.now() - playStartTime
+      if (props.game.mode == 'play') {
+        //   if (e.movementX > 0) {
+        //     setmouse(1)
+        //   } else {
+        //     setmouse(0)
+        // }
+        // console.log(props.game.key[4], props.game.key[5])
+        if (
+          (x > nextObj.x && props.game.key[4][0] == '1') ||
+          (x < nextObj.x && props.game.key[4][1] == '1')
+        ) {
           // find the hit object that player tried to click
           const clickedHitObject =
             nextObj.startTime >= currentTime - maxAcceptableOffset &&
@@ -82,22 +84,34 @@ export default function Cursor(props: Props) {
               ? nextObj
               : undefined
           if (clickedHitObject) {
-            const offset = Math.abs(clickedHitObject.startTime - currentTime)
+            // console.log('hit', nextObjIndex)
+            // const offset = Math.abs(clickedHitObject.startTime - currentTime)
             var result = async () => {
-              await props.game
-                .hit("perfect", clickedHitObject.startTime, 5)
-                .then((res) => {
-                  if (res){
-                    setNextObjIndex(nextObjIndex + 1)
-                  }
-                })
+              setNextObjIndex(nextObjIndex + 1)
+              await props.game.hit('perfect', clickedHitObject.startTime, 5)
             }
             result()
           }
         }
-      })
+        if (nextObj != undefined) {
+          if (currentTime > nextObj.startTime + 150) {
+            props.game.miss(nextObj.startTime, 5)
+            setNextObjIndex(nextObjIndex + 1)
+          }
+        }
+      }
     }
-    return () => {}
-  }, [nextObj, x])
-  return (null)
+  })
+  return null
+  //   <Text
+  //     text={mouse > 0 ? 'right' : 'left'}
+  //     style={
+  //       new TextStyle({
+  //         fontFamily: 'Courier New',
+  //         align: 'center',
+  //         fill: '#ffffff',
+  //         fontSize: 20,
+  //       })
+  //     }
+  //   />
 }

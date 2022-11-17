@@ -52,28 +52,28 @@ export default function PlayField(props: PlayFieldProps) {
   //   console.log(getWidth(), getHeight(),app.renderer.width, app.renderer.height)
   // })
   // observer.observe(document.getElementsByTagName('html')[0])
+  const GAME = props.game
   const timinglist = props.game.beatmap.timingPoints.sort(
     (a, b) => a.time - b.time
   )
   let currentbpm = timinglist[0]
+  // setInterval(() => {
+  //   GAME.hitwaitlist.forEach((element) => {
+  //     GAME.score += GAME.idtoscore(element.split(',')[1])
+  //     GAME.combo += 1
+  //     if (GAME.combo > GAME.highestcombo) GAME.highestcombo = GAME.combo
+  //     GAME.hitlist.push(element)
+  //     GAME.hitwaitlist = GAME.hitwaitlist.filter((item) => item !== element)
+  //   })
+  // }, 1000)
   useTick(() => {
     if (props.game.isPlaying) {
       var currentTime = Date.now() - props.game.playStartTime
       currentbpm = timinglist.filter((e) => e.time <= currentTime)[0]
       props.game.currenttime = currentTime
+      // console.log(Math.abs(props.game.currenttime- props.game.audio.currentTime*1000))
     }
   })
-  console.log(
-    props.game.beatmap.hitObjects[props.game.beatmap.hitObjects.length - 1]
-      .startTime,
-    currentbpm.time,
-    60000 / currentbpm.bpm,
-    Math.round(
-      (props.game.beatmap.hitObjects[props.game.beatmap.hitObjects.length - 1]
-        .startTime -
-        currentbpm.time )/ (60000 / currentbpm.bpm)
-    )
-  )
   const app = useApp()
   const bgimage = SPRITE.from(bg)
   app.stage.addChild(bgimage)
@@ -121,15 +121,18 @@ export default function PlayField(props: PlayFieldProps) {
         {[
           ...Array(
             Math.round(
-              (props.game.beatmap.hitObjects[props.game.beatmap.hitObjects.length - 1]
-                .startTime -
-                currentbpm.time )/ ((60000 / currentbpm.bpm))*4
+              ((props.game.beatmap.hitObjects[
+                props.game.beatmap.hitObjects.length - 1
+              ].startTime -
+                currentbpm.time) /
+                (60000 / currentbpm.bpm)) *
+                4
             )
           ),
         ].map((_, i) => (
           <BPMLine
             key={i}
-            time={currentbpm.time + i * (60000 / currentbpm.bpm)*4}
+            time={currentbpm.time + i * (60000 / currentbpm.bpm) * 4}
             game={props.game}
           />
         ))}

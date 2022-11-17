@@ -17,6 +17,7 @@ import perfect from '../../assets/perfect.png'
 import great from '../../assets/great.png'
 import ok from '../../assets/ok.png'
 import miss from '../../assets/miss.png'
+import { getWidth, getHeight } from '../../libs/screenhandler'
 type Props = {
   game: GameState
 }
@@ -36,11 +37,11 @@ const text = new PIXITEXT(
     dropShadowDistance: 0,
     fontFamily: 'Courier New',
     fontSize: 30,
-    fontWeight: 900,
+    fontWeight: '900',
     fontVariant: 'small-caps',
   })
 )
-text.anchor.set(0.5)
+text.anchor.set(0.5, 0.5)
 text.name = 'scoretext'
 
 let clicktime = -1
@@ -74,6 +75,46 @@ export default function Display(props: Props) {
   return (
     <Container>
       <Text
+        text={
+          props.game.beatmap.metadata.artist +
+          ' - ' +
+          props.game.beatmap.metadata.title +
+          ' by ' +
+          props.game.beatmap.metadata.creator
+        }
+        x={15}
+        y={200 + 0}
+        blendMode={BLEND_MODES.ADD}
+        anchor={[0, 0]}
+        alpha={0.5}
+        style={
+          new TextStyle({
+            fontFamily: 'Courier New',
+            align: 'center',
+            fill: '#ffffff',
+            fontWeight: '900',
+            fontSize: 20,
+          })
+        }
+      />
+      <Text
+        text={props.game.beatmap.metadata.difficult}
+        x={15}
+        y={200 + 25}
+        blendMode={BLEND_MODES.ADD}
+        anchor={[0, 0]}
+        alpha={0.5}
+        style={
+          new TextStyle({
+            fontFamily: 'Courier New',
+            align: 'center',
+            fill: '#ffffff',
+            fontWeight: 'bold',
+            fontSize: 30,
+          })
+        }
+      />
+      <Text
         text={'FPS : ' + Math.round(useApp().ticker.FPS).toString()}
         x={(WIDTH / 2 + PLAYFIELD_WIDTH / 2) * 1.1}
         y={30}
@@ -86,6 +127,7 @@ export default function Display(props: Props) {
             align: 'center',
             fill: '#ffffff',
             fontSize: 20,
+            fontVariant: 'small-caps',
           })
         }
       />
@@ -121,6 +163,7 @@ export default function Display(props: Props) {
             align: 'center',
             fill: '#ffffff',
             fontSize: 20,
+            fontVariant: 'small-caps',
           })
         }
       />
@@ -140,6 +183,7 @@ export default function Display(props: Props) {
             align: 'center',
             fill: '#ffffff',
             fontSize: 25,
+            fontVariant: 'small-caps',
           })
         }
       />
@@ -162,6 +206,7 @@ export default function Display(props: Props) {
             align: 'center',
             fill: '#ffffff',
             fontSize: 20,
+            fontVariant: 'small-caps',
           })
         }
       />

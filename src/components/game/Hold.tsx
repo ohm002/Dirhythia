@@ -142,7 +142,7 @@ export default function Hold(props: HoldProps) {
         y={y + height}
         tint={color}
         anchor={[0.5, 1]}
-        width={COL_WIDTH}
+        width={COL_WIDTH*0.95}
         height={NOTE_HEIGHT}
         alpha={alpha}
       />

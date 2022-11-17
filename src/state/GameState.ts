@@ -1,10 +1,10 @@
 import { triggereffect } from '../components/game/Display'
 import { WIDTH } from '../libs/options'
+import { getHeight, getWidth } from '../libs/screenhandler'
 import { Beatmap } from '../types/Beatmap'
 
 const audioctx = new AudioContext()
 const GAME_AUDIO = new Audio()
-
 export class GameState {
   // data: JSON
   audiovolume: number
@@ -14,6 +14,7 @@ export class GameState {
   scrollspeed: number
   score: number
   maxscore: number
+  hitwaitlist: Array<any>
   combo: number
   playStartTime: number
   cursor: number
@@ -25,6 +26,8 @@ export class GameState {
   highestcombo: number
   beatmap: Beatmap
   maxcombo: number
+  WIDTH: number
+  HEIGHT: number
 
   constructor(
     volume: number,
@@ -52,7 +55,7 @@ export class GameState {
     // 8 : CURSOR
     // 9 : HITLIST
     this.beatmap = beatmap
-    this.key = ['00', '00', '00', '00', 0, 0]
+    this.key = ['00', '00', '00', '00', '00']
     this.audio = GAME_AUDIO
     this.audiopath = audiopath
     this.audiovolume = volume
@@ -60,6 +63,7 @@ export class GameState {
     this.effectvolume = effect
     this.scrollspeed = scrollspeed
     this.highestcombo = 0
+    this.hitwaitlist = []
     this.maxcombo = maxcombo
     this.score = 0
     this.maxscore = maxscore
@@ -69,40 +73,38 @@ export class GameState {
     this.cursor = 0.5
     this.mode = ''
     this.currenttime = 0
+    this.HEIGHT = getHeight()
+    this.WIDTH = getWidth()
     this.hitlist = []
   }
 
   async miss(time: number, key: number) {
     this.combo = 0
     this.hitlist.push(time.toString() + key.toString() + 'miss')
+    triggereffect(time, 'miss')
+  }
+  async hit(score: string, time: number, key: number) {
+    this.score += this.idtoscore(score)
+    this.combo += 1
+    if (this.combo > this.highestcombo) this.highestcombo = this.combo
+    if (key == 5) {
+      this.key[key - 1] = '00'
+    } else {
+      this.key[key - 1] = '01'
+    }
+// TODO : MAKETHE CODE ABOVE ACTUALLY GOOD IM SO TIRED RN 
+    
+    this.hitlist.push(time.toString() + key.toString() + ',' + score)
+    // this.hitwaitlist = this.hitwaitlist.filter((item) => item !== element)
+    triggereffect(time, score)
   }
 
-  async hit(score: string, time: number, key: number) {
-    let valid = true
-    this.hitlist.forEach((element) => {
-      if (element.startsWith(time.toString() + key.toString())) {
-        valid = false
-      }
-    })
-    if (valid) {
-      this.score += this.idtoscore(score)
-      this.combo += 1
-      if (this.combo > this.highestcombo) this.highestcombo = this.combo
-      triggereffect(time, score)
-      this.hitlist.push(time.toString() + key.toString() + ',' + score)
-      return true
-    } else {
-      return false
-    }
-  }
   play() {
     this.isPlaying = true
     this.score = 0
     this.combo = 0
     this.playStartTime = Date.now()
     this.hitlist = []
-
-    GAME_AUDIO.currentTime = 0
     GAME_AUDIO.play()
   }
 

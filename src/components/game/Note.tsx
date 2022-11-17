@@ -49,15 +49,24 @@ export default function Note(props: NoteProps) {
   const [effalpha, setEffAlpha] = useState(0)
   const [score, setscore] = useState('')
   let color = COLCOLOR[props.keys - 1]
+  const [active, setactive] = useState(true)
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
-  const cursorlist = props.game.beatmap.cursor.sort((a,b) => a.startTime-b.startTime)
+  const cursorlist = props.game.beatmap.cursor.sort(
+    (a, b) => a.startTime - b.startTime
+  )
 
   useTick(() => {
     let isPlaying = props.game.isPlaying
     const currentTime = props.game.currenttime
-    if (isPlaying) {
+    if (isPlaying && active) {
+      if (
+        currentTime >
+        props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION
+      ) {
+        // setactive(false)
+      }
       if (props.game.beatmap.cursor.length > 0) {
         let depth = -1
         for (let w = 0; w < props.game.beatmap.cursor.length; w++) {
@@ -102,20 +111,19 @@ export default function Note(props: NoteProps) {
             [0, HEIGHT]
           )
         )
-      }
-      setAlpha(
-        interpolate(
-          currentTime,
-          [
-            props.startTime,
-            props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-          ],
-          [1, 0]
+        setAlpha(
+          interpolate(
+            currentTime,
+            [
+              props.startTime,
+              props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+            ],
+            [1, 0]
+          )
         )
-      )
-      if (clicked) {
+      } else {
         setEffAlpha(
-          interpolate(currentTime, [clicktime, clicktime + 500], [1, 0])
+          interpolate(currentTime, [clicktime, clicktime + 200], [1, 0])
         )
         setAlpha(0)
       }
@@ -127,7 +135,7 @@ export default function Note(props: NoteProps) {
         image={hit}
         x={cursorx - WIDTH / 2 + props.x}
         y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
-        width={COL_WIDTH *5}
+        width={COL_WIDTH}
         height={NOTE_HEIGHT * 3}
         alpha={effalpha}
         blendMode={BLEND_MODES.ADD_NPM}
