@@ -26,7 +26,7 @@ import Cursor from './Cursor'
 import CursorNote, { BPMLine } from './CursorNote'
 import React from 'react'
 import judgement from '../../assets/judgement.png'
-import hit from '../../assets/great.png'
+import judgement2 from '../../assets/judgement2.png'
 import bg from '../../data/void(Mournfinale) - World Vanquisher/87729274_p0.jpg'
 import { interpolate } from '../../libs/interpolate'
 
@@ -143,6 +143,14 @@ export default function PlayField(props: PlayFieldProps) {
         anchor={[0, 0.5]}
         image={judgement}
         y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
+      />
+      <Sprite
+        image={judgement2}
+        x={0}
+        y={HEIGHT}
+        width={interpolate(props.game.currenttime,[0, props.game.beatmap.hitObjects[props.game.beatmap.hitObjects.length-1].startTime],[0,WIDTH])}
+        alpha={1}
+        anchor={[0, 1]}
       />
     </>
   )

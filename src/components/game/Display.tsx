@@ -1,4 +1,4 @@
-import { Container, Text, useApp, useTick } from '@inlet/react-pixi'
+import { Container, Text, useApp, useTick, Sprite } from '@inlet/react-pixi'
 import {
   BLEND_MODES,
   TextStyle,
@@ -17,6 +17,9 @@ import perfect from '../../assets/perfect.png'
 import great from '../../assets/great.png'
 import ok from '../../assets/ok.png'
 import miss from '../../assets/miss.png'
+import scoreline from '../../assets/scoreline.png'
+import comboline from '../../assets/comboline.png'
+import judgement2 from '../../assets/judgement2.png'
 import { getWidth, getHeight } from '../../libs/screenhandler'
 type Props = {
   game: GameState
@@ -74,6 +77,37 @@ export default function Display(props: Props) {
 
   return (
     <Container>
+      <Sprite
+        // image={topoverlay}
+        texture={Texture.WHITE}
+        tint={0x000000}
+        x={0}
+        width={330}
+        height={130}
+        y={0}
+        alpha={1}
+        anchor={[0, 0]}
+      />
+      <Sprite
+        // image={topoverlay}
+        texture={Texture.WHITE}
+        tint={0x000000}
+        x={WIDTH}
+        width={200}
+        height={130}
+        y={0}
+        alpha={1}
+        anchor={[1, 0]}
+      />
+      <Sprite image={scoreline} x={0} y={15} alpha={0.5} anchor={[0, 0]} />
+      <Sprite
+        image={comboline}
+        x={WIDTH - 30}
+        y={5}
+        alpha={0.5}
+        anchor={[1, 0]}
+      />
+
       <Text
         text={
           props.game.beatmap.metadata.artist +
@@ -82,8 +116,10 @@ export default function Display(props: Props) {
           ' by ' +
           props.game.beatmap.metadata.creator
         }
-        x={15}
-        y={200 + 0}
+        x={10}
+        y={70}
+        width={300}
+        height={30}
         blendMode={BLEND_MODES.ADD}
         anchor={[0, 0]}
         alpha={0.5}
@@ -91,35 +127,35 @@ export default function Display(props: Props) {
           new TextStyle({
             fontFamily: 'Courier New',
             align: 'center',
-            fill: '#ffffff',
             fontWeight: '900',
-            fontSize: 20,
+            fill: '#ffffff',
+            fontSize: 36,
           })
         }
       />
       <Text
         text={props.game.beatmap.metadata.difficult}
-        x={15}
-        y={200 + 25}
+        x={10}
+        y={100}
         blendMode={BLEND_MODES.ADD}
         anchor={[0, 0]}
         alpha={0.5}
-        style={
+        height={20}
+        style={ 
           new TextStyle({
             fontFamily: 'Courier New',
             align: 'center',
             fill: '#ffffff',
-            fontWeight: 'bold',
-            fontSize: 30,
+            fontSize: 18,
           })
         }
       />
       <Text
         text={'FPS : ' + Math.round(useApp().ticker.FPS).toString()}
-        x={(WIDTH / 2 + PLAYFIELD_WIDTH / 2) * 1.1}
-        y={30}
+        x={WIDTH - 20}
+        y={100}
         blendMode={BLEND_MODES.ADD}
-        anchor={[0, 0]}
+        anchor={[1, 0]}
         alpha={0.5}
         style={
           new TextStyle({
@@ -135,9 +171,10 @@ export default function Display(props: Props) {
         text={combo + ' Combo'}
         x={WIDTH - 20}
         y={10}
+        width={150}
         blendMode={BLEND_MODES.ADD}
         anchor={[1, 0]}
-        alpha={0.5}
+        alpha={1}
         style={
           new TextStyle({
             fontFamily: 'Courier New',
@@ -171,9 +208,9 @@ export default function Display(props: Props) {
         text={Math.round(
           (props.game.score / props.game.maxscore) * 1000000
         ).toString()}
-        x={10}
-        y={20}
-        alpha={0.5}
+        x={16}
+        y={17}
+        alpha={1}
         anchor={[0, 0.5]}
         blendMode={BLEND_MODES.ADD}
         style={
@@ -195,8 +232,8 @@ export default function Display(props: Props) {
           ).toString() +
           '% MAX)'
         }
-        x={10}
-        y={45}
+        x={15}
+        y={50}
         blendMode={BLEND_MODES.ADD}
         alpha={0.5}
         anchor={[0, 0.5]}
@@ -205,7 +242,7 @@ export default function Display(props: Props) {
             fontFamily: 'Courier New',
             align: 'center',
             fill: '#ffffff',
-            fontSize: 20,
+            fontSize: 15,
             fontVariant: 'small-caps',
           })
         }

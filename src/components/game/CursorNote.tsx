@@ -252,7 +252,7 @@ export default function CursorNote(props: CursorNoteProps) {
       arrow.anchor.set(lastpos > startpos ? 1 : 0, 1)
       arrow.alpha = 0.7
       arrow.tint = lastpos > startpos ? 0x57d8ff : 0xff5986
-      // arrow.blendMode = BLEND_MODES.ADD
+      arrow.blendMode = BLEND_MODES.ADD
       arrow.width = arrowdelay
       arrow.height = arrowdelay
       arrow.name = 'arrow' + i.toString() + props.i.toString()
