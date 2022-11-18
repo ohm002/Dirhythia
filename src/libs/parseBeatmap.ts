@@ -72,5 +72,9 @@ export function parseBeatmap(data: string): Beatmap {
     w.startTime = w.startTime + OFFSET
     if (w.endTime) w.endTime = w.endTime + OFFSET
   })
+  beatmap.cursor = beatmap.cursor.sort((a, b) => a.startTime - b.startTime)
+  beatmap.cursor.forEach((w, i) => {
+    w.startTime = w.startTime + OFFSET
+  })
   return beatmap
 }

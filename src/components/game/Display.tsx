@@ -11,7 +11,7 @@ import {
 import { useState } from 'react'
 import { HEIGHT, PLAYFIELD_WIDTH, WIDTH } from '../../libs/options'
 import { GameState } from '../../state/GameState'
-import font from '../../assets/LEMONMILK-Bold.otf'
+import combobox from '../../assets/combobox.png'
 import { easeOutCubic, interpolate } from '../../libs/interpolate'
 import perfect from '../../assets/perfect.png'
 import great from '../../assets/great.png'
@@ -19,8 +19,8 @@ import ok from '../../assets/ok.png'
 import miss from '../../assets/miss.png'
 import scoreline from '../../assets/scoreline.png'
 import comboline from '../../assets/comboline.png'
-import judgement2 from '../../assets/judgement2.png'
-import { getWidth, getHeight } from '../../libs/screenhandler'
+import overlay from '../../assets/overlay.png'
+import scorebox from '../../assets/scorebox.png'
 type Props = {
   game: GameState
 }
@@ -77,34 +77,26 @@ export default function Display(props: Props) {
 
   return (
     <Container>
+      <Sprite image={overlay} x={0} y={0} alpha={1} width={WIDTH} anchor={[0, 0]} />
       <Sprite
-        // image={topoverlay}
-        texture={Texture.WHITE}
-        tint={0x000000}
-        x={0}
-        width={330}
-        height={130}
-        y={0}
+        image={scorebox}
+        x={29}
+        y={23}
         alpha={1}
         anchor={[0, 0]}
       />
       <Sprite
-        // image={topoverlay}
-        texture={Texture.WHITE}
-        tint={0x000000}
-        x={WIDTH}
-        width={200}
-        height={130}
-        y={0}
+        image={combobox}
+        x={WIDTH-20}
+        y={20}
         alpha={1}
         anchor={[1, 0]}
       />
-      <Sprite image={scoreline} x={0} y={15} alpha={0.5} anchor={[0, 0]} />
+      <Sprite image={scoreline} x={378} y={81} alpha={1} anchor={[1, 0]} />
       <Sprite
         image={comboline}
         x={WIDTH - 30}
-        y={5}
-        alpha={0.5}
+        y={78}
         anchor={[1, 0]}
       />
 
@@ -112,95 +104,96 @@ export default function Display(props: Props) {
         text={
           props.game.beatmap.metadata.artist +
           ' - ' +
-          props.game.beatmap.metadata.title +
-          ' by ' +
-          props.game.beatmap.metadata.creator
+          props.game.beatmap.metadata.title
         }
-        x={10}
-        y={70}
-        width={300}
-        height={30}
+        x={WIDTH/2}
+        y={93}
+        anchor={[0.5, 0]}
         blendMode={BLEND_MODES.ADD}
-        anchor={[0, 0]}
-        alpha={0.5}
         style={
           new TextStyle({
-            fontFamily: 'Courier New',
+            fontFamily: 'Goldman',
             align: 'center',
-            fontWeight: '900',
             fill: '#ffffff',
-            fontSize: 36,
+            fontSize: 20,
+          })
+        }
+      />
+      <Text
+        text={
+          "Charted by " + props.game.beatmap.metadata.creator
+        }
+        x={WIDTH/2}
+        y={43}
+        alpha={0.5}
+        anchor={[0.5, 0]}
+        blendMode={BLEND_MODES.ADD}
+        style={
+          new TextStyle({
+            fontFamily: 'Goldman',
+            align: 'center',
+            fill: '#ffffff',
+            fontSize: 10,
           })
         }
       />
       <Text
         text={props.game.beatmap.metadata.difficult}
-        x={10}
-        y={100}
-        blendMode={BLEND_MODES.ADD}
-        anchor={[0, 0]}
-        alpha={0.5}
-        height={20}
+        x={WIDTH/2}
+        y={66}
+        anchor={[0.5, 0]}
         style={ 
           new TextStyle({
-            fontFamily: 'Courier New',
+            fontFamily: 'Goldman',
             align: 'center',
             fill: '#ffffff',
-            fontSize: 18,
+            fontSize: 17,
           })
         }
       />
       <Text
         text={'FPS : ' + Math.round(useApp().ticker.FPS).toString()}
-        x={WIDTH - 20}
-        y={100}
+        x={WIDTH - 30}
+        y={116}
         blendMode={BLEND_MODES.ADD}
         anchor={[1, 0]}
         alpha={0.5}
         style={
           new TextStyle({
-            fontFamily: 'Courier New',
+            fontFamily: 'Goldman',
             align: 'center',
             fill: '#ffffff',
-            fontSize: 20,
-            fontVariant: 'small-caps',
+            fontSize: 15,
           })
         }
       />
       <Text
-        text={combo + ' Combo'}
-        x={WIDTH - 20}
-        y={10}
-        width={150}
-        blendMode={BLEND_MODES.ADD}
+        text={combo + ' COMBO'}
+        x={WIDTH - 30}
+        y={59}
         anchor={[1, 0]}
-        alpha={1}
         style={
           new TextStyle({
-            fontFamily: 'Courier New',
-            fontWeight: 'bold',
-            align: 'center',
+            fontFamily: 'Goldman',
+            align: 'right',
             fill: '#ffffff',
-            fontVariant: 'small-caps',
-            fontSize: 40,
+            fontSize: 30,
           })
         }
       />
       <Text
         text={props.game.highestcombo + ' / ' + props.game.maxcombo}
-        x={WIDTH - 20}
-        y={50}
+        x={WIDTH - 30}
+        y={40}
         blendMode={BLEND_MODES.ADD}
         anchor={[1, 0]}
         alpha={0.5}
         style={
           new TextStyle({
-            fontFamily: 'Courier New',
-            // fontWeight: 'bold',
+            fontFamily: 'Goldman',
             align: 'center',
             fill: '#ffffff',
-            fontSize: 20,
-            fontVariant: 'small-caps',
+            fontSize: 15,
           })
         }
       />
@@ -208,19 +201,17 @@ export default function Display(props: Props) {
         text={Math.round(
           (props.game.score / props.game.maxscore) * 1000000
         ).toString()}
-        x={16}
-        y={17}
+        x={156}
+        y={54}
         alpha={1}
-        anchor={[0, 0.5]}
+        anchor={[0, 0]}
         blendMode={BLEND_MODES.ADD}
         style={
           new TextStyle({
-            fontFamily: 'Courier New',
-            fontWeight: 'bold',
+            fontFamily: 'Goldman',
             align: 'center',
             fill: '#ffffff',
-            fontSize: 25,
-            fontVariant: 'small-caps',
+            fontSize: 31,
           })
         }
       />
@@ -232,18 +223,17 @@ export default function Display(props: Props) {
           ).toString() +
           '% MAX)'
         }
-        x={15}
-        y={50}
+        x={54}
+        y={72}
         blendMode={BLEND_MODES.ADD}
         alpha={0.5}
-        anchor={[0, 0.5]}
+        anchor={[0, 0]}
         style={
           new TextStyle({
-            fontFamily: 'Courier New',
+            fontFamily: 'Goldman',
             align: 'center',
             fill: '#ffffff',
-            fontSize: 15,
-            fontVariant: 'small-caps',
+            fontSize: 11,
           })
         }
       />

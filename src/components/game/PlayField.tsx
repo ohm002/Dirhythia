@@ -76,7 +76,7 @@ export default function PlayField(props: PlayFieldProps) {
   })
   const app = useApp()
   const bgimage = SPRITE.from(bg)
-  app.stage.addChild(bgimage)
+  // app.stage.addChild(bgimage)
   // const ratio = bgimage.width * WIDTH
   bgimage.width = WIDTH
   bgimage.height = HEIGHT

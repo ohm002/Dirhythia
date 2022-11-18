@@ -6,10 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dirhythia</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap');
     canvas {
       width: fit-content;
     }
-
   </style>
 </head>
 
@@ -18,7 +18,22 @@
   <button>Submit</button>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
-
+  <script>
+    function generaterapidline(bpm, beatdivisor, startpos, endpos, starttime, endtime) {
+      var array = []
+      var factor = 1
+      if (startpos > endpos) factor = -1;
+      for (let index = 0; index < Math.abs(starttime-endtime)/((60000/bpm)/beatdivisor); index++) {
+        array.push({
+          "type":"normal",
+          "x":startpos+(index*factor * 
+          (Math.abs(startpos-endpos) / Math.floor(Math.abs(starttime-endtime)/((60000/bpm)/(beatdivisor))))),
+          "startTime":starttime+Math.round((60000/bpm)*index/beatdivisor),
+        })
+      }
+      console.log(JSON.stringify(array))
+    }
+  </script>
 
 </body>
 

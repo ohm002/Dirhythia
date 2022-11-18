@@ -35,18 +35,6 @@ export default function Cursor(props: Props) {
   const [nextObjIndex, setNextObjIndex] = useState(0)
   let playStartTime = props.game.playStartTime
   const nextObj = useMemo(() => props.cursors[nextObjIndex], [nextObjIndex])
-  const app = useApp()
-  function validmouse(i: number) {
-    if (nextObj) {
-      if (x > nextObj.x && i < 0) {
-        return true
-      } else if (x < nextObj.x && i > 0) {
-        return true
-      } else {
-        return false
-      }
-    }
-  }
   useTick(() => {
     playStartTime = props.game.playStartTime
     let isPlaying = props.game.isPlaying

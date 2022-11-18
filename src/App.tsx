@@ -123,7 +123,8 @@ export default function App(props: AppProps) {
   }
   useEffect(() => {
     document.addEventListener('mousemove', (e: MouseEvent) => {
-      GAME.key[4] = e.movementX > 0 ? '01' : '10'
+      if (e.movementX > 0) GAME.key[4] =  GAME.key[4][0] + '1'
+      if (e.movementX < 0) GAME.key[4] =  '1' + GAME.key[4][1]
     })
     document.addEventListener('keyup', (e: KeyboardEvent) => {
       if (validkey(e.key)) {

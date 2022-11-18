@@ -150,9 +150,6 @@ export default function CursorNote(props: CursorNoteProps) {
   const [score, setscore] = useState('')
 
   const arrowdelay = 20
-  // const app = useApp()
-  // const container = app.stage
-  // const container = new CONTAINER()
   const a =
     lastpos > startpos
       ? -(PLAYFIELD_WIDTH / 2 + (PLAYFIELD_WIDTH * 0.3) / 2)
@@ -172,7 +169,6 @@ export default function CursorNote(props: CursorNoteProps) {
   } else {
     hiteffect = container.getChildByName(props.i + 'cursorf')
   }
-
   hiteffect.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
   hiteffect.width = 300
   hiteffect.height = 50
