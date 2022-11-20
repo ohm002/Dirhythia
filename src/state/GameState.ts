@@ -79,9 +79,15 @@ export class GameState {
   }
 
   async miss(time: number, key: number) {
-    this.combo = 0
-    this.hitlist.push(time.toString() + key.toString() + 'miss')
-    triggereffect(time, 'miss')
+    if (
+      this.hitlist.filter(
+        (a) => a == time.toString() + key.toString() + ',miss'
+      ).length == 0
+    ) {
+      this.combo = 0
+      this.hitlist.push(time.toString() + key.toString() + ',miss')
+      triggereffect(this.currenttime, 'miss')
+    }
   }
   async hit(score: string, time: number, key: number) {
     this.score += this.idtoscore(score)
@@ -92,8 +98,8 @@ export class GameState {
     } else {
       this.key[key - 1] = '01'
     }
-// TODO : MAKETHE CODE ABOVE ACTUALLY GOOD IM SO TIRED RN 
-    
+    // TODO : MAKETHE CODE ABOVE ACTUALLY GOOD IM SO TIRED RN
+
     this.hitlist.push(time.toString() + key.toString() + ',' + score)
     // this.hitwaitlist = this.hitwaitlist.filter((item) => item !== element)
     triggereffect(time, score)

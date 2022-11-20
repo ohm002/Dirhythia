@@ -50,7 +50,7 @@ type BPMLineProps = {
   game: GameState
   time: number
 }
-const container = new CONTAINER()
+let container = new CONTAINER()
 
 export function BPMLine(props: BPMLineProps) {
   const cursorlist = props.game.beatmap.cursor.sort(
@@ -111,11 +111,9 @@ export function BPMLine(props: BPMLineProps) {
     />
   )
 }
-
 export default function CursorNote(props: CursorNoteProps) {
   const app = useApp()
-  let isPlaying = props.game.isPlaying
-  // console.log(props.game.audio.duration)
+  app.stage.addChild(container)
   let effectVolume = props.game.effectvolume
   props.beatmap.cursor.sort((a, b) => a.startTime - b.startTime)
   const notex = props.x
@@ -161,13 +159,84 @@ export default function CursorNote(props: CursorNoteProps) {
   )
   offsetx += props.type == 'normal' ? a : 0
   let hiteffect = SPRITE.from(lastpos > startpos ? hitleft : hitright)
-  hiteffect.name = props.i + 'cursorf'
-  if (container.getChildByName(props.i + 'cursorf') == null) {
-    container.addChild(hiteffect)
+  let rowbg = SPRITE.from(Texture.WHITE)
+  let switchline = SPRITE.from(judgement2)
+  let line1 = SPRITE.from(vertical)
+  let line2 = SPRITE.from(vertical)
+  let line3 = SPRITE.from(vertical)
+  if (container.getChildByName('switchline' + props.i) == null) {
+    line1.x = interpolate(
+      trackx,
+      [0, 1],
+      [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+    )
+    line1.anchor.set(0.5, 1)
+    line1.width = 100
+    line1.height = height
+    line1.name = 'line1' + props.i
+    line2.anchor.set(0.5, 1)
+    line2.width = 100
+    line2.height = height
+    line2.name = 'line2' + props.i
+    line2.alpha = 0.2
+    line3.anchor.set(0.5, 1)
+    line3.width = 100
+    line3.height = height
+    line3.name = 'line3' + props.i
+    line3.alpha = 0.2
+    line2.x = interpolate(
+      trackx,
+      [0, 1],
+      [
+        WIDTH / 2 - CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
+        WIDTH / 2 + CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
+      ]
+    )
+    line3.x = interpolate(
+      trackx,
+      [0, 1],
+      [
+        WIDTH / 2 - CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
+        WIDTH / 2 + CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
+      ]
+    )
     hiteffect.alpha = 0
     hiteffect.x = offsetx
+    hiteffect.name = props.i + 'cursorf'
+    rowbg.width = PLAYFIELD_WIDTH * 1.3
+    rowbg.name = props.i + 'rowbg'
+    rowbg.height = height
+    rowbg.tint = 0x000000
+    rowbg.x = interpolate(
+      trackx,
+      [0, 1],
+      [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+    )
+    rowbg.anchor.set(0.5, 1)
+    switchline.name = 'switchline' + props.i
+    switchline.height = 150
+    switchline.anchor.set(lastpos > startpos ? 0 : 1, 1)
+    switchline.width = Math.abs(lastpos - startpos) * CURSOR_AREA
+    switchline.tint = color
+    switchline.x = interpolate(
+      props.x,
+      [0, 1],
+      [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+    )
+    container.addChild(hiteffect)
+    container.addChild(rowbg)
+    container.addChild(line1)
+    container.addChild(line2)
+    container.addChild(switchline)
+    container.addChild(line3)
   } else {
+    switchline = container.getChildByName('switchline' + props.i)
+    rowbg = container.getChildByName(props.i + 'rowbg')
+    line1 = container.getChildByName('line1' + props.i)
+    line2 = container.getChildByName('line2' + props.i)
+    line3 = container.getChildByName('line3' + props.i)
     hiteffect = container.getChildByName(props.i + 'cursorf')
+    switchline.alpha = active ? 1 : 0
   }
   hiteffect.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
   hiteffect.width = 300
@@ -175,10 +244,23 @@ export default function CursorNote(props: CursorNoteProps) {
   hiteffect.blendMode = BLEND_MODES.ADD_NPM
   hiteffect.anchor.set(lastpos > startpos ? 1 : 0, 0.5)
   hiteffect.tint = color
+
+  switchline.y = y + height
+  rowbg.y = y + height
+  line1.y = y + height
+  line2.y = y + height
+  line3.y = y + height
   useTick(() => {
     currentTime = props.game.currenttime
     let isPlaying = props.game.isPlaying
-    if (isPlaying && active) {
+    if (
+      isPlaying &&
+      active &&
+      currentTime >=
+        startTime -
+          NOTE_TRAVEL_DURATION +
+          NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION
+    ) {
       if (props.game.hitlist.length > 0)
         props.game.hitlist.forEach((element: any) => {
           if (
@@ -272,151 +354,5 @@ export default function CursorNote(props: CursorNoteProps) {
       arrow.y = y + height - 30
     }
   }
-
-  app.stage.addChild(container)
-  return (
-    <Container name="cursornotecontainer">
-      <Sprite
-        texture={Texture.WHITE}
-        width={PLAYFIELD_WIDTH * 1.3}
-        height={height}
-        x={interpolate(
-          trackx,
-          [0, 1],
-          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-        )}
-        y={y + height}
-        tint={0x000000}
-        // filters={[new filters.BlurFilter(2)]}
-        anchor={[0.5, 1]}
-        alpha={1}
-      />
-      <Sprite
-        // texture={Texture.WHITE}
-        image={judgement2}
-        x={interpolate(
-          props.x,
-          [0, 1],
-          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-        )}
-        y={y + height}
-        tint={color}
-        anchor={lastpos > startpos ? [0, 1] : [1, 1]}
-        alpha={active ? 1 : 0}
-        width={Math.abs(lastpos - startpos) * CURSOR_AREA}
-        // blendMode={BLEND_MODES.ADD_NPM}
-        height={300}
-      />
-      <Sprite
-        texture={Texture.WHITE}
-        tint={COLCOLOR[0]}
-        x={interpolate(
-          trackx,
-          [0, 1],
-          [
-            WIDTH / 2 - CURSOR_AREA / 2 - COL_WIDTH,
-            WIDTH / 2 + CURSOR_AREA / 2 - COL_WIDTH,
-          ]
-        )}
-        alpha={0.1}
-        y={y + height}
-        anchor={[1, 1]}
-        height={height}
-        width={COL_WIDTH}
-      />
-      <Sprite
-        texture={Texture.WHITE}
-        tint={COLCOLOR[1]}
-        x={interpolate(
-          trackx,
-          [0, 1],
-          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-        )}
-        alpha={trackalpha}
-        y={y + height}
-        anchor={[1, 1]}
-        height={height}
-        width={COL_WIDTH}
-      />
-      <Sprite
-        texture={Texture.WHITE}
-        tint={COLCOLOR[2]}
-        x={interpolate(
-          trackx,
-          [0, 1],
-          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-        )}
-        alpha={trackalpha}
-        y={y + height}
-        anchor={[0, 1]}
-        height={height}
-        width={COL_WIDTH}
-      />
-      <Sprite
-        texture={Texture.WHITE}
-        tint={COLCOLOR[3]}
-        x={interpolate(
-          trackx,
-          [0, 1],
-          [
-            WIDTH / 2 - CURSOR_AREA / 2 + COL_WIDTH,
-            WIDTH / 2 + CURSOR_AREA / 2 + COL_WIDTH,
-          ]
-        )}
-        y={y + height}
-        alpha={0.1}
-        anchor={[0, 1]}
-        height={height}
-        width={COL_WIDTH}
-      />
-      <Sprite
-        image={vertical}
-        x={interpolate(
-          trackx,
-          [0, 1],
-          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-        )}
-        y={y + height}
-        anchor={[0.5, 1]}
-        alpha={1}
-        blendMode={BLEND_MODES.ADD}
-        width={100}
-        height={height}
-      />
-      <Sprite
-        image={vertical}
-        x={interpolate(
-          trackx,
-          [0, 1],
-          [
-            WIDTH / 2 - CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
-            WIDTH / 2 + CURSOR_AREA / 2 + PLAYFIELD_WIDTH / 2,
-          ]
-        )}
-        y={y + height}
-        anchor={[0.5, 1]}
-        alpha={0.2}
-        blendMode={BLEND_MODES.ADD}
-        width={100}
-        height={height}
-      />
-      <Sprite
-        image={vertical}
-        x={interpolate(
-          trackx,
-          [0, 1],
-          [
-            WIDTH / 2 - CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
-            WIDTH / 2 + CURSOR_AREA / 2 - PLAYFIELD_WIDTH / 2,
-          ]
-        )}
-        y={y + height}
-        anchor={[0.5, 1]}
-        alpha={0.2}
-        blendMode={BLEND_MODES.ADD}
-        width={100}
-        height={height}
-      />
-    </Container>
-  )
+  return null
 }

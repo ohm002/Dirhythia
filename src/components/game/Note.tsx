@@ -7,6 +7,7 @@ import {
   Texture,
   Application,
   Filter,
+  Container as CONTAINER,
   filters,
 } from 'pixi.js'
 import PIXI from 'pixi.js'
@@ -39,28 +40,73 @@ type NoteProps = {
   startTime: number
   game: GameState
   keys: number
+  i: number
 }
+let container = new CONTAINER()
 
 export default function Note(props: NoteProps) {
+  const app = useApp()
+  container.name = 'container' + props.i
   let [clicked, setclicked] = useState(false)
   const [y, setY] = useState(0)
   const [alpha, setAlpha] = useState(1)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
-  const [score, setscore] = useState('')
-  let color = COLCOLOR[props.keys - 1]
-  const [active, setactive] = useState(true)
+  let color = COLCOLOR[props.keys-1]
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
   const cursorlist = props.game.beatmap.cursor.sort(
     (a, b) => a.startTime - b.startTime
   )
+  const mode = props.game.beatmap.timingPoints.filter(
+    (a) => a.time <= props.startTime
+  )[0].mode
+  let note = SPRITE.from(Texture.WHITE)
+  let hits = SPRITE.from(hit)
+  if (container.getChildByName('note' + props.i + props.keys) == null) {
+    if (mode == '2k' && props.keys == 2 || props.keys == 3) {
+      note.anchor.set(props.keys == 2 ? 1 : 0, 1)
+      hits.anchor.set(props.keys == 2 ? 1 : 0, 1)
+      note.width = COL_WIDTH * 2
+      hits.width = COL_WIDTH * 2
+      note.tint = color
+      hits.tint = color
+    } else {
+      note.anchor.set(0.5, 1)
+      hits.anchor.set(0.5, 1)
+      note.width = COL_WIDTH
+      hits.width = COL_WIDTH
+      note.tint = 0xffffff
+      hits.tint = 0xffffff
+    }
+    hits.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
+    hits.blendMode = BLEND_MODES.ADD_NPM
+    hits.name = 'hits' + props.i + props.keys
+    hits.height = NOTE_HEIGHT * 3
+    note.name = 'note' + props.i + props.keys
+    note.height = NOTE_HEIGHT
+    container.addChild(note)
+    container.addChild(hits)
+  } else {
+    note = container.getChildByName('note' + props.i + props.keys)
+    hits = container.getChildByName('hits' + props.i + props.keys)
+  }
 
+  hits.alpha = effalpha
+  note.alpha = alpha
+  note.y = y
+  if (mode == '2k' && props.keys == 2 || props.keys == 3) {
+    note.x = cursorx
+    hits.x = cursorx
+  } else {
+    hits.x = cursorx - WIDTH / 2 + props.x
+    note.x = cursorx - WIDTH / 2 + props.x
+  }
   useTick(() => {
     let isPlaying = props.game.isPlaying
     const currentTime = props.game.currenttime
-    if (isPlaying && active) {
+    if (isPlaying) {
       if (
         currentTime >
         props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION
@@ -93,7 +139,6 @@ export default function Note(props: NoteProps) {
             clicktime == -1
           ) {
             setclicked(true)
-            setscore(element.split(',')[1])
             setclicktime(currentTime)
           }
         })
@@ -129,29 +174,8 @@ export default function Note(props: NoteProps) {
       }
     }
   })
-  return (
-    <Container>
-      <Sprite
-        image={hit}
-        x={cursorx - WIDTH / 2 + props.x}
-        y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
-        width={COL_WIDTH}
-        height={NOTE_HEIGHT * 3}
-        alpha={effalpha}
-        blendMode={BLEND_MODES.ADD_NPM}
-        tint={color}
-        anchor={[0.5, 0.5]}
-      />
-      <Sprite
-        image={note}
-        x={cursorx - WIDTH / 2 + props.x}
-        y={y}
-        tint={0xffffff}
-        anchor={[0.5, 1]}
-        width={COL_WIDTH}
-        height={NOTE_HEIGHT}
-        alpha={alpha}
-      />
-    </Container>
-  )
+  if (container.getChildByName('container' + props.i) == null) {
+    app.stage.addChild(container)
+  }
+  return null
 }

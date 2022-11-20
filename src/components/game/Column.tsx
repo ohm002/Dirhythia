@@ -122,7 +122,7 @@ export default function Column(props: ColumnProps) {
           // change to bpm         ^
           if (props.game.key[props.i - 1][1] == '0') {
             const miss = async () => {
-              props.game.miss(currentTime, props.i)
+              props.game.miss(currenthold.startTime , props.i)
             }
             miss()
           }
@@ -158,6 +158,7 @@ export default function Column(props: ColumnProps) {
             startTime={hitObject.startTime}
             keys={props.i}
             key={i}
+            i={i}
             game={props.game}
           />
         ) : (
@@ -172,6 +173,7 @@ export default function Column(props: ColumnProps) {
             }
             keys={props.i}
             key={i}
+            i={i}
             game={props.game}
           />
         )

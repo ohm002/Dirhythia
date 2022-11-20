@@ -76,5 +76,8 @@ export function parseBeatmap(data: string): Beatmap {
   beatmap.cursor.forEach((w, i) => {
     w.startTime = w.startTime + OFFSET
   })
+  beatmap.timingPoints.forEach((w, i) => {
+    w.time = w.time + OFFSET
+  })
   return beatmap
 }

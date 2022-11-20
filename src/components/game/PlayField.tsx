@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Container, Sprite, useApp, useTick } from '@inlet/react-pixi'
 import { Beatmap } from '../../types/Beatmap'
 import { TimingPoint } from '../../types/TimingPoint'
@@ -27,7 +27,6 @@ import CursorNote, { BPMLine } from './CursorNote'
 import React from 'react'
 import judgement from '../../assets/judgement.png'
 import judgement2 from '../../assets/judgement2.png'
-import bg from '../../data/void(Mournfinale) - World Vanquisher/87729274_p0.jpg'
 import { interpolate } from '../../libs/interpolate'
 
 type PlayFieldProps = {
@@ -36,6 +35,20 @@ type PlayFieldProps = {
 }
 
 export default function PlayField(props: PlayFieldProps) {
+  const app = useApp()
+  const bgimage = SPRITE.from(props.beatmap.bgPath)
+  app.stage.addChild(bgimage)
+  console.log(bgimage.height, bgimage.width)
+  if (bgimage.height > 1) {
+    const height = bgimage.height * (WIDTH / bgimage.width)
+    bgimage.height = height
+    bgimage.width = WIDTH
+    bgimage.blendMode = BLEND_MODES.ADD
+    bgimage.x = WIDTH / 2
+    bgimage.y = HEIGHT / 2
+    bgimage.anchor.set(0.5, 0.5)
+    bgimage.alpha = 0.2
+  }
   // const app = useApp()
   // const observer = new ResizeObserver(([entry]) => {
   //   function getWidth() {
@@ -57,15 +70,7 @@ export default function PlayField(props: PlayFieldProps) {
     (a, b) => a.time - b.time
   )
   let currentbpm = timinglist[0]
-  // setInterval(() => {
-  //   GAME.hitwaitlist.forEach((element) => {
-  //     GAME.score += GAME.idtoscore(element.split(',')[1])
-  //     GAME.combo += 1
-  //     if (GAME.combo > GAME.highestcombo) GAME.highestcombo = GAME.combo
-  //     GAME.hitlist.push(element)
-  //     GAME.hitwaitlist = GAME.hitwaitlist.filter((item) => item !== element)
-  //   })
-  // }, 1000)
+
   useTick(() => {
     if (props.game.isPlaying) {
       var currentTime = Date.now() - props.game.playStartTime
@@ -74,17 +79,6 @@ export default function PlayField(props: PlayFieldProps) {
       // console.log(Math.abs(props.game.currenttime- props.game.audio.currentTime*1000))
     }
   })
-  const app = useApp()
-  const bgimage = SPRITE.from(bg)
-  // app.stage.addChild(bgimage)
-  // const ratio = bgimage.width * WIDTH
-  bgimage.width = WIDTH
-  bgimage.height = HEIGHT
-  bgimage.blendMode = BLEND_MODES.ADD
-  bgimage.x = WIDTH / 2
-  bgimage.y = HEIGHT / 2
-  bgimage.anchor.set(0.5, 0.5)
-  bgimage.alpha = 0.2
   return (
     <>
       <Container>
@@ -148,7 +142,16 @@ export default function PlayField(props: PlayFieldProps) {
         image={judgement2}
         x={0}
         y={HEIGHT}
-        width={interpolate(props.game.currenttime,[0, props.game.beatmap.hitObjects[props.game.beatmap.hitObjects.length-1].startTime],[0,WIDTH])}
+        width={interpolate(
+          props.game.currenttime,
+          [
+            0,
+            props.game.beatmap.hitObjects[
+              props.game.beatmap.hitObjects.length - 1
+            ].startTime,
+          ],
+          [0, WIDTH]
+        )}
         alpha={1}
         anchor={[0, 1]}
       />

@@ -8,7 +8,7 @@ import {
   filters,
   AnimatedSprite,
 } from 'pixi.js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HEIGHT, PLAYFIELD_WIDTH, WIDTH } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import combobox from '../../assets/combobox.png'
@@ -61,8 +61,14 @@ text.y = HEIGHT / 2
 text.alpha = 0
 export default function Display(props: Props) {
   const [combo, setCombo] = useState('0')
+  const [fps, setfps] = useState('0')
   const app = useApp()
   app.stage.addChild(text)
+  useEffect(() => {
+    setInterval(() => {
+      setfps(Math.round(app.ticker.FPS).toString())
+    }, 1000)
+  })
 
   useTick(() => {
     const currentTime = props.game.currenttime
@@ -77,28 +83,24 @@ export default function Display(props: Props) {
 
   return (
     <Container>
-      <Sprite image={overlay} x={0} y={0} alpha={1} width={WIDTH} anchor={[0, 0]} />
       <Sprite
-        image={scorebox}
-        x={29}
-        y={23}
+        image={overlay}
+        x={0}
+        y={0}
         alpha={1}
+        width={WIDTH}
         anchor={[0, 0]}
       />
+      <Sprite image={scorebox} x={29} y={23} alpha={1} anchor={[0, 0]} />
       <Sprite
         image={combobox}
-        x={WIDTH-20}
+        x={WIDTH - 20}
         y={20}
         alpha={1}
         anchor={[1, 0]}
       />
       <Sprite image={scoreline} x={378} y={81} alpha={1} anchor={[1, 0]} />
-      <Sprite
-        image={comboline}
-        x={WIDTH - 30}
-        y={78}
-        anchor={[1, 0]}
-      />
+      <Sprite image={comboline} x={WIDTH - 30} y={78} anchor={[1, 0]} />
 
       <Text
         text={
@@ -106,7 +108,7 @@ export default function Display(props: Props) {
           ' - ' +
           props.game.beatmap.metadata.title
         }
-        x={WIDTH/2}
+        x={WIDTH / 2}
         y={93}
         anchor={[0.5, 0]}
         blendMode={BLEND_MODES.ADD}
@@ -120,10 +122,8 @@ export default function Display(props: Props) {
         }
       />
       <Text
-        text={
-          "Charted by " + props.game.beatmap.metadata.creator
-        }
-        x={WIDTH/2}
+        text={'Charted by ' + props.game.beatmap.metadata.creator}
+        x={WIDTH / 2}
         y={43}
         alpha={0.5}
         anchor={[0.5, 0]}
@@ -139,10 +139,10 @@ export default function Display(props: Props) {
       />
       <Text
         text={props.game.beatmap.metadata.difficult}
-        x={WIDTH/2}
+        x={WIDTH / 2}
         y={66}
         anchor={[0.5, 0]}
-        style={ 
+        style={
           new TextStyle({
             fontFamily: 'Goldman',
             align: 'center',
@@ -152,7 +152,7 @@ export default function Display(props: Props) {
         }
       />
       <Text
-        text={'FPS : ' + Math.round(useApp().ticker.FPS).toString()}
+        text={'FPS : ' + fps}
         x={WIDTH - 30}
         y={116}
         blendMode={BLEND_MODES.ADD}
