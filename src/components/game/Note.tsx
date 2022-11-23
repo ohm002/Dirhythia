@@ -34,6 +34,7 @@ import {
 import { GameState } from '../../state/GameState'
 import PlayField from './PlayField'
 import { triggereffect } from './Display'
+import { Beatmap } from '../../types/Beatmap'
 
 type NoteProps = {
   x: number
@@ -56,10 +57,10 @@ export default function Note(props: NoteProps) {
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
-  const cursorlist = props.game.beatmap.cursor.sort(
+  const cursorlist = (props.game.beatmap as Beatmap).cursor.sort(
     (a, b) => a.startTime - b.startTime
   )
-  const mode = props.game.beatmap.timingPoints.filter(
+  const mode = (props.game.beatmap as Beatmap).timingPoints.filter(
     (a) => a.time <= props.startTime
   )[0].mode
   let note = SPRITE.from(Texture.WHITE)
@@ -90,7 +91,7 @@ export default function Note(props: NoteProps) {
     container.addChild(hits)
   } else {
     note = container.getChildByName('note' + props.i + props.keys)
-    hits = container.getChildByName('hits' + props.i + props.keys)
+    if (props.game.mode == "play") hits = container.getChildByName('hits' + props.i + props.keys)
   }
 
   hits.alpha = effalpha

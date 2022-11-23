@@ -24,6 +24,7 @@ import {
 } from '../../libs/options'
 import { GameState } from '../../state/GameState'
 import { TimingPoint } from '../../types/TimingPoint'
+import { Beatmap } from '../../types/Beatmap'
 
 type HoldProps = {
   x: number
@@ -48,9 +49,9 @@ export default function Hold(props: HoldProps) {
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
-  const mode = (props.game.beatmap.timingPoints.filter((a) => a.time <= props.startTime)[0] != undefined ? 
-                props.game.beatmap.timingPoints.filter((a) => a.time <= props.startTime)[0] : 
-                props.game.beatmap.timingPoints[0]).mode
+  const mode = ((props.game.beatmap as Beatmap).timingPoints.filter((a) => a.time <= props.startTime)[0] != undefined ? 
+                (props.game.beatmap as Beatmap).timingPoints.filter((a) => a.time <= props.startTime)[0] : 
+                (props.game.beatmap as Beatmap).timingPoints[0]).mode
 
   let color = COLCOLOR[props.keys-1]
   let note = SPRITE.from(Texture.WHITE)
@@ -96,24 +97,24 @@ export default function Hold(props: HoldProps) {
     note.height = NOTE_HEIGHT
     container.addChild(hold)
     container.addChild(note)
-    container.addChild(hits)
+    if (props.game.mode == "play") container.addChild(hits)
   } else {
     note = container.getChildByName('note' + props.i + props.keys)
     hold = container.getChildByName('hold' + props.i + props.keys)
-    hits = container.getChildByName('hits' + props.i + props.keys)
+    if (props.game.mode == "play") hits = container.getChildByName('hits' + props.i + props.keys)
   }
 
   hold.y = y + height
   hold.alpha = holdfade
-  hits.alpha = effalpha
+  if (props.game.mode == "play") hits.alpha = effalpha
   note.alpha = alpha
   note.y = y + height
   if (mode == '2k' && props.keys == 2 || props.keys == 3) {
     note.x = cursorx
     hold.x = cursorx - (props.keys == 2 ? COL_WIDTH-HOLD_WIDTH : -(COL_WIDTH-HOLD_WIDTH) )
-    hits.x = cursorx 
+    if (props.game.mode == "play") hits.x = cursorx 
   } else {
-    hits.x = cursorx - WIDTH / 2 + props.x
+    if (props.game.mode == "play") hits.x = cursorx - WIDTH / 2 + props.x
     note.x = cursorx - WIDTH / 2 + props.x
     hold.x = cursorx - WIDTH / 2 + props.x
   }

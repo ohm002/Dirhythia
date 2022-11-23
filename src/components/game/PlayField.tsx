@@ -37,18 +37,8 @@ type PlayFieldProps = {
 export default function PlayField(props: PlayFieldProps) {
   const app = useApp()
   const bgimage = SPRITE.from(props.beatmap.bgPath)
+  bgimage.alpha = 0
   app.stage.addChild(bgimage)
-  console.log(bgimage.height, bgimage.width)
-  if (bgimage.height > 1) {
-    const height = bgimage.height * (WIDTH / bgimage.width)
-    bgimage.height = height
-    bgimage.width = WIDTH
-    bgimage.blendMode = BLEND_MODES.ADD
-    bgimage.x = WIDTH / 2
-    bgimage.y = HEIGHT / 2
-    bgimage.anchor.set(0.5, 0.5)
-    bgimage.alpha = 0.2
-  }
   // const app = useApp()
   // const observer = new ResizeObserver(([entry]) => {
   //   function getWidth() {
@@ -66,16 +56,26 @@ export default function PlayField(props: PlayFieldProps) {
   // })
   // observer.observe(document.getElementsByTagName('html')[0])
   const GAME = props.game
-  const timinglist = props.game.beatmap.timingPoints.sort(
+  const timinglist = ((props.game.beatmap as Beatmap).timingPoints as TimingPoint[]).sort(
     (a, b) => a.time - b.time
   )
   let currentbpm = timinglist[0]
 
   useTick(() => {
+    if (bgimage.height > 1) {
+      const height = bgimage.height * (WIDTH / bgimage.width)
+      bgimage.height = height
+      bgimage.width = WIDTH
+      bgimage.blendMode = BLEND_MODES.ADD
+      bgimage.x = WIDTH / 2
+      bgimage.y = HEIGHT / 2
+      bgimage.anchor.set(0.5, 0.5)
+      bgimage.alpha = 0.2
+    }
     if (props.game.isPlaying) {
       var currentTime = Date.now() - props.game.playStartTime
       currentbpm = timinglist.filter((e) => e.time <= currentTime)[0]
-      props.game.currenttime = currentTime
+      if (props.game.mode == "play") props.game.currenttime = currentTime
       // console.log(Math.abs(props.game.currenttime- props.game.audio.currentTime*1000))
     }
   })

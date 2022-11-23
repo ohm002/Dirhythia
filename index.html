@@ -7,9 +7,11 @@
   <title>Dirhythia</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap');
+
     canvas {
       width: fit-content;
     }
+
   </style>
 </head>
 
@@ -23,16 +25,20 @@
       var array = []
       var factor = 1
       if (startpos > endpos) factor = -1;
-      for (let index = 0; index < Math.abs(starttime-endtime)/((60000/bpm)/beatdivisor); index++) {
+      for (let index = 0; index < Math.abs(starttime - endtime) / ((60000 / bpm) / beatdivisor); index++) {
+        const val = (Math.sin((((index + 1) / ((Math.abs(starttime - endtime) / ((60000 / bpm) / beatdivisor) + 1))) *
+          Math.PI) / 2)) * Math.abs(startpos - endpos) 
+        const val2 = ((val - 0) / (1 - 0)) * (endpos - startpos) +startpos
         array.push({
-          "type":"normal",
-          "x":startpos+(index*factor * 
-          (Math.abs(startpos-endpos) / Math.floor(Math.abs(starttime-endtime)/((60000/bpm)/(beatdivisor))))),
-          "startTime":starttime+Math.round((60000/bpm)*index/beatdivisor),
+          "type": "normal",
+          "x": startpos+(val2*factor),
+          "x": val,
+          "startTime": starttime + Math.round((60000 / bpm) * index / beatdivisor),
         })
       }
       console.log(JSON.stringify(array))
     }
+
   </script>
 
 </body>

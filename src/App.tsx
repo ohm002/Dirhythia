@@ -27,6 +27,7 @@ import { Text } from 'pixi.js'
 type AppProps = {
   mode: 'play' | 'editor'
   chart: Beatmap
+  game: GameState
 }
 
 export default function App(props: AppProps) {
@@ -48,10 +49,6 @@ export default function App(props: AppProps) {
   beatmap.hitObjects.forEach((e) => {
     maxscore += 100
     maxcombo += 1
-    if (e.type == 'hold') {
-      maxscore += 100
-      maxcombo += 1
-    }
   })
   // add slam support
   beatmap.cursor.forEach((e, i) => {
@@ -65,7 +62,7 @@ export default function App(props: AppProps) {
       maxcombo += 1
     }
   })
-  const GAME = new GameState(
+  const GAME = props.game.init(
     10,
     10,
     400,
@@ -74,10 +71,10 @@ export default function App(props: AppProps) {
     beatmap,
     maxcombo
   )
+  GAME.mode = props.mode
   GAME.setAudioPath(audioPath)
   const musicVolume = GAME.audiovolume
   const effectVolume = GAME.effectvolume
-  GAME.mode = props.mode
   const clearCacheData = () => {
     caches.keys().then((names) => {
       names.forEach((name) => {
@@ -153,7 +150,13 @@ export default function App(props: AppProps) {
       document.removeEventListener('keydown', handleRetry)
     }
   }, [])
-
+  // const rangehandler = (e) => {
+  //   if(GAME.mode == 'editor'){
+  //     GAME.currenttime = (e.target.value / 100) * beatmap.hitObjects[beatmap.hitObjects.length-1].startTime
+  //     console.log(GAME.currenttime)
+  //   }
+  // }
+  
   
   return (
     <>
@@ -188,6 +191,7 @@ export default function App(props: AppProps) {
         />
       </div>
       <div id="display"></div>
+      {/* <input type="range" id="range" onInput={rangehandler}></input> */}
       <Stage width={WIDTH} height={HEIGHT}>
         <PlayField beatmap={beatmap} game={GAME} />
         <Display game={GAME}></Display>

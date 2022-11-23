@@ -24,20 +24,12 @@ export class GameState {
   key: Array<any>
   currenttime: number
   highestcombo: number
-  beatmap: Beatmap
+  beatmap: Beatmap | any
   maxcombo: number
   WIDTH: number
   HEIGHT: number
 
-  constructor(
-    volume: number,
-    effect: number,
-    scrollspeed: number,
-    audiopath: string,
-    maxscore: number,
-    beatmap: Beatmap,
-    maxcombo: number
-  ) {
+  constructor() {
     // this.data = [
     //   {
     //     apath: audiopath,
@@ -54,19 +46,18 @@ export class GameState {
     // 7 : ISPLAYING
     // 8 : CURSOR
     // 9 : HITLIST
-    this.beatmap = beatmap
+    this.beatmap = null
     this.key = ['00', '00', '00', '00', '00']
     this.audio = GAME_AUDIO
-    this.audiopath = audiopath
-    this.audiovolume = volume
-    GAME_AUDIO.src = this.audiopath
-    this.effectvolume = effect
-    this.scrollspeed = scrollspeed
+    this.audiopath = ''
+    this.audiovolume = NaN
+    this.effectvolume = NaN
+    this.scrollspeed = NaN
     this.highestcombo = 0
     this.hitwaitlist = []
-    this.maxcombo = maxcombo
+    this.maxcombo = NaN
     this.score = 0
-    this.maxscore = maxscore
+    this.maxscore = NaN
     this.combo = 0
     this.playStartTime = 0
     this.isPlaying = false
@@ -77,7 +68,25 @@ export class GameState {
     this.WIDTH = getWidth()
     this.hitlist = []
   }
-
+  init(
+    volume: number,
+    effect: number,
+    scrollspeed: number,
+    audiopath: string,
+    maxscore: number,
+    beatmap: Beatmap,
+    maxcombo: number
+  ) {
+    this.audiovolume=volume
+    this.effectvolume=effect
+    this.scrollspeed=scrollspeed
+    this.audiopath=audiopath
+    this.maxscore=maxscore
+    this.maxcombo=maxcombo
+    this.beatmap=beatmap
+    GAME_AUDIO.src = audiopath
+    return this
+  }
   async miss(time: number, key: number) {
     if (
       this.hitlist.filter(
@@ -111,7 +120,7 @@ export class GameState {
     this.combo = 0
     this.playStartTime = Date.now()
     this.hitlist = []
-    GAME_AUDIO.play()
+    if (this.mode == 'play') GAME_AUDIO.play()
   }
 
   retry() {

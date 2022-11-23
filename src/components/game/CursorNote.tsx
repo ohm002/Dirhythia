@@ -53,7 +53,7 @@ type BPMLineProps = {
 let container = new CONTAINER()
 
 export function BPMLine(props: BPMLineProps) {
-  const cursorlist = props.game.beatmap.cursor.sort(
+  const cursorlist = (props.game.beatmap as Beatmap).cursor.sort(
     (a, b) => a.startTime - b.startTime
   )
   const [y, sety] = useState(0)
@@ -140,7 +140,7 @@ export default function CursorNote(props: CursorNoteProps) {
   const height = Math.round((Duration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
   let currentTime = 0
-  const color = lastpos > startpos ? 0x57d8ff : 0xff5986
+  const color = lastpos > startpos ? 0xa1ff59 : 0xff8547
   const [active, setactive] = useState(true)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
@@ -256,10 +256,10 @@ export default function CursorNote(props: CursorNoteProps) {
     if (
       isPlaying &&
       active &&
-      currentTime >=
+      (currentTime >=
         startTime -
           NOTE_TRAVEL_DURATION +
-          NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION
+          NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION || props.game.mode == 'editor')
     ) {
       if (props.game.hitlist.length > 0)
         props.game.hitlist.forEach((element: any) => {
@@ -286,7 +286,7 @@ export default function CursorNote(props: CursorNoteProps) {
         // )
       }
 
-      if (currentTime > endTime + 300) {
+      if (currentTime > endTime + 300 && props.game.mode == "play") {
         for (
           let i = 0;
           i <
@@ -329,10 +329,10 @@ export default function CursorNote(props: CursorNoteProps) {
       const arrow = SPRITE.from(lastpos > startpos ? arrowleft : arrowright)
       arrow.anchor.set(lastpos > startpos ? 1 : 0, 1)
       arrow.alpha = 0.7
-      arrow.tint = lastpos > startpos ? 0x57d8ff : 0xff5986
+      arrow.tint = color
       arrow.blendMode = BLEND_MODES.ADD
-      arrow.width = arrowdelay
-      arrow.height = arrowdelay
+      arrow.width = arrowdelay/2
+      arrow.height = arrowdelay/2
       arrow.name = 'arrow' + i.toString() + props.i.toString()
       container.addChild(arrow)
     } else {
