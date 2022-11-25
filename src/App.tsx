@@ -1,9 +1,11 @@
 import { MouseEventHandler, useEffect } from 'react'
-import PlayField from './components/game/PlayField'
+import PlayField from './components/game/play/PlayField'
 // import beatmap from './data/Virtual Self - Particle Arts/beatmap'
 // import beatmap from './data/void(Mournfinale) - World Vanquisher/beatmap'
 // import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { GameState } from './state/GameState'
+import MenuWindow from './MenuWindow'
+import Menu from './components/game/menu/Menu'
 import {
   HEIGHT,
   OFFSET,
@@ -18,14 +20,13 @@ import {
   JUDGEMENT_LINE_OFFSET_Y,
 } from './libs/options'
 import { Stage, useApp, useTick, Container } from '@inlet/react-pixi'
-import Display from './components/game/Display'
+import Display from './components/game/play/Display'
 import css from './index.css'
 import { parseBeatmap } from './libs/parseBeatmap'
 import { Beatmap } from './types/Beatmap'
 import { Application, TextStyle } from 'pixi.js'
 import { Text } from 'pixi.js'
 type AppProps = {
-  mode: 'play' | 'editor'
   chart: Beatmap
   game: GameState
 }
@@ -71,7 +72,6 @@ export default function App(props: AppProps) {
     beatmap,
     maxcombo
   )
-  GAME.mode = props.mode
   GAME.setAudioPath(audioPath)
   const musicVolume = GAME.audiovolume
   const effectVolume = GAME.effectvolume
@@ -120,8 +120,8 @@ export default function App(props: AppProps) {
   }
   useEffect(() => {
     document.addEventListener('mousemove', (e: MouseEvent) => {
-      if (e.movementX > 0) GAME.key[4] =  GAME.key[4][0] + '1'
-      if (e.movementX < 0) GAME.key[4] =  '1' + GAME.key[4][1]
+      if (e.movementX > 0) GAME.key[4] = GAME.key[4][0] + '1'
+      if (e.movementX < 0) GAME.key[4] = '1' + GAME.key[4][1]
     })
     document.addEventListener('keyup', (e: KeyboardEvent) => {
       if (validkey(e.key)) {
@@ -156,8 +156,6 @@ export default function App(props: AppProps) {
   //     console.log(GAME.currenttime)
   //   }
   // }
-  
-  
   return (
     <>
       <button className="border border-black py-2 px-3" onClick={handlePlay}>
@@ -192,9 +190,13 @@ export default function App(props: AppProps) {
       </div>
       <div id="display"></div>
       {/* <input type="range" id="range" onInput={rangehandler}></input> */}
+
       <Stage width={WIDTH} height={HEIGHT}>
-        <PlayField beatmap={beatmap} game={GAME} />
-        <Display game={GAME}></Display>
+        <Menu game={GAME} />
+        <Container>
+          <PlayField beatmap={beatmap} game={GAME} />
+          <Display game={GAME} />
+        </Container>
       </Stage>
       <div id="log"></div>
     </>

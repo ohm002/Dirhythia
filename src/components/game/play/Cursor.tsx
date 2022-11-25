@@ -12,9 +12,9 @@ import {
   CURSOR_LEFT_KEY,
   CURSOR_RIGHT_KEY,
   CURSOR_AREA,
-} from '../../libs/options'
-import { GameState } from '../../state/GameState'
-import { Cursors } from '../../types/Cursors'
+} from '../../../libs/options'
+import { GameState } from '../../../state/GameState'
+import { Cursors } from '../../../types/Cursors'
 import { useEffect, useMemo, useState } from 'react'
 
 type Props = {

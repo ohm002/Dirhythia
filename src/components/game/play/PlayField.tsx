@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Container, Sprite, useApp, useTick } from '@inlet/react-pixi'
-import { Beatmap } from '../../types/Beatmap'
-import { TimingPoint } from '../../types/TimingPoint'
+import { Beatmap } from '../../../types/Beatmap'
+import { TimingPoint } from '../../../types/TimingPoint'
 import {
   BLEND_MODES,
   filters,
@@ -20,14 +20,14 @@ import {
   HEIGHT,
   PLAYFIELD_WIDTH,
   NOTE_TRAVEL_DURATION,
-} from '../../libs/options'
-import { GameState } from '../../state/GameState'
+} from '../../../libs/options'
+import { GameState } from '../../../state/GameState'
 import Cursor from './Cursor'
 import CursorNote, { BPMLine } from './CursorNote'
 import React from 'react'
-import judgement from '../../assets/judgement.png'
-import judgement2 from '../../assets/judgement2.png'
-import { interpolate } from '../../libs/interpolate'
+import judgement from '../../../assets/judgement.png'
+import judgement2 from '../../../assets/judgement2.png'
+import { interpolate } from '../../../libs/interpolate'
 
 type PlayFieldProps = {
   beatmap: Beatmap
@@ -36,9 +36,10 @@ type PlayFieldProps = {
 
 export default function PlayField(props: PlayFieldProps) {
   const app = useApp()
+  const [active, setactive] = useState(0)
   const bgimage = SPRITE.from(props.beatmap.bgPath)
   bgimage.alpha = 0
-  app.stage.addChild(bgimage)
+  if (props.game.mode == 'play') app.stage.addChild(bgimage)
   // const app = useApp()
   // const observer = new ResizeObserver(([entry]) => {
   //   function getWidth() {
@@ -56,9 +57,9 @@ export default function PlayField(props: PlayFieldProps) {
   // })
   // observer.observe(document.getElementsByTagName('html')[0])
   const GAME = props.game
-  const timinglist = ((props.game.beatmap as Beatmap).timingPoints as TimingPoint[]).sort(
-    (a, b) => a.time - b.time
-  )
+  const timinglist = (
+    (props.game.beatmap as Beatmap).timingPoints as TimingPoint[]
+  ).sort((a, b) => a.time - b.time)
   let currentbpm = timinglist[0]
 
   useTick(() => {
@@ -75,13 +76,18 @@ export default function PlayField(props: PlayFieldProps) {
     if (props.game.isPlaying) {
       var currentTime = Date.now() - props.game.playStartTime
       currentbpm = timinglist.filter((e) => e.time <= currentTime)[0]
-      if (props.game.mode == "play") props.game.currenttime = currentTime
+      if (props.game.mode == 'play') props.game.currenttime = currentTime
       // console.log(Math.abs(props.game.currenttime- props.game.audio.currentTime*1000))
     }
   })
+
+  useTick(() => {
+    if (props.game.mode == 'play') setactive(1)
+  })
+
   return (
     <>
-      <Container>
+      <Container  alpha={props.game.mode == 'play' ? 1 : 0}>
         <CursorNote
           x={0.5}
           beatmap={props.beatmap}
@@ -111,7 +117,6 @@ export default function PlayField(props: PlayFieldProps) {
             game={props.game}
           />
         ))}
-
         {[
           ...Array(
             Math.round(
@@ -130,31 +135,31 @@ export default function PlayField(props: PlayFieldProps) {
             game={props.game}
           />
         ))}
+        <Cursor game={props.game} cursors={props.beatmap.cursor}></Cursor>
+        <Sprite
+          width={WIDTH}
+          anchor={[0, 0.5]}
+          image={judgement}
+          y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
+        />
+        <Sprite
+          image={judgement2}
+          x={0}
+          y={HEIGHT}
+          width={interpolate(
+            props.game.currenttime,
+            [
+              0,
+              props.game.beatmap.hitObjects[
+                props.game.beatmap.hitObjects.length - 1
+              ].startTime,
+            ],
+            [0, WIDTH]
+          )}
+          alpha={1}
+          anchor={[0, 1]}
+        />
       </Container>
-      <Cursor game={props.game} cursors={props.beatmap.cursor}></Cursor>
-      <Sprite
-        width={WIDTH}
-        anchor={[0, 0.5]}
-        image={judgement}
-        y={HEIGHT - JUDGEMENT_LINE_OFFSET_Y}
-      />
-      <Sprite
-        image={judgement2}
-        x={0}
-        y={HEIGHT}
-        width={interpolate(
-          props.game.currenttime,
-          [
-            0,
-            props.game.beatmap.hitObjects[
-              props.game.beatmap.hitObjects.length - 1
-            ].startTime,
-          ],
-          [0, WIDTH]
-        )}
-        alpha={1}
-        anchor={[0, 1]}
-      />
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { triggereffect } from '../components/game/Display'
+import { triggereffect } from '../components/game/play/Display'
 import { WIDTH } from '../libs/options'
 import { getHeight, getWidth } from '../libs/screenhandler'
 import { Beatmap } from '../types/Beatmap'
@@ -77,13 +77,13 @@ export class GameState {
     beatmap: Beatmap,
     maxcombo: number
   ) {
-    this.audiovolume=volume
-    this.effectvolume=effect
-    this.scrollspeed=scrollspeed
-    this.audiopath=audiopath
-    this.maxscore=maxscore
-    this.maxcombo=maxcombo
-    this.beatmap=beatmap
+    this.audiovolume = volume
+    this.effectvolume = effect
+    this.scrollspeed = scrollspeed
+    this.audiopath = audiopath
+    this.maxscore = maxscore
+    this.maxcombo = maxcombo
+    this.beatmap = beatmap
     GAME_AUDIO.src = audiopath
     return this
   }
@@ -120,6 +120,7 @@ export class GameState {
     this.combo = 0
     this.playStartTime = Date.now()
     this.hitlist = []
+    this.mode = 'play'
     if (this.mode == 'play') GAME_AUDIO.play()
   }
 

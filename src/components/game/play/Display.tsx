@@ -9,18 +9,18 @@ import {
   AnimatedSprite,
 } from 'pixi.js'
 import { useEffect, useState } from 'react'
-import { HEIGHT, PLAYFIELD_WIDTH, WIDTH } from '../../libs/options'
-import { GameState } from '../../state/GameState'
-import combobox from '../../assets/combobox.png'
-import { easeOutCubic, interpolate } from '../../libs/interpolate'
-import perfect from '../../assets/perfect.png'
-import great from '../../assets/great.png'
-import ok from '../../assets/ok.png'
-import miss from '../../assets/miss.png'
-import scoreline from '../../assets/scoreline.png'
-import comboline from '../../assets/comboline.png'
-import overlay from '../../assets/overlay.png'
-import scorebox from '../../assets/scorebox.png'
+import { HEIGHT, PLAYFIELD_WIDTH, WIDTH } from '../../../libs/options'
+import { GameState } from '../../../state/GameState'
+import combobox from '../../../assets/combobox.png'
+import { easeOutCubic, interpolate } from '../../../libs/interpolate'
+import perfect from '../../../assets/perfect.png'
+import great from '../../../assets/great.png'
+import ok from '../../../assets/ok.png'
+import miss from '../../../assets/miss.png'
+import scoreline from '../../../assets/scoreline.png'
+import comboline from '../../../assets/comboline.png'
+import overlay from '../../../assets/overlay.png'
+import scorebox from '../../../assets/scorebox.png'
 type Props = {
   game: GameState
 }
@@ -61,9 +61,10 @@ text.y = HEIGHT / 2
 text.alpha = 0
 export default function Display(props: Props) {
   const [combo, setCombo] = useState('0')
+  const [active, setactive] = useState(0)
   const [fps, setfps] = useState('0')
   const app = useApp()
-  app.stage.addChild(text)
+  if (props.game.mode == 'play') app.stage.addChild(text)
   useEffect(() => {
     setInterval(() => {
       setfps(Math.round(app.ticker.FPS).toString())
@@ -80,9 +81,12 @@ export default function Display(props: Props) {
     text.alpha = interpolate(currentTime, [clicktime, clicktime + 500], [1, 0])
     setCombo(props.game.combo.toString())
   })
+  useTick(() => {
+    if (props.game.mode == 'play') setactive(1)
+  })
 
   return (
-    <Container>
+    <Container alpha={active}>
       <Sprite
         image={overlay}
         x={0}

@@ -10,10 +10,10 @@ import {
   HEIGHT,
   PLAYFIELD_WIDTH,
   WIDTH,
-} from '../../libs/options'
-import { GameState } from '../../state/GameState'
-import { HitObject } from '../../types/HitObject'
-import { TimingPoint } from '../../types/TimingPoint'
+} from '../../../libs/options'
+import { GameState } from '../../../state/GameState'
+import { HitObject } from '../../../types/HitObject'
+import { TimingPoint } from '../../../types/TimingPoint'
 import Hold from './Hold'
 import Note from './Note'
 

@@ -12,13 +12,13 @@ import {
 } from 'pixi.js'
 import PIXI from 'pixi.js'
 import { useState } from 'react'
-import hit from '../../assets/hit.png'
-import note from '../../assets/note.png'
-import perfect from '../../assets/perfect.png'
-import great from '../../assets/great.png'
-import ok from '../../assets/ok.png'
-import miss from '../../assets/miss.png'
-import { interpolate } from '../../libs/interpolate'
+import hit from '../../../assets/hit.png'
+import note from '../../../assets/note.png'
+import perfect from '../../../assets/perfect.png'
+import great from '../../../assets/great.png'
+import ok from '../../../assets/ok.png'
+import miss from '../../../assets/miss.png'
+import { interpolate } from '../../../libs/interpolate'
 import {
   COLCOLOR,
   COL_WIDTH,
@@ -30,11 +30,11 @@ import {
   NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
   PLAYFIELD_WIDTH,
   WIDTH,
-} from '../../libs/options'
-import { GameState } from '../../state/GameState'
+} from '../../../libs/options'
+import { GameState } from '../../../state/GameState'
 import PlayField from './PlayField'
 import { triggereffect } from './Display'
-import { Beatmap } from '../../types/Beatmap'
+import { Beatmap } from '../../../types/Beatmap'
 
 type NoteProps = {
   x: number
@@ -53,7 +53,7 @@ export default function Note(props: NoteProps) {
   const [alpha, setAlpha] = useState(1)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
-  let color = COLCOLOR[props.keys-1]
+  let color = COLCOLOR[props.keys - 1]
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
@@ -66,7 +66,7 @@ export default function Note(props: NoteProps) {
   let note = SPRITE.from(Texture.WHITE)
   let hits = SPRITE.from(hit)
   if (container.getChildByName('note' + props.i + props.keys) == null) {
-    if (mode == '2k' && props.keys == 2 || props.keys == 3) {
+    if ((mode == '2k' && props.keys == 2) || props.keys == 3) {
       note.anchor.set(props.keys == 2 ? 1 : 0, 1)
       hits.anchor.set(props.keys == 2 ? 1 : 0, 1)
       note.width = COL_WIDTH * 2
@@ -83,6 +83,7 @@ export default function Note(props: NoteProps) {
     }
     hits.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
     hits.blendMode = BLEND_MODES.ADD_NPM
+    hits.alpha = 0
     hits.name = 'hits' + props.i + props.keys
     hits.height = NOTE_HEIGHT * 3
     note.name = 'note' + props.i + props.keys
@@ -91,13 +92,14 @@ export default function Note(props: NoteProps) {
     container.addChild(hits)
   } else {
     note = container.getChildByName('note' + props.i + props.keys)
-    if (props.game.mode == "play") hits = container.getChildByName('hits' + props.i + props.keys)
+    if (props.game.mode == 'play')
+      hits = container.getChildByName('hits' + props.i + props.keys)
   }
 
   hits.alpha = effalpha
   note.alpha = alpha
   note.y = y
-  if (mode == '2k' && props.keys == 2 || props.keys == 3) {
+  if ((mode == '2k' && props.keys == 2) || props.keys == 3) {
     note.x = cursorx
     hits.x = cursorx
   } else {
@@ -143,8 +145,7 @@ export default function Note(props: NoteProps) {
             setclicktime(currentTime)
           }
         })
-
-      if (!clicked) {
+      if (!clicked || clicktime == -1) {
         setY(
           interpolate(
             currentTime,

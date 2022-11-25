@@ -9,10 +9,10 @@ import {
   TextStyle,
 } from 'pixi.js'
 import { useEffect, useMemo, useState } from 'react'
-import { easeOutCubic, interpolate } from '../../libs/interpolate'
-import vertical from '../../assets/vertical.png'
-import judgement from '../../assets/judgement.png'
-import judgement2 from '../../assets/judgement2.png'
+import { easeOutCubic, interpolate } from '../../../libs/interpolate'
+import vertical from '../../../assets/vertical.png'
+import judgement from '../../../assets/judgement.png'
+import judgement2 from '../../../assets/judgement2.png'
 import {
   COLCOLOR,
   COL_WIDTH,
@@ -29,14 +29,14 @@ import {
   PLAYFIELD_WIDTH,
   SCROLL_SPEED,
   WIDTH,
-} from '../../libs/options'
-import { GameState } from '../../state/GameState'
-import { Beatmap } from '../../types/Beatmap'
-import { TimingPoint } from '../../types/TimingPoint'
-import hitright from '../../assets/cursorhitright.png'
-import hitleft from '../../assets/cursorhitleft.png'
-import arrowright from '../../assets/arrowright.png'
-import arrowleft from '../../assets/arrowleft.png'
+} from '../../../libs/options'
+import { GameState } from '../../../state/GameState'
+import { Beatmap } from '../../../types/Beatmap'
+import { TimingPoint } from '../../../types/TimingPoint'
+import hitright from '../../../assets/cursorhitright.png'
+import hitleft from '../../../assets/cursorhitleft.png'
+import arrowright from '../../../assets/arrowright.png'
+import arrowleft from '../../../assets/arrowleft.png'
 
 type CursorNoteProps = {
   x: number
@@ -140,7 +140,7 @@ export default function CursorNote(props: CursorNoteProps) {
   const height = Math.round((Duration * SCROLL_SPEED) / 1000)
   const [y, setY] = useState(-height)
   let currentTime = 0
-  const color = lastpos > startpos ? 0xa1ff59 : 0xff8547
+  const color = lastpos > startpos ? 0x3dd2ff : 0xff6161
   const [active, setactive] = useState(true)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
@@ -172,6 +172,7 @@ export default function CursorNote(props: CursorNoteProps) {
     )
     line1.anchor.set(0.5, 1)
     line1.width = 100
+    line1.alpha = 0.5
     line1.height = height
     line1.name = 'line1' + props.i
     line2.anchor.set(0.5, 1)
@@ -259,7 +260,8 @@ export default function CursorNote(props: CursorNoteProps) {
       (currentTime >=
         startTime -
           NOTE_TRAVEL_DURATION +
-          NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION || props.game.mode == 'editor')
+          NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION ||
+        props.game.mode == 'editor')
     ) {
       if (props.game.hitlist.length > 0)
         props.game.hitlist.forEach((element: any) => {
@@ -286,7 +288,7 @@ export default function CursorNote(props: CursorNoteProps) {
         // )
       }
 
-      if (currentTime > endTime + 300 && props.game.mode == "play") {
+      if (currentTime > endTime + 300 && props.game.mode == 'play') {
         for (
           let i = 0;
           i <
@@ -331,8 +333,8 @@ export default function CursorNote(props: CursorNoteProps) {
       arrow.alpha = 0.7
       arrow.tint = color
       arrow.blendMode = BLEND_MODES.ADD
-      arrow.width = arrowdelay/2
-      arrow.height = arrowdelay/2
+      arrow.width = arrowdelay / 2
+      arrow.height = arrowdelay / 2
       arrow.name = 'arrow' + i.toString() + props.i.toString()
       container.addChild(arrow)
     } else {
