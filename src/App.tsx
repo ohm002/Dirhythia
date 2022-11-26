@@ -24,10 +24,11 @@ import Display from './components/game/play/Display'
 import css from './index.css'
 import { parseBeatmap } from './libs/parseBeatmap'
 import { Beatmap } from './types/Beatmap'
-import { Application, TextStyle } from 'pixi.js'
+import { Application, TextStyle, Container as CONTAINER } from 'pixi.js'
 import { Text } from 'pixi.js'
 type AppProps = {
   chart: Beatmap
+  menutime: number
   game: GameState
 }
 
@@ -156,6 +157,7 @@ export default function App(props: AppProps) {
   //     console.log(GAME.currenttime)
   //   }
   // }
+  var displaycontainer = new CONTAINER()
   return (
     <>
       <button className="border border-black py-2 px-3" onClick={handlePlay}>
@@ -192,10 +194,10 @@ export default function App(props: AppProps) {
       {/* <input type="range" id="range" onInput={rangehandler}></input> */}
 
       <Stage width={WIDTH} height={HEIGHT}>
-        <Menu game={GAME} />
+        <Menu game={GAME} time={props.menutime} />
         <Container>
+          <Display game={GAME} container={displaycontainer} />
           <PlayField beatmap={beatmap} game={GAME} />
-          <Display game={GAME} />
         </Container>
       </Stage>
       <div id="log"></div>

@@ -43,6 +43,7 @@ type CursorNoteProps = {
   game: GameState
   key: number
   type: string
+  container: CONTAINER
   i: number
   beatmap: Beatmap
 }
@@ -113,7 +114,8 @@ export function BPMLine(props: BPMLineProps) {
 }
 export default function CursorNote(props: CursorNoteProps) {
   const app = useApp()
-  app.stage.addChild(container)
+  // app.stage.addChild(container)
+  container = props.container
   let effectVolume = props.game.effectvolume
   props.beatmap.cursor.sort((a, b) => a.startTime - b.startTime)
   const notex = props.x
@@ -214,6 +216,7 @@ export default function CursorNote(props: CursorNoteProps) {
       [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
     )
     rowbg.anchor.set(0.5, 1)
+    rowbg.alpha = 1
     switchline.name = 'switchline' + props.i
     switchline.height = 150
     switchline.anchor.set(lastpos > startpos ? 0 : 1, 1)

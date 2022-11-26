@@ -1,5 +1,5 @@
 import { Container, useTick, Text, useApp } from '@inlet/react-pixi'
-import PIXI from 'pixi.js'
+import { Container as CONTAINER } from 'pixi.js'
 import { useMemo, useState } from 'react'
 import {
   COL_1_KEY,
@@ -76,74 +76,78 @@ export default function Column(props: ColumnProps) {
       return a.startTime - b.startTime
     })
   useTick(() => {
-  isPlaying = props.game.isPlaying
-  if (isPlaying) {
-    // if (props.i == 1) console.log(props.game.key[props.i - 1])
-    effectVolume = props.game.effectvolume
-    playStartTime = props.game.playStartTime
-    const currentTime = props.game.currenttime
-    if (props.game.mode == 'play') {
-      if (props.game.key[props.i - 1][0] == '1' && nextObj != undefined) {
-        // find the hit object that player tried to click
-        const clickedHitObject =
-          nextObj.startTime >= currentTime - maxAcceptableOffset &&
-          nextObj.startTime <= currentTime + maxAcceptableOffset
-            ? nextObj
-            : undefined
-        if (clickedHitObject) {
-          const offset = Math.abs(clickedHitObject.startTime - currentTime)
-          setNextObjIndex(nextObjIndex + 1)
-          const check = async () => {
-            if (offset <= hitWindow300) {
-              await props.game.hit(
-                'perfect',
-                clickedHitObject.startTime,
-                props.i
-              )
-            } else if (hitWindow300 < offset && offset <= hitWindow100) {
-              await props.game.hit('great', clickedHitObject.startTime, props.i)
-            } else if (hitWindow100 < offset && offset <= hitWindow50) {
-              await props.game.hit('ok', clickedHitObject.startTime, props.i)
+    isPlaying = props.game.isPlaying
+    if (isPlaying) {
+      // if (props.i == 1) console.log(props.game.key[props.i - 1])
+      effectVolume = props.game.effectvolume
+      playStartTime = props.game.playStartTime
+      const currentTime = props.game.currenttime
+      if (props.game.mode == 'play') {
+        if (props.game.key[props.i - 1][0] == '1' && nextObj != undefined) {
+          // find the hit object that player tried to click
+          const clickedHitObject =
+            nextObj.startTime >= currentTime - maxAcceptableOffset &&
+            nextObj.startTime <= currentTime + maxAcceptableOffset
+              ? nextObj
+              : undefined
+          if (clickedHitObject) {
+            const offset = Math.abs(clickedHitObject.startTime - currentTime)
+            setNextObjIndex(nextObjIndex + 1)
+            const check = async () => {
+              if (offset <= hitWindow300) {
+                await props.game.hit(
+                  'perfect',
+                  clickedHitObject.startTime,
+                  props.i
+                )
+              } else if (hitWindow300 < offset && offset <= hitWindow100) {
+                await props.game.hit(
+                  'great',
+                  clickedHitObject.startTime,
+                  props.i
+                )
+              } else if (hitWindow100 < offset && offset <= hitWindow50) {
+                await props.game.hit('ok', clickedHitObject.startTime, props.i)
+              }
+            }
+            check()
+          }
+        }
+        // inconsistent hold amount
+        let currenthold = holds.filter((t) => {
+          return t.endTime != undefined && t.endTime >= currentTime
+        })[0]
+        if (currenthold != undefined) {
+          if (checkHold < currenthold.startTime) {
+            setcheckHold(currenthold.startTime + 100)
+            // change to bpm                    ^
+          } else if (currentTime >= checkHold && checkHold != -1) {
+            setcheckHold(checkHold + 100)
+            // change to bpm         ^
+            if (props.game.key[props.i - 1][1] == '0') {
+              const miss = async () => {
+                props.game.miss(currenthold.startTime, props.i)
+              }
+              miss()
             }
           }
-          check()
+          // if (
+          //   Math.abs(currentTime - currenthold.endTime) < 10 &&
+          //   props.game.key[props.i - 1][1] == '1'
+          // )
+          //   props.game.hit('perfect', currenthold.startTime, props.i + 6)
         }
-      }
-      // inconsistent hold amount
-      let currenthold = holds.filter((t) => {
-        return t.endTime != undefined && t.endTime >= currentTime
-      })[0]
-      if (currenthold != undefined) {
-        if (checkHold < currenthold.startTime) {
-          setcheckHold(currenthold.startTime + 100)
-          // change to bpm                    ^
-        } else if (currentTime >= checkHold && checkHold != -1) {
-          setcheckHold(checkHold + 100)
-          // change to bpm         ^
-          if (props.game.key[props.i - 1][1] == '0') {
+        if (nextObj != undefined) {
+          if (currentTime > nextObj.startTime + 150) {
             const miss = async () => {
-              props.game.miss(currenthold.startTime , props.i)
+              props.game.miss(currentTime, props.i)
             }
             miss()
+            setNextObjIndex(nextObjIndex + 1)
           }
-        }
-        // if (
-        //   Math.abs(currentTime - currenthold.endTime) < 10 &&
-        //   props.game.key[props.i - 1][1] == '1'
-        // )
-        //   props.game.hit('perfect', currenthold.startTime, props.i + 6)
-      }
-      if (nextObj != undefined) {
-        if (currentTime > nextObj.startTime + 150) {
-          const miss = async () => {
-            props.game.miss(currentTime, props.i)
-          }
-          miss()
-          setNextObjIndex(nextObjIndex + 1)
         }
       }
     }
-  }
   })
   let x =
     (WIDTH - PLAYFIELD_WIDTH) / 2 + COL_WIDTH * (props.i - 1) + COL_WIDTH / 2

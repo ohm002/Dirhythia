@@ -12,6 +12,8 @@ import {
   TextureLoader,
   Loader,
   Container as container,
+  ObservablePoint,
+  Ticker,
 } from 'pixi.js'
 import {
   WIDTH,
@@ -22,32 +24,56 @@ import {
 } from '../../../libs/options'
 import { GameState } from '../../../state/GameState'
 import React from 'react'
-import { interpolate } from '../../../libs/interpolate'
+import { easeOutCubic, interpolate } from '../../../libs/interpolate'
 
 type Props = {
   game: GameState
+  time: number
 }
-
-const text = new TEXT()
-text.text = 'play'
-text.name = 'playbutton'
-text.interactive = true
-text.cursor = 'pointer'
-text.x = WIDTH / 2
-text.y = HEIGHT / 2
-text.style = new TextStyle({
-  fontFamily: 'Goldman',
-  align: 'center',
-  fill: '#ffffff',
-  fontSize: 17,
-})
-export default function PlayField(props: Props) {
+function generateText(textstring: string, x: number, y: number) {
+  const text = new TEXT()
+  text.text = textstring
+  text.name = 'playbutton'
+  text.interactive = true
+  text.cursor = 'pointer'
+  text.x = x
+  text.y = y
+  text.anchor.set(0.5, 0.5)
+  text.style = new TextStyle({
+    fontFamily: 'Goldman',
+    align: 'center',
+    fill: '#ffffff',
+    fontSize: 25,
+    dropShadow: true,
+    dropShadowBlur: 5,
+    dropShadowDistance: 0,
+    dropShadowColor: 0xffffff,
+  })
+  return text
+}
+const play = generateText('Play', WIDTH / 2, HEIGHT / 2)
+const playxy = [play.x,play.y]
+const edit = generateText('Edit', WIDTH / 2, HEIGHT / 2 + 30)
+export default function Menu(props: Props) {
+  const TIME = Date.now() + 1000
   const handlePlay = () => {
     props.game.setVolume(10 / 100)
     props.game.play()
-    text.alpha = 0
+    play.alpha = 0
+    edit.alpha = 0
   }
-  text.on('pointerdown', handlePlay)
-  useApp().stage.addChild(text)
+  useTick(() => {
+    if (props.game.mode == 'menu') {
+      play.alpha = easeOutCubic(Date.now(), [TIME, TIME + 500], [0, 1])
+      play.x = easeOutCubic(Date.now(), [TIME, TIME + 500], [playxy[0]-50, playxy[0]])
+      // play.scale.x = play.scale.y = easeOutCubic(Date.now(), [TIME, TIME + 500], [0, 1])
+      // edit.scale.x = play.scale.y = easeOutCubic(Date.now(), [TIME, TIME + 500], [0, 1])
+      edit.alpha = easeOutCubic(Date.now(), [TIME, TIME + 500], [0, 1])
+      edit.x = easeOutCubic(Date.now(), [TIME, TIME + 500], [playxy[0]-50, playxy[0]])
+    }
+  })
+  play.on('pointerdown', handlePlay)
+  useApp().stage.addChild(play)
+  useApp().stage.addChild(edit)
   return null
 }

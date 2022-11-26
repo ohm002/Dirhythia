@@ -65,7 +65,7 @@ export default function MenuWindow(props: AppProps) {
       {/* <input type="range" id="range" onInput={rangehandler}></input> */}
       {GAME.mode == 'menu' ? (
         <Stage width={WIDTH} height={HEIGHT}>
-          <Menu game={props.game}></Menu>
+          <Menu game={props.game} time={Date.now()}></Menu>
         </Stage>
       ) : null}
     </>

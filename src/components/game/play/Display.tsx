@@ -5,6 +5,7 @@ import {
   Text as PIXITEXT,
   Texture,
   Sprite as SPRITE,
+  Container as CONTAINER,
   filters,
   AnimatedSprite,
 } from 'pixi.js'
@@ -23,6 +24,7 @@ import overlay from '../../../assets/overlay.png'
 import scorebox from '../../../assets/scorebox.png'
 type Props = {
   game: GameState
+  container: CONTAINER
 }
 const sprites = {
   '': miss,
@@ -30,14 +32,30 @@ const sprites = {
   great: great,
   ok: ok,
 }
-const text = new PIXITEXT(
+
+let clicktime = -1
+const container = new CONTAINER()
+
+export function triggereffect(time: number, score: string) {
+  if (container.getChildByName('scoretext') == null) {
+    container.addChild(text)
+  } else {
+    let text = container.getChildByName('scoretext')
+  }
+  clicktime = time
+  let sscore = score.slice(1)
+  sscore = score[0].toUpperCase() + sscore
+  text.text = sscore
+}
+const middlescreenv = HEIGHT / 2
+let text = new PIXITEXT(
   '',
   new TextStyle({
     fill: 'white',
     dropShadow: true,
-    dropShadowBlur: 2,
-    dropShadowColor: 'black',
+    dropShadowBlur: 5,
     dropShadowDistance: 0,
+    dropShadowColor: 0xffffff,
     fontFamily: 'Courier New',
     fontSize: 30,
     fontWeight: '900',
@@ -46,25 +64,20 @@ const text = new PIXITEXT(
 )
 text.anchor.set(0.5, 0.5)
 text.name = 'scoretext'
-
-let clicktime = -1
-
-export function triggereffect(time: number, score: string) {
-  clicktime = time
-  let sscore = score.slice(1)
-  sscore = score[0].toUpperCase() + sscore
-  text.text = sscore
-}
-const middlescreenv = HEIGHT / 2
 text.x = WIDTH / 2
 text.y = HEIGHT / 2
 text.alpha = 0
 export default function Display(props: Props) {
+  const app = useApp()
+  app.stage.addChild(container)
   const [combo, setCombo] = useState('0')
   const [active, setactive] = useState(0)
   const [fps, setfps] = useState('0')
-  const app = useApp()
-  if (props.game.mode == 'play') app.stage.addChild(text)
+  if (container.getChildByName('scoretext') == null) {
+    container.addChild(text)
+  } else {
+    text = container.getChildByName('scoretext')
+  }
   useEffect(() => {
     setInterval(() => {
       setfps(Math.round(app.ticker.FPS).toString())
@@ -78,7 +91,7 @@ export default function Display(props: Props) {
       [clicktime, clicktime + 100],
       [1.5, 1]
     )
-    text.alpha = interpolate(currentTime, [clicktime, clicktime + 500], [1, 0])
+    text.alpha = easeOutCubic(currentTime, [clicktime, clicktime + 500], [1, 0])
     setCombo(props.game.combo.toString())
   })
   useTick(() => {

@@ -11,7 +11,7 @@ import {
   Sprite as SPRITE,
   TextureLoader,
   Loader,
-  Container as container,
+  Container as CONTAINER,
 } from 'pixi.js'
 import Column from './Column'
 import {
@@ -34,12 +34,15 @@ type PlayFieldProps = {
   game: GameState
 }
 
+const container = new CONTAINER()
 export default function PlayField(props: PlayFieldProps) {
   const app = useApp()
+  app.stage.addChild(container)
   const [active, setactive] = useState(0)
   const bgimage = SPRITE.from(props.beatmap.bgPath)
   bgimage.alpha = 0
-  if (props.game.mode == 'play') app.stage.addChild(bgimage)
+  bgimage.name = "bgimage"
+  if (app.stage.getChildByName("bgimage") == null) app.stage.addChild(bgimage)
   // const app = useApp()
   // const observer = new ResizeObserver(([entry]) => {
   //   function getWidth() {
@@ -87,14 +90,15 @@ export default function PlayField(props: PlayFieldProps) {
 
   return (
     <>
-      <Container  alpha={props.game.mode == 'play' ? 1 : 0}>
+      <Container alpha={props.game.mode == 'play' ? 1 : 0}>
         <CursorNote
           x={0.5}
           beatmap={props.beatmap}
           key={-1}
           i={-1}
           type={'normal'}
-          game={props.game}
+            container={container}
+            game={props.game}
         />
         {props.beatmap.cursor.map((hitObject, i) => (
           <CursorNote
@@ -102,6 +106,7 @@ export default function PlayField(props: PlayFieldProps) {
             beatmap={props.beatmap}
             key={i}
             i={i}
+            container={container}
             type={hitObject.type}
             game={props.game}
           />
