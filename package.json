@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "previewhost": "vite preview --host"
   },
   "dependencies": {
     "@inlet/react-pixi": "^6.8.0",

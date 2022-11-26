@@ -66,6 +66,7 @@ text.anchor.set(0.5, 0.5)
 text.name = 'scoretext'
 text.x = WIDTH / 2
 text.y = HEIGHT / 2
+text.blendMode = BLEND_MODES.ADD
 text.alpha = 0
 export default function Display(props: Props) {
   const app = useApp()
