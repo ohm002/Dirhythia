@@ -1,12 +1,12 @@
-# Playing
-you can try the sample map that i made [here](https://drive.google.com/uc?id=1FS4ASArTLMMfhkIEvllvyMOTM_wvCI6r) and upload on the file
-
-![](https://i.imgur.com/nqlKBtJ.png)
-![](https://i.imgur.com/8m0WZAB.png)
+![image](https://user-images.githubusercontent.com/53414787/204076947-92890a4b-3586-42e4-a8e0-2471e530620b.png)
+*////////// 0.2.0 BUILD*
 
 
+# _DI-RHYTHIA_ 
+## Playing 
+Try the demo [here](ohm002.github.io)
 
-# Building
+## Building
 run ``pnpm i`` to install the dependencies
 
 run ``pnpm dev`` to start the dev server
