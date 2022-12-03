@@ -40,7 +40,9 @@ let container = new CONTAINER()
 export default function Hold(props: HoldProps) {
   const app = useApp()
   let holdDuration = props.endTime - props.startTime
-  const height = Math.round((holdDuration * SCROLL_SPEED) / 1000)
+  const [height, setheight] = useState(
+    Math.round((holdDuration * props.game.notespeed) / 1000)
+  )
   const [y, setY] = useState(-height)
   const [alpha, setAlpha] = useState(1)
   const [holdfade, setHoldfade] = useState(0.5)
@@ -75,11 +77,10 @@ export default function Hold(props: HoldProps) {
   //     />
   if (container.getChildByName('note' + props.i + props.keys) == null) {
     hold.name = 'hold' + props.i + props.keys
-    hold.height = height
-    if ((mode == '2k' && props.keys == 2) || props.keys == 3) {
+    if (props.keys == 2 || props.keys == 3) {
       note.anchor.set(props.keys == 2 ? 1 : 0, 1)
       hits.anchor.set(props.keys == 2 ? 1 : 0, 1)
-      hold.anchor.set(props.keys == 2 ? 1 : 0, 1)
+      hold.anchor.set(props.keys == 2 ? 1 : 0, 0)
       note.width = COL_WIDTH * 2
       hits.width = COL_WIDTH * 2
       hold.width = HOLD_WIDTH * 2
@@ -112,16 +113,15 @@ export default function Hold(props: HoldProps) {
     hits = container.getChildByName('hits' + props.i + props.keys)
   }
 
-  hold.y = y + height
+  hold.y = y
+  note.y = y + height
+  hold.height = height
   hold.alpha = holdfade
   if (props.game.mode == 'play') hits.alpha = effalpha
   note.alpha = alpha
-  note.y = y + height
-  if ((mode == '2k' && props.keys == 2) || props.keys == 3) {
+  if (props.keys == 2 || props.keys == 3) {
     note.x = cursorx
-    hold.x =
-      cursorx -
-      (props.keys == 2 ? COL_WIDTH - HOLD_WIDTH : -(COL_WIDTH - HOLD_WIDTH))
+    hold.x = cursorx
     if (props.game.mode == 'play') hits.x = cursorx
   } else {
     if (props.game.mode == 'play') hits.x = cursorx - WIDTH / 2 + props.x
@@ -131,6 +131,7 @@ export default function Hold(props: HoldProps) {
   useTick(() => {
     let isPlaying = props.game.isPlaying
     if (isPlaying) {
+      setheight(Math.round((holdDuration * props.game.notespeed) / 1000))
       const currentTime = props.game.currenttime
       if (props.game.beatmap.cursor.length > 0) {
         let depth = -1
@@ -164,15 +165,16 @@ export default function Hold(props: HoldProps) {
           }
         })
       }
-
       setY(
         interpolate(
           currentTime,
           [
             props.startTime -
-              NOTE_TRAVEL_DURATION +
-              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-            props.endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+              props.game.NOTE_TRAVEL_DURATION() +
+              props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
+            props.startTime +
+              props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() +
+              (height / props.game.notespeed) * 1000,
           ],
           [-height, HEIGHT]
         )
@@ -182,7 +184,8 @@ export default function Hold(props: HoldProps) {
           currentTime,
           [
             props.startTime,
-            props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+            props.startTime +
+              props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
           ],
           [1, 0]
         )

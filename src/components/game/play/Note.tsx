@@ -66,7 +66,7 @@ export default function Note(props: NoteProps) {
   let note = SPRITE.from(Texture.WHITE)
   let hits = SPRITE.from(hit)
   if (container.getChildByName('note' + props.i + props.keys) == null) {
-    if ((mode == '2k' && props.keys == 2) || props.keys == 3) {
+    if (props.keys == 2 || props.keys == 3) {
       note.anchor.set(props.keys == 2 ? 1 : 0, 1)
       hits.anchor.set(props.keys == 2 ? 1 : 0, 1)
       note.width = COL_WIDTH * 2
@@ -151,9 +151,10 @@ export default function Note(props: NoteProps) {
             currentTime,
             [
               props.startTime -
-                NOTE_TRAVEL_DURATION +
-                NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-              props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+                props.game.NOTE_TRAVEL_DURATION() +
+                props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
+              props.startTime +
+                props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
             ],
             [0, HEIGHT]
           )
@@ -163,7 +164,8 @@ export default function Note(props: NoteProps) {
             currentTime,
             [
               props.startTime,
-              props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+              props.startTime +
+                props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
             ],
             [1, 0]
           )

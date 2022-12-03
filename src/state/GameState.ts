@@ -1,5 +1,5 @@
 import { triggereffect } from '../components/game/play/Display'
-import { WIDTH } from '../libs/options'
+import { HEIGHT, JUDGEMENT_LINE_OFFSET_Y, SCROLL_SPEED } from '../libs/options'
 import { getHeight, getWidth } from '../libs/screenhandler'
 import { Beatmap } from '../types/Beatmap'
 
@@ -11,7 +11,6 @@ export class GameState {
   audio: any
   hitlist: Array<any>
   effectvolume: number
-  scrollspeed: number
   score: number
   maxscore: number
   hitwaitlist: Array<any>
@@ -26,6 +25,7 @@ export class GameState {
   highestcombo: number
   beatmap: Beatmap | any
   maxcombo: number
+  notespeed: number
   WIDTH: number
   HEIGHT: number
 
@@ -52,11 +52,11 @@ export class GameState {
     this.audiopath = ''
     this.audiovolume = NaN
     this.effectvolume = NaN
-    this.scrollspeed = NaN
     this.highestcombo = 0
     this.hitwaitlist = []
     this.maxcombo = NaN
     this.score = 0
+    this.notespeed = 0
     this.maxscore = NaN
     this.combo = 0
     this.playStartTime = 0
@@ -75,17 +75,24 @@ export class GameState {
     audiopath: string,
     maxscore: number,
     beatmap: Beatmap,
+    notespeed: number,
     maxcombo: number
   ) {
     this.audiovolume = volume
     this.effectvolume = effect
-    this.scrollspeed = scrollspeed
     this.audiopath = audiopath
+    this.notespeed = notespeed
     this.maxscore = maxscore
     this.maxcombo = maxcombo
     this.beatmap = beatmap
     GAME_AUDIO.src = audiopath
     return this
+  }
+  NOTE_TRAVEL_DURATION() {
+    return (HEIGHT / this.notespeed) * 1000
+  }
+  NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() {
+    return (JUDGEMENT_LINE_OFFSET_Y / this.notespeed) * 1000
   }
   async miss(time: number, key: number) {
     if (
