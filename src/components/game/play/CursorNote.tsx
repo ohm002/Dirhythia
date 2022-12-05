@@ -37,6 +37,7 @@ import hitright from '../../../assets/cursorhitright.png'
 import hitleft from '../../../assets/cursorhitleft.png'
 import arrowright from '../../../assets/arrowright.png'
 import arrowleft from '../../../assets/arrowleft.png'
+import { NoteSpeedModifier } from '../../../types/NoteSpeedModifier'
 
 type CursorNoteProps = {
   x: number
@@ -135,8 +136,19 @@ export default function CursorNote(props: CursorNoteProps) {
   let lastpos = 0.5
   const trackx = props.type == 'normal' ? props.x : lastpos
   let Duration = endTime - startTime
+  var currentspeed =
+    props.game.beatmap.speedChanges != undefined
+      ? props.game.beatmap.speedChanges
+          .filter((a: NoteSpeedModifier) => {
+            return a.startTime <= props.game.currenttime
+          })
+          .sort((a: NoteSpeedModifier, b: NoteSpeedModifier) => {
+            return a.startTime - b.startTime
+          })
+          .reverse()[0]?.speed * HEIGHT
+      : props.game.notespeed
   const [height, setheight] = useState(
-    Math.round((Duration * props.game.notespeed) / 1000)
+    Math.round((Duration * currentspeed) / 1000)
   )
   const [y, setY] = useState(-height)
   let currentTime = 0
@@ -171,8 +183,8 @@ export default function CursorNote(props: CursorNoteProps) {
   let hiteffect = SPRITE.from(lastpos > startpos ? hitleft : hitright)
   let rowbg = SPRITE.from(Texture.WHITE)
   let switchline = SPRITE.from(judgement2)
-  let point = SPRITE.from(Texture.WHITE)
-  let point2 = SPRITE.from(Texture.WHITE)
+  // let point = SPRITE.from(Texture.WHITE)
+  // let point2 = SPRITE.from(Texture.WHITE)
   let line1 = SPRITE.from(vertical)
   let line2 = SPRITE.from(vertical)
   let line3 = SPRITE.from(vertical)
@@ -182,27 +194,27 @@ export default function CursorNote(props: CursorNoteProps) {
       [0, 1],
       [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
     )
-    point.width = 10
-    point.anchor.set(0.5)
-    point.height = 10
-    point.angle = 45
-    point.name = 'point' + props.i
-    point.x = interpolate(
-      props.x,
-      [0, 1],
-      [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-    )
-    point2.width = 10
-    point2.anchor.set(0.5)
-    point2.height = 10
-    point2.angle = 45
-    point2.name = 'point2' + props.i
-    point2.x = interpolate(
-      props.x,
-      [0, 1],
-      [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-    )
-    point.alpha = point2.alpha = 0
+    // point.width = 10
+    // point.anchor.set(0.5)
+    // point.height = 10
+    // point.angle = 45
+    // point.name = 'point' + props.i
+    // point.x = interpolate(
+    //   trackx,
+    //   [0, 1],
+    //   [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+    // )
+    // point2.width = 10
+    // point2.anchor.set(0.5)
+    // point2.height = 10
+    // point2.angle = 45
+    // point2.name = 'point2' + props.i
+    // point2.x = interpolate(
+    //   trackx,
+    //   [0, 1],
+    //   [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+    // ) + (startpos - lastpos) * CURSOR_AREA
+    // point.alpha = point2.alpha = 0
     line1.anchor.set(0.5, 1)
     line1.width = 100
     line1.alpha = 0.5
@@ -260,13 +272,13 @@ export default function CursorNote(props: CursorNoteProps) {
     container.addChild(line2)
     container.addChild(switchline)
     container.addChild(line3)
-    container.addChild(point)
-    container.addChild(point2)
+    // container.addChild(point)
+    // container.addChild(point2)
   } else {
     switchline = container.getChildByName('switchline' + props.i)
     rowbg = container.getChildByName(props.i + 'rowbg')
-    point = container.getChildByName('point' + props.i)
-    point2 = container.getChildByName('point2' + props.i)
+    // point = container.getChildByName('point' + props.i)
+    // point2 = container.getChildByName('point2' + props.i)
     line1 = container.getChildByName('line1' + props.i)
     line2 = container.getChildByName('line2' + props.i)
     line3 = container.getChildByName('line3' + props.i)
@@ -274,7 +286,7 @@ export default function CursorNote(props: CursorNoteProps) {
   }
 
   switchline.alpha = active ? 1 : 0
-  point.alpha = point2.alpha = active ? 1 : 0
+  // point.alpha = point2.alpha = active ? 1 : 0
   hiteffect.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
   hiteffect.width = 300
   hiteffect.height = 50
@@ -291,8 +303,8 @@ export default function CursorNote(props: CursorNoteProps) {
   line1.y = y + height
   line2.y = y + height
   line3.y = y + height
-  point.y = y + height
-  point2.y = y
+  // point.y = y + height
+  // point2.y = y
   useTick(() => {
     setheight(Math.round((Duration * props.game.notespeed) / 1000))
     currentTime = props.game.currenttime
