@@ -6,8 +6,7 @@ import {
   Texture,
   Sprite as SPRITE,
   Container as CONTAINER,
-  filters,
-  AnimatedSprite,
+  filters
 } from 'pixi.js'
 import { useEffect, useState } from 'react'
 import { HEIGHT, PLAYFIELD_WIDTH, WIDTH } from '../../../libs/options'
@@ -101,7 +100,7 @@ export default function Display(props: Props) {
 
   return (
     <Container alpha={active}>
-      <Sprite
+      {/* <Sprite
         image={overlay}
         x={0}
         y={0}
@@ -118,7 +117,7 @@ export default function Display(props: Props) {
         anchor={[1, 0]}
       />
       <Sprite image={scoreline} x={378} y={81} alpha={1} anchor={[1, 0]} />
-      <Sprite image={comboline} x={WIDTH - 30} y={78} anchor={[1, 0]} />
+      <Sprite image={comboline} x={WIDTH - 30} y={78} anchor={[1, 0]} /> */}
 
       <Text
         text={
@@ -185,7 +184,7 @@ export default function Display(props: Props) {
           })
         }
       />
-      <Text
+      {/* <Text
         text={combo + ' COMBO'}
         x={WIDTH - 30}
         y={59}
@@ -198,7 +197,7 @@ export default function Display(props: Props) {
             fontSize: 30,
           })
         }
-      />
+      /> */}
       <Text
         text={props.game.highestcombo + ' / ' + props.game.maxcombo}
         x={WIDTH - 30}
@@ -215,7 +214,7 @@ export default function Display(props: Props) {
           })
         }
       />
-      <Text
+      {/* <Text
         text={Math.round(
           (props.game.score / props.game.maxscore) * 1000000
         ).toString()}
@@ -232,8 +231,8 @@ export default function Display(props: Props) {
             fontSize: 31,
           })
         }
-      />
-      <Text
+      /> */}
+      {/* <Text
         text={
           '(' +
           Math.round(
@@ -254,7 +253,7 @@ export default function Display(props: Props) {
             fontSize: 11,
           })
         }
-      />
+      /> */}
     </Container>
   )
 }
