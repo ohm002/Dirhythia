@@ -94,8 +94,8 @@ export default function PlayField(props: PlayFieldProps) {
               .reverse()[0]?.speed * HEIGHT
           : props.game.notespeed
       if (currentspeed > 0) {
-        props.game.notespeed = 1.7 * HEIGHT
-        // props.game.notespeed = currentspeed
+        // props.game.notespeed = 1.7 * HEIGHT
+        props.game.notespeed = currentspeed
       }
       // console.log(Math.abs(props.game.currenttime- props.game.audio.currentTime*1000))
     }

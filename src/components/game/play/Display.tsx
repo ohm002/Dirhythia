@@ -35,6 +35,7 @@ const sprites = {
 
 let clicktime = -1
 const container = new CONTAINER()
+const MAINFONT = "Roboto Condensed"
 
 export function triggereffect(time: number, score: string) {
   if (container.getChildByName('scoretext') == null) {
@@ -132,7 +133,7 @@ export default function Display(props: Props) {
         blendMode={BLEND_MODES.ADD}
         style={
           new TextStyle({
-            fontFamily: 'Goldman',
+            fontFamily: MAINFONT,
             align: 'center',
             fill: '#ffffff',
             fontSize: 20,
@@ -148,7 +149,7 @@ export default function Display(props: Props) {
         blendMode={BLEND_MODES.ADD}
         style={
           new TextStyle({
-            fontFamily: 'Goldman',
+            fontFamily: MAINFONT,
             align: 'center',
             fill: '#ffffff',
             fontSize: 10,
@@ -162,7 +163,7 @@ export default function Display(props: Props) {
         anchor={[0.5, 0]}
         style={
           new TextStyle({
-            fontFamily: 'Goldman',
+            fontFamily: MAINFONT,
             align: 'center',
             fill: '#ffffff',
             fontSize: 17,
@@ -178,7 +179,7 @@ export default function Display(props: Props) {
         alpha={0.5}
         style={
           new TextStyle({
-            fontFamily: 'Goldman',
+            fontFamily: MAINFONT,
             align: 'center',
             fill: '#ffffff',
             fontSize: 15,
@@ -192,7 +193,7 @@ export default function Display(props: Props) {
         anchor={[1, 0]}
         style={
           new TextStyle({
-            fontFamily: 'Goldman',
+            fontFamily: MAINFONT,
             align: 'right',
             fill: '#ffffff',
             fontSize: 30,
@@ -208,7 +209,7 @@ export default function Display(props: Props) {
         alpha={0.5}
         style={
           new TextStyle({
-            fontFamily: 'Goldman',
+            fontFamily: MAINFONT,
             align: 'center',
             fill: '#ffffff',
             fontSize: 15,
@@ -226,7 +227,7 @@ export default function Display(props: Props) {
         blendMode={BLEND_MODES.ADD}
         style={
           new TextStyle({
-            fontFamily: 'Goldman',
+            fontFamily: MAINFONT,
             align: 'center',
             fill: '#ffffff',
             fontSize: 31,
@@ -248,7 +249,7 @@ export default function Display(props: Props) {
         anchor={[0, 0]}
         style={
           new TextStyle({
-            fontFamily: 'Goldman',
+            fontFamily: MAINFONT,
             align: 'center',
             fill: '#ffffff',
             fontSize: 11,
