@@ -13,7 +13,9 @@ import {
 import PIXI from 'pixi.js'
 import { useState } from 'react'
 import hit from '../../../assets/hit.png'
-import note from '../../../assets/note.png'
+import LNOTE from '../../../assets/NOTE/LNOTE.png'
+import RNOTE from '../../../assets/NOTE/RNOTE.png'
+import NOTE from '../../../assets/NOTE/NOTE.png'
 import perfect from '../../../assets/perfect.png'
 import great from '../../../assets/great.png'
 import ok from '../../../assets/ok.png'
@@ -63,22 +65,22 @@ export default function Note(props: NoteProps) {
   const mode = (props.game.beatmap as Beatmap).timingPoints.filter(
     (a) => a.time <= props.startTime
   )[0].mode
-  let note = SPRITE.from(Texture.WHITE)
+  let note = props.keys == 2 ? SPRITE.from(LNOTE) : props.keys == 3 ?  SPRITE.from(RNOTE) :  SPRITE.from(NOTE)  
   let hits = SPRITE.from(hit)
   if (container.getChildByName('note' + props.i + props.keys) == null) {
-    if (props.keys == 2 || props.keys == 3) {
+    if ((props.keys == 2) || props.keys == 3) {
       note.anchor.set(props.keys == 2 ? 1 : 0, 1)
       hits.anchor.set(props.keys == 2 ? 1 : 0, 1)
-      note.width = COL_WIDTH * 2
-      hits.width = COL_WIDTH * 2
-      note.tint = color
+      note.width = COL_WIDTH * 2 + 50
+      hits.width = COL_WIDTH * 2 + 50
+      // note.tint = color
       hits.tint = color
     } else {
       note.anchor.set(0.5, 1)
       hits.anchor.set(0.5, 1)
       note.width = COL_WIDTH
       hits.width = COL_WIDTH
-      note.tint = 0xffffff
+      // note.tint = 0xffffff
       hits.tint = 0xffffff
     }
     hits.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y

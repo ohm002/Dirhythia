@@ -1,12 +1,10 @@
 import { Container, Sprite, useApp, useTick, Text } from '@inlet/react-pixi'
 import {
   BLEND_MODES,
-  filters,
   Texture,
-  utils,
   Sprite as SPRITE,
+  Graphics,
   Container as CONTAINER,
-  TextStyle,
 } from 'pixi.js'
 import { useEffect, useMemo, useState } from 'react'
 import { easeOutCubic, interpolate } from '../../../libs/interpolate'
@@ -53,7 +51,6 @@ type BPMLineProps = {
   time: number
 }
 let container = new CONTAINER()
-
 export function BPMLine(props: BPMLineProps) {
   const cursorlist = (props.game.beatmap as Beatmap).cursor.sort(
     (a, b) => a.startTime - b.startTime
@@ -85,8 +82,8 @@ export function BPMLine(props: BPMLineProps) {
             currentTime,
             [
               props.time -
-                NOTE_TRAVEL_DURATION +
-                NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+              NOTE_TRAVEL_DURATION +
+              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
               props.time + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
             ],
             [0, HEIGHT]
@@ -113,6 +110,8 @@ export function BPMLine(props: BPMLineProps) {
     />
   )
 }
+
+// const renderer = (new CanvasRenderer())
 export default function CursorNote(props: CursorNoteProps) {
   const app = useApp()
   // app.stage.addChild(container)
@@ -182,9 +181,15 @@ export default function CursorNote(props: CursorNoteProps) {
   offsetx += props.type == 'normal' ? a : 0
   let hiteffect = SPRITE.from(lastpos > startpos ? hitleft : hitright)
   let rowbg = SPRITE.from(Texture.WHITE)
-  let switchline = SPRITE.from(judgement2)
-  // let point = SPRITE.from(Texture.WHITE)
-  // let point2 = SPRITE.from(Texture.WHITE)
+  let switchlineg = new Graphics();
+  switchlineg.lineStyle(4, 0xFFFFFF, 1);
+  switchlineg.beginFill(color);
+  switchlineg.drawRect(0, 0, Math.abs(lastpos - startpos) * CURSOR_AREA, 26);
+  switchlineg.endFill();
+  console.log(useApp().renderer.generateTexture(switchlineg))
+  let switchlinegg = useApp().renderer.generateTexture(switchlineg)
+  // console.log(switchlinegg)
+  let switchline = new SPRITE(switchlinegg)
   let line1 = SPRITE.from(vertical)
   let line2 = SPRITE.from(vertical)
   let line3 = SPRITE.from(vertical)
@@ -217,16 +222,17 @@ export default function CursorNote(props: CursorNoteProps) {
     // point.alpha = point2.alpha = 0
     line1.anchor.set(0.5, 1)
     line1.width = 100
-    line1.alpha = 0.5
+    line1.alpha = 1
+    line1.height = height
     line1.name = 'line1' + props.i
     line2.anchor.set(0.5, 1)
     line2.width = 100
     line2.name = 'line2' + props.i
-    line2.alpha = 0.2
+    line2.alpha = 0
     line3.anchor.set(0.5, 1)
     line3.width = 100
     line3.name = 'line3' + props.i
-    line3.alpha = 0.2
+    line3.alpha = 0
     line2.x = interpolate(
       trackx,
       [0, 1],
@@ -255,12 +261,9 @@ export default function CursorNote(props: CursorNoteProps) {
       [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
     )
     rowbg.anchor.set(0.5, 1)
-    rowbg.alpha = 1
+    rowbg.alpha = 0.5
     switchline.name = 'switchline' + props.i
-    switchline.height = 150
     switchline.anchor.set(lastpos > startpos ? 0 : 1, 1)
-    switchline.width = Math.abs(lastpos - startpos) * CURSOR_AREA
-    switchline.tint = color
     switchline.x = interpolate(
       props.x,
       [0, 1],
@@ -409,9 +412,9 @@ export default function CursorNote(props: CursorNoteProps) {
       arrow.x = interpolate(
         interpolate(
           i /
-            Math.abs(
-              Math.floor(((lastpos - startpos) * CURSOR_AREA) / arrowdelay)
-            ),
+          Math.abs(
+            Math.floor(((lastpos - startpos) * CURSOR_AREA) / arrowdelay)
+          ),
           [0, 1],
           [lastpos, startpos]
         ),
