@@ -18,6 +18,7 @@ import {
   CURSOR_RIGHT_KEY,
   PLAYFIELD_WIDTH,
   JUDGEMENT_LINE_OFFSET_Y,
+  SCROLL_SPEED,
 } from './libs/options'
 import { Stage, useApp, useTick, Container } from '@inlet/react-pixi'
 import Display from './components/game/play/Display'
@@ -71,6 +72,7 @@ export default function App(props: AppProps) {
     audioPath,
     maxscore,
     beatmap,
+    SCROLL_SPEED,
     maxcombo
   )
   GAME.setAudioPath(audioPath)

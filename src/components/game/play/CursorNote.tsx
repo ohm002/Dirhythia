@@ -35,6 +35,7 @@ import hitright from '../../../assets/cursorhitright.png'
 import hitleft from '../../../assets/cursorhitleft.png'
 import arrowright from '../../../assets/arrowright.png'
 import arrowleft from '../../../assets/arrowleft.png'
+import { NoteSpeedModifier } from '../../../types/NoteSpeedModifier'
 
 type CursorNoteProps = {
   x: number
@@ -116,7 +117,9 @@ export default function CursorNote(props: CursorNoteProps) {
   // app.stage.addChild(container)
   container = props.container
   let effectVolume = props.game.effectvolume
-  props.beatmap.cursor.sort((a, b) => a.startTime - b.startTime)
+  props.beatmap.cursor = props.beatmap.cursor.sort(
+    (a, b) => a.startTime - b.startTime
+  )
   const notex = props.x
   let endTime =
     props.beatmap.cursor[props.i + 1] != undefined
@@ -130,19 +133,36 @@ export default function CursorNote(props: CursorNoteProps) {
       ? props.beatmap.cursor[props.i].x
       : 0.5
   let lastpos = 0.5
+  const trackx = props.type == 'normal' ? props.x : lastpos
+  let Duration = endTime - startTime
+  var currentspeed =
+    props.game.beatmap.speedChanges != undefined
+      ? props.game.beatmap.speedChanges
+          .filter((a: NoteSpeedModifier) => {
+            return a.startTime <= props.game.currenttime
+          })
+          .sort((a: NoteSpeedModifier, b: NoteSpeedModifier) => {
+            return a.startTime - b.startTime
+          })
+          .reverse()[0]?.speed * HEIGHT
+      : props.game.notespeed
+  const [height, setheight] = useState(
+    Math.round((Duration * currentspeed) / 1000)
+  )
+  const [y, setY] = useState(-height)
+  let currentTime = 0
+
   for (let index = 1; index < props.i + 1; index++) {
-    if (props.beatmap.cursor[props.i - index].type == 'normal') {
+    if (
+      props.beatmap.cursor[props.i - index].type == 'normal' ||
+      props.beatmap.cursor[props.i - index] != undefined
+    ) {
       lastpos = props.beatmap.cursor[props.i - index].x
       break
     }
   }
-  const trackx = props.type == 'normal' ? props.x : lastpos
-  let Duration = endTime - startTime
-  const height = Math.round((Duration * SCROLL_SPEED) / 1000)
-  const [y, setY] = useState(-height)
-  let currentTime = 0
   const color = lastpos > startpos ? 0x3dd2ff : 0xff6161
-  const [active, setactive] = useState(true)
+  const [active, setactive] = useState(false)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
   let [clicked, setclicked] = useState(false)
@@ -179,6 +199,27 @@ export default function CursorNote(props: CursorNoteProps) {
       [0, 1],
       [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
     )
+    // point.width = 10
+    // point.anchor.set(0.5)
+    // point.height = 10
+    // point.angle = 45
+    // point.name = 'point' + props.i
+    // point.x = interpolate(
+    //   trackx,
+    //   [0, 1],
+    //   [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+    // )
+    // point2.width = 10
+    // point2.anchor.set(0.5)
+    // point2.height = 10
+    // point2.angle = 45
+    // point2.name = 'point2' + props.i
+    // point2.x = interpolate(
+    //   trackx,
+    //   [0, 1],
+    //   [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+    // ) + (startpos - lastpos) * CURSOR_AREA
+    // point.alpha = point2.alpha = 0
     line1.anchor.set(0.5, 1)
     line1.width = 100
     line1.alpha = 1
@@ -186,12 +227,10 @@ export default function CursorNote(props: CursorNoteProps) {
     line1.name = 'line1' + props.i
     line2.anchor.set(0.5, 1)
     line2.width = 100
-    line2.height = height
     line2.name = 'line2' + props.i
     line2.alpha = 0
     line3.anchor.set(0.5, 1)
     line3.width = 100
-    line3.height = height
     line3.name = 'line3' + props.i
     line3.alpha = 0
     line2.x = interpolate(
@@ -215,7 +254,6 @@ export default function CursorNote(props: CursorNoteProps) {
     hiteffect.name = props.i + 'cursorf'
     rowbg.width = PLAYFIELD_WIDTH * 1.3
     rowbg.name = props.i + 'rowbg'
-    rowbg.height = height
     rowbg.tint = 0x000000
     rowbg.x = interpolate(
       trackx,
@@ -237,15 +275,21 @@ export default function CursorNote(props: CursorNoteProps) {
     container.addChild(line2)
     container.addChild(switchline)
     container.addChild(line3)
+    // container.addChild(point)
+    // container.addChild(point2)
   } else {
     switchline = container.getChildByName('switchline' + props.i)
     rowbg = container.getChildByName(props.i + 'rowbg')
+    // point = container.getChildByName('point' + props.i)
+    // point2 = container.getChildByName('point2' + props.i)
     line1 = container.getChildByName('line1' + props.i)
     line2 = container.getChildByName('line2' + props.i)
     line3 = container.getChildByName('line3' + props.i)
     hiteffect = container.getChildByName(props.i + 'cursorf')
-    switchline.alpha = active ? 1 : 0
   }
+
+  switchline.alpha = active ? 1 : 0
+  // point.alpha = point2.alpha = active ? 1 : 0
   hiteffect.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
   hiteffect.width = 300
   hiteffect.height = 50
@@ -253,21 +297,37 @@ export default function CursorNote(props: CursorNoteProps) {
   hiteffect.anchor.set(lastpos > startpos ? 1 : 0, 0.5)
   hiteffect.tint = color
 
+  line2.height = height
+  line1.height = height
+  line3.height = height
+  rowbg.height = height
   switchline.y = y + height
   rowbg.y = y + height
   line1.y = y + height
   line2.y = y + height
   line3.y = y + height
+  // point.y = y + height
+  // point2.y = y
   useTick(() => {
+    setheight(Math.round((Duration * props.game.notespeed) / 1000))
     currentTime = props.game.currenttime
     let isPlaying = props.game.isPlaying
+    if (
+      currentTime >=
+        startTime -
+          props.game.NOTE_TRAVEL_DURATION() +
+          props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() &&
+      currentTime <=
+        endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION()
+    )
+      setactive(true)
     if (
       isPlaying &&
       active &&
       (currentTime >=
         startTime -
-        NOTE_TRAVEL_DURATION +
-        NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION ||
+          props.game.NOTE_TRAVEL_DURATION() +
+          +props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() ||
         props.game.mode == 'editor')
     ) {
       if (props.game.hitlist.length > 0)
@@ -310,14 +370,15 @@ export default function CursorNote(props: CursorNoteProps) {
         }
         setactive(false)
       }
+
       setY(
         interpolate(
           currentTime,
           [
             startTime -
-            NOTE_TRAVEL_DURATION +
-            NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-            endTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+              props.game.NOTE_TRAVEL_DURATION() +
+              props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
+            endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
           ],
           [-height, HEIGHT]
         )

@@ -35,7 +35,7 @@ export const CURSOR_AREA = PLAYFIELD_WIDTH*4
 export const SCROLL_SPEED = 1.7*HEIGHT // px per sec
 export const NOTE_TRAVEL_DURATION = (HEIGHT / SCROLL_SPEED) * 1000
 export const JUDGEMENT_LINE_OFFSET_Y = 20
-export const OFFSET = 30  // ms ************** CHART OFFSET
+export const OFFSET = 0  // ms ************** CHART OFFSET
 // if you're early, adjust down
 // if you're late, adjust up
 export const NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION =

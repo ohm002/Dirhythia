@@ -28,6 +28,7 @@ import React from 'react'
 import judgement from '../../../assets/judgement.png'
 import judgement2 from '../../../assets/judgement2.png'
 import { interpolate } from '../../../libs/interpolate'
+import { NoteSpeedModifier } from '../../../types/NoteSpeedModifier'
 
 type PlayFieldProps = {
   beatmap: Beatmap
@@ -41,8 +42,8 @@ export default function PlayField(props: PlayFieldProps) {
   const [active, setactive] = useState(0)
   const bgimage = SPRITE.from(props.beatmap.bgPath)
   bgimage.alpha = 0
-  bgimage.name = "bgimage"
-  if (app.stage.getChildByName("bgimage") == null) app.stage.addChild(bgimage)
+  bgimage.name = 'bgimage'
+  if (app.stage.getChildByName('bgimage') == null) app.stage.addChild(bgimage)
   // const app = useApp()
   // const observer = new ResizeObserver(([entry]) => {
   //   function getWidth() {
@@ -80,6 +81,22 @@ export default function PlayField(props: PlayFieldProps) {
       var currentTime = Date.now() - props.game.playStartTime
       currentbpm = timinglist.filter((e) => e.time <= currentTime)[0]
       if (props.game.mode == 'play') props.game.currenttime = currentTime
+      var reversespeedlist = props.game.beatmap.speedChanges
+      var currentspeed =
+        reversespeedlist != undefined
+          ? reversespeedlist
+              .filter((a: NoteSpeedModifier) => {
+                return a.startTime <= props.game.currenttime
+              })
+              .sort((a: NoteSpeedModifier, b: NoteSpeedModifier) => {
+                return a.startTime - b.startTime
+              })
+              .reverse()[0]?.speed * HEIGHT
+          : props.game.notespeed
+      if (currentspeed > 0) {
+        props.game.notespeed = 1.7 * HEIGHT
+        // props.game.notespeed = currentspeed
+      }
       // console.log(Math.abs(props.game.currenttime- props.game.audio.currentTime*1000))
     }
   })
@@ -97,8 +114,8 @@ export default function PlayField(props: PlayFieldProps) {
           key={-1}
           i={-1}
           type={'normal'}
-            container={container}
-            game={props.game}
+          container={container}
+          game={props.game}
         />
         {props.beatmap.cursor.map((hitObject, i) => (
           <CursorNote

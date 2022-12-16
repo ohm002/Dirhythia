@@ -153,9 +153,10 @@ export default function Note(props: NoteProps) {
             currentTime,
             [
               props.startTime -
-                NOTE_TRAVEL_DURATION +
-                NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
-              props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+                props.game.NOTE_TRAVEL_DURATION() +
+                props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
+              props.startTime +
+                props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
             ],
             [0, HEIGHT]
           )
@@ -165,7 +166,8 @@ export default function Note(props: NoteProps) {
             currentTime,
             [
               props.startTime,
-              props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+              props.startTime +
+                props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
             ],
             [1, 0]
           )

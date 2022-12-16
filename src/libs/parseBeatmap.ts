@@ -6,7 +6,14 @@ export function parseBeatmap(data: string): Beatmap {
   // sort by time in case someone fuck up the order
   const beatmap = JSON.parse(data) as Beatmap
 
-  const { audioPath, metadata, hitObjects, timingPoints, cursor } = beatmap
+  const {
+    audioPath,
+    metadata,
+    hitObjects,
+    timingPoints,
+    cursor,
+    speedChanges,
+  } = beatmap
 
   const validAudioPath = typeof audioPath == 'string'
 
@@ -72,6 +79,10 @@ export function parseBeatmap(data: string): Beatmap {
     w.startTime = w.startTime + OFFSET
     if (w.endTime) w.endTime = w.endTime + OFFSET
   })
+  if (beatmap.speedChanges != undefined)
+    beatmap.speedChanges = beatmap.speedChanges.sort(
+      (a, b) => a.startTime - b.startTime
+    )
   beatmap.cursor = beatmap.cursor.sort((a, b) => a.startTime - b.startTime)
   beatmap.cursor.forEach((w, i) => {
     w.startTime = w.startTime + OFFSET

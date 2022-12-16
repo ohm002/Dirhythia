@@ -7,6 +7,7 @@ import './index.css'
 import { AppConsumer } from '@inlet/react-pixi'
 import { parseBeatmap } from './libs/parseBeatmap'
 import { GameState } from './state/GameState'
+import Edit from './Edit'
 // import { store } from './libs/redux/store'
 
 var beatmap = null
@@ -23,8 +24,7 @@ document.getElementById('chartfile')?.addEventListener('change', () => {
     GAME.beatmap = beatmap
     ReactDOM.render(
       <React.StrictMode>
-        if 
-        <App game={GAME} chart={beatmap} menutime={Date.now()}/>
+        <Edit game={GAME} chart={beatmap} menutime={Date.now()}/>
       </React.StrictMode>,
       document.getElementById('root')
     )
