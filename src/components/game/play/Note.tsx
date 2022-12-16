@@ -62,17 +62,14 @@ export default function Note(props: NoteProps) {
   const cursorlist = (props.game.beatmap as Beatmap).cursor.sort(
     (a, b) => a.startTime - b.startTime
   )
-  const mode = (props.game.beatmap as Beatmap).timingPoints.filter(
-    (a) => a.time <= props.startTime
-  )[0].mode
   let note = props.keys == 2 ? SPRITE.from(LNOTE) : props.keys == 3 ?  SPRITE.from(RNOTE) :  SPRITE.from(NOTE)  
   let hits = SPRITE.from(hit)
   if (container.getChildByName('note' + props.i + props.keys) == null) {
     if ((props.keys == 2) || props.keys == 3) {
       note.anchor.set(props.keys == 2 ? 1 : 0, 1)
       hits.anchor.set(props.keys == 2 ? 1 : 0, 1)
-      note.width = COL_WIDTH * 2 + 50
-      hits.width = COL_WIDTH * 2 + 50
+      note.width = COL_WIDTH * 2
+      hits.width = COL_WIDTH * 2
       // note.tint = color
       hits.tint = color
     } else {
@@ -101,7 +98,7 @@ export default function Note(props: NoteProps) {
   hits.alpha = effalpha
   note.alpha = alpha
   note.y = y
-  if ((mode == '2k' && props.keys == 2) || props.keys == 3) {
+  if (props.keys == 2 || props.keys == 3) {
     note.x = cursorx
     hits.x = cursorx
   } else {
@@ -111,7 +108,7 @@ export default function Note(props: NoteProps) {
   useTick(() => {
     let isPlaying = props.game.isPlaying
     const currentTime = props.game.currenttime
-    if (isPlaying) {
+      if (isPlaying) {
       if (
         currentTime >
         props.startTime + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION
@@ -161,7 +158,7 @@ export default function Note(props: NoteProps) {
             [0, HEIGHT]
           )
         )
-        setAlpha(
+      setAlpha(
           interpolate(
             currentTime,
             [
@@ -173,9 +170,9 @@ export default function Note(props: NoteProps) {
           )
         )
       } else {
-        setEffAlpha(
-          interpolate(currentTime, [clicktime, clicktime + 200], [1, 0])
-        )
+        // setEffAlpha(
+        //   interpolate(currentTime, [clicktime, clicktime + 200], [1, 0])
+        // )
         setAlpha(0)
       }
     }

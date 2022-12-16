@@ -20,6 +20,7 @@ import {
   HEIGHT,
   PLAYFIELD_WIDTH,
   NOTE_TRAVEL_DURATION,
+  SCROLL_SPEED,
 } from '../../../libs/options'
 import { GameState } from '../../../state/GameState'
 import Cursor from './Cursor'
@@ -71,16 +72,18 @@ export default function PlayField(props: PlayFieldProps) {
       const height = bgimage.height * (WIDTH / bgimage.width)
       bgimage.height = height
       bgimage.width = WIDTH
-      bgimage.blendMode = BLEND_MODES.ADD
+      // bgimage.blendMode = BLEND_MODES.ADD
       bgimage.x = WIDTH / 2
       bgimage.y = HEIGHT / 2
       bgimage.anchor.set(0.5, 0.5)
       bgimage.alpha = 0.2
     }
     if (props.game.isPlaying) {
-      var currentTime = Date.now() - props.game.playStartTime
-      currentbpm = timinglist.filter((e) => e.time <= currentTime)[0]
-      if (props.game.mode == 'play') props.game.currenttime = currentTime
+      if (props.game.mode == 'play') {
+        var currentTime = Date.now() - props.game.playStartTime
+        currentbpm = timinglist.filter((e) => e.time <= currentTime)[0]
+        props.game.currenttime = currentTime
+      }
       var reversespeedlist = props.game.beatmap.speedChanges
       var currentspeed =
         reversespeedlist != undefined
@@ -93,9 +96,9 @@ export default function PlayField(props: PlayFieldProps) {
               })
               .reverse()[0]?.speed * HEIGHT
           : props.game.notespeed
-      if (currentspeed > 0) {
-        // props.game.notespeed = 1.7 * HEIGHT
-        props.game.notespeed = currentspeed
+      if (currentspeed >= 0) {
+        props.game.notespeed = SCROLL_SPEED
+        // props.game.notespeed = currentspeed
       }
       // console.log(Math.abs(props.game.currenttime- props.game.audio.currentTime*1000))
     }

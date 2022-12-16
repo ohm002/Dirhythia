@@ -25,6 +25,7 @@ import { GameState } from '../../../state/GameState'
 type Props = {
   time: number
   bpm: number
+  game: GameState
 }
 function generateText(textstring: string, x: number, y: number) {
   const text = new TEXT()
@@ -49,18 +50,21 @@ function generateText(textstring: string, x: number, y: number) {
 }
 const play = generateText('0', WIDTH / 2, HEIGHT / 2)
 export default function Menu(props: Props) {
-  useEffect(() => {
     var time = props.time
+    // useEffect(() => {
     const handlewheel = (e: WheelEvent) => {
-      time += Math.round(60000 / props.bpm / 4)
+      time +=  e.deltaY < 0 ? -Math.round(60000 / props.bpm / 4) : Math.round(60000 / props.bpm / 4)
       play.text = time
       //   else if (e.dFeltaY < 0) settime(time - 50)
     }
     document.addEventListener('wheel', handlewheel)
-    return () => {
-      document.removeEventListener('wheel', handlewheel)
-    }
-  }, [])
+    // return () => {
+    //   document.removeEventListener('wheel', handlewheel)
+    // }
+  // }, [])
+  useTick(()=>{
+    props.game.currenttime = time
+  })
   useApp().stage.addChild(play)
   return null
 }

@@ -22,5 +22,4 @@ export type TimingPoint = {
    * Volume percentage for hit objects.
    */
   volume: number
-  mode: "2k" | "4k"
 }

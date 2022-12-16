@@ -162,7 +162,7 @@ export default function CursorNote(props: CursorNoteProps) {
     }
   }
   const color = lastpos > startpos ? 0x3dd2ff : 0xff6161
-  const [active, setactive] = useState(false)
+  const [active, setactive] = useState(props.game.mode == "play" ? false : true)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
   let [clicked, setclicked] = useState(false)
@@ -186,7 +186,6 @@ export default function CursorNote(props: CursorNoteProps) {
   switchlineg.beginFill(color);
   switchlineg.drawRect(0, 0, Math.abs(lastpos - startpos) * CURSOR_AREA, 26);
   switchlineg.endFill();
-  console.log(useApp().renderer.generateTexture(switchlineg))
   let switchlinegg = useApp().renderer.generateTexture(switchlineg)
   // console.log(switchlinegg)
   let switchline = new SPRITE(switchlinegg)
@@ -288,7 +287,7 @@ export default function CursorNote(props: CursorNoteProps) {
     hiteffect = container.getChildByName(props.i + 'cursorf')
   }
 
-  switchline.alpha = active ? 1 : 0
+  switchline.alpha = active ? 0.5 : 0
   // point.alpha = point2.alpha = active ? 1 : 0
   hiteffect.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
   hiteffect.width = 300
@@ -309,18 +308,30 @@ export default function CursorNote(props: CursorNoteProps) {
   // point.y = y + height
   // point2.y = y
   useTick(() => {
-    setheight(Math.round((Duration * props.game.notespeed) / 1000))
     currentTime = props.game.currenttime
     let isPlaying = props.game.isPlaying
+    if (clicked && clicktime != -1 && currentTime) {
+      hiteffect.alpha = interpolate(
+        currentTime,
+        [clicktime, clicktime + 300],
+        [1, 0]
+      )
+      // hiteffect.x = easeOutCubic(
+      //   currentTime,
+      //   [clicktime, clicktime + 300],
+      //   [offsetx, lastpos > startpos ? offsetx - 50 : offsetx + 50]
+      // )
+    }
     if (
       currentTime >=
         startTime -
           props.game.NOTE_TRAVEL_DURATION() +
           props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() &&
       currentTime <=
-        endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION()
+        endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() && props.game.mode == 'play'
     )
       setactive(true)
+
     if (
       isPlaying &&
       active &&
@@ -342,32 +353,8 @@ export default function CursorNote(props: CursorNoteProps) {
             setclicktime(currentTime)
           }
         })
-      if (clicked && clicktime != -1) {
-        hiteffect.alpha = interpolate(
-          currentTime,
-          [clicktime, clicktime + 300],
-          [1, 0]
-        )
-        // hiteffect.x = easeOutCubic(
-        //   currentTime,
-        //   [clicktime, clicktime + 300],
-        //   [offsetx, lastpos > startpos ? offsetx - 50 : offsetx + 50]
-        // )
-      }
 
       if (currentTime > endTime + 300 && props.game.mode == 'play') {
-        for (
-          let i = 0;
-          i <
-          Math.abs(
-            Math.floor(((lastpos - startpos) * CURSOR_AREA) / arrowdelay)
-          );
-          i += 2
-        ) {
-          container.getChildByName(
-            'arrow' + i.toString() + props.i.toString()
-          ).alpha = 0
-        }
         setactive(false)
       }
 
@@ -385,44 +372,5 @@ export default function CursorNote(props: CursorNoteProps) {
       )
     }
   })
-  const trackalpha = 0.5
-
-  for (
-    let i = 0;
-    i < Math.abs(Math.floor(((lastpos - startpos) * CURSOR_AREA) / arrowdelay));
-    i += 2
-  ) {
-    if (
-      container.getChildByName('arrow' + i.toString() + props.i.toString()) ==
-      null
-    ) {
-      const arrow = SPRITE.from(lastpos > startpos ? arrowleft : arrowright)
-      arrow.anchor.set(lastpos > startpos ? 1 : 0, 1)
-      arrow.alpha = 0
-      arrow.tint = color
-      arrow.blendMode = BLEND_MODES.ADD
-      arrow.width = arrowdelay / 2
-      arrow.height = arrowdelay / 2
-      arrow.name = 'arrow' + i.toString() + props.i.toString()
-      container.addChild(arrow)
-    } else {
-      const arrow = container.getChildByName(
-        'arrow' + i.toString() + props.i.toString()
-      )
-      arrow.x = interpolate(
-        interpolate(
-          i /
-          Math.abs(
-            Math.floor(((lastpos - startpos) * CURSOR_AREA) / arrowdelay)
-          ),
-          [0, 1],
-          [lastpos, startpos]
-        ),
-        [0, 1],
-        [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-      )
-      arrow.y = y + height - 30
-    }
-  }
   return null
 }

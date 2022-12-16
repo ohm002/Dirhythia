@@ -101,7 +101,16 @@ export default function Display(props: Props) {
 
   return (
     <Container alpha={active}>
-      {/* <Sprite
+      <Sprite
+        texture={Texture.WHITE}
+        x={0}
+        y={100}
+        alpha={1}
+        width={WIDTH}
+        height={4}
+        anchor={[0, 0]}
+      />
+      <Sprite
         image={overlay}
         x={0}
         y={0}
@@ -109,63 +118,104 @@ export default function Display(props: Props) {
         width={WIDTH}
         anchor={[0, 0]}
       />
-      <Sprite image={scorebox} x={29} y={23} alpha={1} anchor={[0, 0]} />
-      <Sprite
-        image={combobox}
-        x={WIDTH - 20}
-        y={20}
-        alpha={1}
-        anchor={[1, 0]}
-      />
-      <Sprite image={scoreline} x={378} y={81} alpha={1} anchor={[1, 0]} />
-      <Sprite image={comboline} x={WIDTH - 30} y={78} anchor={[1, 0]} /> */}
-
       <Text
         text={
           props.game.beatmap.metadata.artist +
           ' - ' +
           props.game.beatmap.metadata.title
         }
-        x={WIDTH / 2}
-        y={93}
-        anchor={[0.5, 0]}
-        blendMode={BLEND_MODES.ADD}
+        x={0}
+        y={80}
+        width={500}
+        alpha={0.2}
+        tint={0xFF33D2}
+        anchor={[0, 1]}
+        blendMode={BLEND_MODES.ADD_NPM}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
+            fontWeight: "bold",
             align: 'center',
             fill: '#ffffff',
-            fontSize: 20,
+            fontSize: 50,
+          })
+        }
+      />
+      <Text
+        text={
+          props.game.beatmap.metadata.artist +
+          ' - ' +
+          props.game.beatmap.metadata.title
+        }
+        x={45}
+        alpha={0.5}
+        tint={0xFF33D2}
+        width={300}
+        y={80}
+        anchor={[0, 1]}
+        blendMode={BLEND_MODES.COLOR_DODGE}
+        style={
+          new TextStyle({
+            fontFamily: MAINFONT,
+            fontWeight: "bold",
+            align: 'center',
+            fill: '#ffffff',
+            fontSize: 36,
+          })
+        }
+      />
+      <Text
+        text={
+          props.game.beatmap.metadata.artist +
+          ' - ' +
+          props.game.beatmap.metadata.title
+        }
+        width={300}
+        x={50}
+        y={80}
+        anchor={[0, 1]}
+        style={
+          new TextStyle({
+            fontFamily: MAINFONT,
+            fontWeight: "bold",
+            align: 'center',
+            fill: '#ffffff',
+            fontSize: 36,
           })
         }
       />
       <Text
         text={'Charted by ' + props.game.beatmap.metadata.creator}
-        x={WIDTH / 2}
-        y={43}
+        x={360}
+        y={75}
+        anchor={[0, 1]}
+        width={100}
         alpha={0.5}
-        anchor={[0.5, 0]}
         blendMode={BLEND_MODES.ADD}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
             align: 'center',
+            fontWeight: "bold",
+            fontStyle: 'italic',
             fill: '#ffffff',
-            fontSize: 10,
+            fontSize: 15,
           })
         }
       />
       <Text
         text={props.game.beatmap.metadata.difficult}
-        x={WIDTH / 2}
-        y={66}
-        anchor={[0.5, 0]}
+        x={470}
+        y={75}
+        anchor={[0, 1]}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
             align: 'center',
+            fontWeight: "bold",
+            fontStyle: 'italic',
             fill: '#ffffff',
-            fontSize: 17,
+            fontSize: 25,
           })
         }
       />
@@ -187,53 +237,54 @@ export default function Display(props: Props) {
       />
       {/* <Text
         text={combo + ' COMBO'}
-        x={WIDTH - 30}
-        y={59}
-        anchor={[1, 0]}
+        x={50}
+        y={170}
+        anchor={[0, 0]}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
-            align: 'right',
+            align: 'left',
             fill: '#ffffff',
-            fontSize: 30,
+            fontSize: 20,
           })
         }
-      /> */}
+      />
       <Text
         text={props.game.highestcombo + ' / ' + props.game.maxcombo}
-        x={WIDTH - 30}
-        y={40}
+        x={50}
+        y={195}
         blendMode={BLEND_MODES.ADD}
-        anchor={[1, 0]}
+        anchor={[0, 0]}
         alpha={0.5}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
-            align: 'center',
+            align: 'left',
             fill: '#ffffff',
             fontSize: 15,
           })
         }
       />
-      {/* <Text
+      <Text
         text={Math.round(
           (props.game.score / props.game.maxscore) * 1000000
         ).toString()}
-        x={156}
-        y={54}
+        x={50}
+        y={132}
         alpha={1}
         anchor={[0, 0]}
         blendMode={BLEND_MODES.ADD}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
-            align: 'center',
+            fontWeight: "bold",
+            align: 'left',
             fill: '#ffffff',
             fontSize: 31,
           })
         }
-      /> */}
-      {/* <Text
+      />
+      <Text
         text={
           '(' +
           Math.round(
@@ -241,15 +292,16 @@ export default function Display(props: Props) {
           ).toString() +
           '% MAX)'
         }
-        x={54}
-        y={72}
+        x={50}
+        y={120}
         blendMode={BLEND_MODES.ADD}
         alpha={0.5}
         anchor={[0, 0]}
         style={
           new TextStyle({
-            fontFamily: MAINFONT,
-            align: 'center',
+            fontFamily: MAINFONT,           
+            fontWeight: "bold",
+            align: 'left',
             fill: '#ffffff',
             fontSize: 11,
           })

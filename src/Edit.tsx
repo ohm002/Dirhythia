@@ -36,10 +36,12 @@ type AppProps = {
 
 export default function Edit(props: AppProps) {
   const beatmap = props.chart
-  //   const { audioPath } = beatmap
+    props.game.play()
+    //   const { audioPath } = beatmap
   // //   GAME.setAudioPath(audioPath)
   //   const musicVolume = GAME.audiovolume
   //   const effectVolume = GAME.effectvolume
+  props.game.mode = "edit"
   return (
     <>
       {/* <div>
@@ -70,9 +72,9 @@ export default function Edit(props: AppProps) {
       {/* <input type="range" id="range" onInput={rangehandler}></input> */}
 
       <Stage width={WIDTH} height={HEIGHT}>
-        {/* <Menu game={GAME} time={props.menutime} /> */}
         <Container>
-            <Time time={beatmap.timingPoints[0].time} bpm={beatmap.timingPoints[0].bpm}></Time>
+            <Time time={beatmap.timingPoints[0].time} bpm={beatmap.timingPoints[0].bpm} game={props.game}></Time>
+          <PlayField beatmap={beatmap} game={props.game} />
         </Container>
       </Stage>
       <div id="log"></div>

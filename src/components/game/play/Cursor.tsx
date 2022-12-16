@@ -62,8 +62,8 @@ export default function Cursor(props: Props) {
         // }
         // console.log(props.game.key[4], props.game.key[5])
         if (
-          (x > nextObj.x && props.game.key[4][0] == '1') ||
-          (x < nextObj.x && props.game.key[4][1] == '1')
+          ((x > nextObj.x && props.game.key[4][0] == '1') ||
+          (x < nextObj.x && props.game.key[4][1] == '1')) && nextObj != undefined
         ) {
           // find the hit object that player tried to click
           const clickedHitObject =

@@ -23,6 +23,9 @@ import {
   SCROLL_SPEED,
   WIDTH,
 } from '../../../libs/options'
+import LNOTE from '../../../assets/NOTE/LNOTE.png'
+import RNOTE from '../../../assets/NOTE/RNOTE.png'
+import NOTE from '../../../assets/NOTE/NOTE.png'
 import { GameState } from '../../../state/GameState'
 import { TimingPoint } from '../../../types/TimingPoint'
 import { Beatmap } from '../../../types/Beatmap'
@@ -52,18 +55,8 @@ export default function Hold(props: HoldProps) {
   const [cursorx, setcursorx] = useState(
     WIDTH / 2 - CURSOR_AREA / 2 + 0.5 * CURSOR_AREA
   )
-  const mode = (
-    (props.game.beatmap as Beatmap).timingPoints.filter(
-      (a) => a.time <= props.startTime
-    )[0] != undefined
-      ? (props.game.beatmap as Beatmap).timingPoints.filter(
-          (a) => a.time <= props.startTime
-        )[0]
-      : (props.game.beatmap as Beatmap).timingPoints[0]
-  ).mode
-
   let color = COLCOLOR[props.keys - 1]
-  let note = SPRITE.from(Texture.WHITE)
+  let note = props.keys == 2 ? SPRITE.from(LNOTE) : props.keys == 3 ?  SPRITE.from(RNOTE) :  SPRITE.from(NOTE)  
   let hits = SPRITE.from(hit)
   let hold = SPRITE.from(Texture.WHITE)
   // <Sprite
@@ -83,17 +76,15 @@ export default function Hold(props: HoldProps) {
       hold.anchor.set(props.keys == 2 ? 1 : 0, 0)
       note.width = COL_WIDTH * 2
       hits.width = COL_WIDTH * 2
-      hold.width = HOLD_WIDTH * 2
-      note.tint = color
+      hold.width = COL_WIDTH * 2 - 10
       hold.tint = color
       hits.tint = color
     } else {
       note.anchor.set(0.5, 1)
       hits.anchor.set(0.5, 1)
-      note.width = COL_WIDTH
+      note.width = COL_WIDTH 
       hits.width = COL_WIDTH
-      hold.width = HOLD_WIDTH
-      note.tint = 0xffffff
+      hold.width = COL_WIDTH
       hold.tint = 0xffffff
       hits.tint = 0xffffff
     }
