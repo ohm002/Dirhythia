@@ -48,10 +48,10 @@ const getColKey = (i: number) => {
       return COL_4_KEY
   }
 }
-// OD 5 equivalent
-const maxAcceptableOffset = 150 // ms
-const hitWindow300 = 50 // ms
-const hitWindow100 = 100 // ms
+// OD 8 equivalent
+const maxAcceptableOffset = 200-10*8 // ms
+const hitWindow300 = 80- 6*8 // ms
+const hitWindow100 = 140-8*8 // ms
 const hitWindow50 = maxAcceptableOffset // ms
 
 export default function Column(props: ColumnProps) {

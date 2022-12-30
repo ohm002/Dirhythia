@@ -6,7 +6,7 @@ import {
   Texture,
   Sprite as SPRITE,
   Container as CONTAINER,
-  filters
+  filters,
 } from 'pixi.js'
 import { useEffect, useState } from 'react'
 import { HEIGHT, PLAYFIELD_WIDTH, WIDTH } from '../../../libs/options'
@@ -34,7 +34,7 @@ const sprites = {
 
 let clicktime = -1
 const container = new CONTAINER()
-const MAINFONT = "Roboto Condensed"
+const MAINFONT = 'Roboto Condensed'
 
 export function triggereffect(time: number, score: string) {
   if (container.getChildByName('scoretext') == null) {
@@ -48,36 +48,90 @@ export function triggereffect(time: number, score: string) {
   text.text = sscore
 }
 const middlescreenv = HEIGHT / 2
-let text = new PIXITEXT(
-  '',
-  new TextStyle({
-    fill: 'white',
-    dropShadow: true,
-    dropShadowBlur: 5,
-    dropShadowDistance: 0,
-    dropShadowColor: 0xffffff,
-    fontFamily: 'Courier New',
-    fontSize: 30,
-    fontWeight: '900',
-    fontVariant: 'small-caps',
-  })
-)
+function generatetext(text: string) {
+  return new PIXITEXT(
+    text,
+    new TextStyle({
+      fill: 'white',
+      dropShadow: true,
+      dropShadowBlur: 5,
+      dropShadowDistance: 0,
+      dropShadowColor: 0xffffff,
+      fontFamily: 'Courier New',
+      fontSize: 30,
+      fontWeight: '900',
+      fontVariant: 'small-caps',
+    })
+  )
+}
+let text = generatetext('')
 text.anchor.set(0.5, 0.5)
 text.name = 'scoretext'
 text.x = WIDTH / 2
 text.y = HEIGHT / 2
 text.blendMode = BLEND_MODES.ADD
 text.alpha = 0
+
+{
+  /* <Text
+        text={
+          props.game.beatmap.metadata.artist +
+          ' - ' +
+          props.game.beatmap.metadata.title
+        }
+        x={0}
+        y={80}
+        width={500}
+        alpha={0.2}
+        tint={0xFF33D2}
+        anchor={[0, 1]}
+        blendMode={BLEND_MODES.ADD_NPM}
+        style={
+          new TextStyle({
+            fontFamily: MAINFONT,
+            fontWeight: "bold",
+            align: 'center',
+            fill: '#ffffff',
+            fontSize: 50,
+          })
+        }
+      /> */
+}
 export default function Display(props: Props) {
   const app = useApp()
   app.stage.addChild(container)
   const [combo, setCombo] = useState('0')
   const [active, setactive] = useState(0)
   const [fps, setfps] = useState('0')
-  if (container.getChildByName('scoretext') == null) {
+
+  let title = generatetext(
+    props.game.beatmap.metadata.artist +
+      ' - ' +
+      props.game.beatmap.metadata.title
+  )
+  if (
+    container.getChildByName('scoretext') == null
+  ) {
+    title.x = 0
+    title.y = 80
+    title.width = 500
+    title.name = 'title'
+    title.alpha = 0.2
+    title.tint = 0xff33d2
+    title.anchor.set(0, 1)
+    title.blendMode = BLEND_MODES.ADD_NPM
+    title.style = new TextStyle({
+      fontFamily: MAINFONT,
+      fontWeight: 'bold',
+      align: 'center',
+      fill: '#ffffff',
+      fontSize: 50,
+    })
+    container.addChild(title)
     container.addChild(text)
   } else {
     text = container.getChildByName('scoretext')
+    title = container.getChildByName('title')
   }
   useEffect(() => {
     setInterval(() => {
@@ -86,14 +140,20 @@ export default function Display(props: Props) {
   })
 
   useTick(() => {
-    const currentTime = props.game.currenttime
-    text.scale.x = text.scale.y = easeOutCubic(
-      currentTime,
-      [clicktime, clicktime + 100],
-      [1.5, 1]
-    )
-    text.alpha = easeOutCubic(currentTime, [clicktime, clicktime + 500], [1, 0])
-    setCombo(props.game.combo.toString())
+    if (props.game.mode == 'play') {
+      const currentTime = props.game.currenttime
+      text.scale.x = text.scale.y = easeOutCubic(
+        currentTime,
+        [clicktime, clicktime + 100],
+        [1.5, 1]
+      )
+      text.alpha = easeOutCubic(
+        currentTime,
+        [clicktime, clicktime + 500],
+        [1, 0]
+      )
+      setCombo(props.game.combo.toString())
+    }
   })
   useTick(() => {
     if (props.game.mode == 'play') setactive(1)
@@ -118,29 +178,7 @@ export default function Display(props: Props) {
         width={WIDTH}
         anchor={[0, 0]}
       />
-      <Text
-        text={
-          props.game.beatmap.metadata.artist +
-          ' - ' +
-          props.game.beatmap.metadata.title
-        }
-        x={0}
-        y={80}
-        width={500}
-        alpha={0.2}
-        tint={0xFF33D2}
-        anchor={[0, 1]}
-        blendMode={BLEND_MODES.ADD_NPM}
-        style={
-          new TextStyle({
-            fontFamily: MAINFONT,
-            fontWeight: "bold",
-            align: 'center',
-            fill: '#ffffff',
-            fontSize: 50,
-          })
-        }
-      />
+
       <Text
         text={
           props.game.beatmap.metadata.artist +
@@ -149,7 +187,7 @@ export default function Display(props: Props) {
         }
         x={45}
         alpha={0.5}
-        tint={0xFF33D2}
+        tint={0xff33d2}
         width={300}
         y={80}
         anchor={[0, 1]}
@@ -157,7 +195,7 @@ export default function Display(props: Props) {
         style={
           new TextStyle({
             fontFamily: MAINFONT,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             align: 'center',
             fill: '#ffffff',
             fontSize: 36,
@@ -177,7 +215,7 @@ export default function Display(props: Props) {
         style={
           new TextStyle({
             fontFamily: MAINFONT,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             align: 'center',
             fill: '#ffffff',
             fontSize: 36,
@@ -196,7 +234,7 @@ export default function Display(props: Props) {
           new TextStyle({
             fontFamily: MAINFONT,
             align: 'center',
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontStyle: 'italic',
             fill: '#ffffff',
             fontSize: 15,
@@ -212,7 +250,7 @@ export default function Display(props: Props) {
           new TextStyle({
             fontFamily: MAINFONT,
             align: 'center',
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontStyle: 'italic',
             fill: '#ffffff',
             fontSize: 25,
@@ -235,7 +273,7 @@ export default function Display(props: Props) {
           })
         }
       />
-      {/* <Text
+      <Text
         text={combo + ' COMBO'}
         x={50}
         y={170}
@@ -277,7 +315,7 @@ export default function Display(props: Props) {
         style={
           new TextStyle({
             fontFamily: MAINFONT,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             align: 'left',
             fill: '#ffffff',
             fontSize: 31,
@@ -299,14 +337,14 @@ export default function Display(props: Props) {
         anchor={[0, 0]}
         style={
           new TextStyle({
-            fontFamily: MAINFONT,           
-            fontWeight: "bold",
+            fontFamily: MAINFONT,
+            fontWeight: 'bold',
             align: 'left',
             fill: '#ffffff',
             fontSize: 11,
           })
         }
-      /> */}
+      />
     </Container>
   )
 }

@@ -14,6 +14,7 @@ import {
   Container as container,
   ObservablePoint,
   Ticker,
+  Graphics,
 } from 'pixi.js'
 import {
   WIDTH,
@@ -73,7 +74,18 @@ export default function Menu(props: Props) {
     }
   })
   play.on('pointerdown', handlePlay)
+  // const curve = new Graphics();
+  
+  // curve.lineStyle(2, 0xFFFFFF, 1);
+  // curve.beginFill(0x1f1f1f);
+  // curve.moveTo(20, 20);
+  // curve.bezierCurveTo(20, 20,58, 100, 100, 100);  
+  // curve.bezierCurveTo(100, 100, 100, 100, 100+50, 100);
+  // curve.bezierCurveTo(100+50, 100,58+50, 100, 20+50, 20);
+  // curve.bezierCurveTo(20+50, 20,20+50, 20, 20, 20);
+  // curve.endFill();
   useApp().stage.addChild(play)
+  // useApp().stage.addChild(curve)
   useApp().stage.addChild(edit)
   return null
 }

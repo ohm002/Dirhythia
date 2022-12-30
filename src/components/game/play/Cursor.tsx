@@ -23,7 +23,7 @@ type Props = {
 }
 
 // OD 5 equivalent
-const maxAcceptableOffset = 150 // ms
+const maxAcceptableOffset = 50 // ms
 
 const getColKey = (i: number) => {
   return i > 0 ? CURSOR_LEFT_KEY : i < 0 ? CURSOR_RIGHT_KEY : undefined
@@ -82,7 +82,7 @@ export default function Cursor(props: Props) {
           }
         }
         if (nextObj != undefined) {
-          if (currentTime > nextObj.startTime + 150) {
+          if (currentTime > nextObj.startTime + maxAcceptableOffset) {
             props.game.miss(nextObj.startTime, 5)
             setNextObjIndex(nextObjIndex + 1)
           }

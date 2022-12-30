@@ -67,14 +67,14 @@ export default function Note(props: NoteProps) {
   if (container.getChildByName('note' + props.i + props.keys) == null) {
     if ((props.keys == 2) || props.keys == 3) {
       note.anchor.set(props.keys == 2 ? 1 : 0, 1)
-      hits.anchor.set(props.keys == 2 ? 1 : 0, 1)
+      hits.anchor.set(props.keys == 2 ? 1 : 0, 0)
       note.width = COL_WIDTH * 2
       hits.width = COL_WIDTH * 2
       // note.tint = color
       hits.tint = color
     } else {
       note.anchor.set(0.5, 1)
-      hits.anchor.set(0.5, 1)
+      hits.anchor.set(1, 0)
       note.width = COL_WIDTH
       hits.width = COL_WIDTH
       // note.tint = 0xffffff
@@ -170,9 +170,9 @@ export default function Note(props: NoteProps) {
           )
         )
       } else {
-        // setEffAlpha(
-        //   interpolate(currentTime, [clicktime, clicktime + 200], [1, 0])
-        // )
+        setEffAlpha(
+          interpolate(currentTime, [clicktime, clicktime + 100], [1, 0])
+        )
         setAlpha(0)
       }
     }
