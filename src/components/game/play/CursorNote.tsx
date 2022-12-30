@@ -82,15 +82,21 @@ export function BPMLine(props: BPMLineProps) {
             currentTime,
             [
               props.time -
-              NOTE_TRAVEL_DURATION +
-              NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
+                NOTE_TRAVEL_DURATION +
+                NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
               props.time + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION,
             ],
             [0, HEIGHT]
           )
         )
       } else {
-        setAlpha(0)
+        setAlpha(
+          interpolate(
+            currentTime,
+            [props.time, props.time + NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION],
+            [1, 0]
+          )
+        )
       }
     }
   })
@@ -135,17 +141,7 @@ export default function CursorNote(props: CursorNoteProps) {
   let lastpos = 0.5
   const trackx = props.type == 'normal' ? props.x : lastpos
   let Duration = endTime - startTime
-  var currentspeed =
-    props.game.beatmap.speedChanges != undefined
-      ? props.game.beatmap.speedChanges
-          .filter((a: NoteSpeedModifier) => {
-            return a.startTime <= props.game.currenttime
-          })
-          .sort((a: NoteSpeedModifier, b: NoteSpeedModifier) => {
-            return a.startTime - b.startTime
-          })
-          .reverse()[0]?.speed * HEIGHT
-      : props.game.notespeed
+  let currentspeed = SCROLL_SPEED
   const [height, setheight] = useState(
     Math.round((Duration * currentspeed) / 1000)
   )
@@ -165,6 +161,7 @@ export default function CursorNote(props: CursorNoteProps) {
   const [active, setactive] = useState(true)
   const [clicktime, setclicktime] = useState(-1)
   const [effalpha, setEffAlpha] = useState(0)
+  const [alpha, setAlpha] = useState(0)
   let [clicked, setclicked] = useState(false)
   const [score, setscore] = useState('')
 
@@ -180,17 +177,17 @@ export default function CursorNote(props: CursorNoteProps) {
   )
   offsetx += props.type == 'normal' ? a : 0
   let hiteffect = SPRITE.from(lastpos > startpos ? hitleft : hitright)
-  let switchlineg = new Graphics();
-  let rowb = new Graphics();
-  rowb.lineStyle(1, 0xFFFFFF, 1);
-  rowb.beginFill(0x000000);
-  rowb.drawRect(0, 0, PLAYFIELD_WIDTH * 1.3, height);
-  rowb.endFill();
+  let switchlineg = new Graphics()
+  let rowb = new Graphics()
+  rowb.lineStyle(2, 0xffffff, 1)
+  rowb.beginFill(0x000000)
+  rowb.drawRect(0, 0, PLAYFIELD_WIDTH * 1.3, height)
+  rowb.endFill()
   let rowbg = new SPRITE(useApp().renderer.generateTexture(rowb))
-  switchlineg.lineStyle(4, 0xFFFFFF, 1);
-  switchlineg.beginFill(color);
-  switchlineg.drawRect(0, 0, Math.abs(lastpos - startpos) * CURSOR_AREA, 26);
-  switchlineg.endFill();
+  switchlineg.lineStyle(4, 0xffffff, 1)
+  switchlineg.beginFill(color)
+  switchlineg.drawRect(0, 0, Math.abs(lastpos - startpos) * CURSOR_AREA, 26)
+  switchlineg.endFill()
   let switchlinegg = useApp().renderer.generateTexture(switchlineg)
   // console.log(switchlinegg)
   let switchline = new SPRITE(switchlinegg)
@@ -255,7 +252,7 @@ export default function CursorNote(props: CursorNoteProps) {
       [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
     )
     rowbg.anchor.set(0.5, 1)
-    rowbg.alpha = 0.5
+    rowbg.alpha = 1
     switchline.name = 'switchline' + props.i
     switchline.anchor.set(lastpos > startpos ? 0 : 1, 1)
     switchline.x = interpolate(
@@ -282,7 +279,6 @@ export default function CursorNote(props: CursorNoteProps) {
     hiteffect = container.getChildByName(props.i + 'cursorf')
   }
 
-  switchline.alpha = active ? 1 : 0
   point.alpha = point2.alpha = active ? 1 : 0
   hiteffect.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
   hiteffect.width = 300
@@ -326,26 +322,26 @@ export default function CursorNote(props: CursorNoteProps) {
       //   [offsetx, lastpos > startpos ? offsetx - 50 : offsetx + 50]
       // )
     }
-    if (
-      currentTime >=
-        startTime -
-          props.game.NOTE_TRAVEL_DURATION() +
-          props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() &&
-      currentTime <=
-        endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() && props.game.mode == 'play'
-    ){
-      setactive(true)} else {
-        setactive(false)
-      }
+    // if (
+    //   currentTime >=
+    //     startTime -
+    //       props.game.NOTE_TRAVEL_DURATION() +
+    //       props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() &&
+    //   currentTime <=
+    //     endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() && props.game.mode == 'play'
+    // ){
+    //   setactive(true)} else {
+    //     setactive(false)
+    //   }
 
     if (
-      isPlaying &&
-      active &&
-      (currentTime >=
-        startTime -
-          props.game.NOTE_TRAVEL_DURATION() +
-          +props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() ||
-        props.game.mode == 'editor')
+      (isPlaying &&
+        active &&
+        currentTime >=
+          startTime -
+            props.game.NOTE_TRAVEL_DURATION() +
+            +props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION()) ||
+      props.game.mode == 'editor'
     ) {
       if (props.game.hitlist.length > 0)
         props.game.hitlist.forEach((element: any) => {
@@ -376,6 +372,17 @@ export default function CursorNote(props: CursorNoteProps) {
           [-height, HEIGHT]
         )
       )
+      setAlpha(
+        interpolate(
+          currentTime,
+          [
+            endTime,
+            endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION(),
+          ],
+          [1, 0]
+        )
+      )
+      switchline.alpha = rowbg.alpha = alpha
     }
   })
   return null

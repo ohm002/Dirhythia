@@ -9,7 +9,7 @@ import {
   filters,
 } from 'pixi.js'
 import { useEffect, useState } from 'react'
-import { HEIGHT, PLAYFIELD_WIDTH, WIDTH } from '../../../libs/options'
+import { CURSOR_AREA, HEIGHT, PLAYFIELD_WIDTH, WIDTH } from '../../../libs/options'
 import { GameState } from '../../../state/GameState'
 import combobox from '../../../assets/combobox.png'
 import { easeOutCubic, interpolate } from '../../../libs/interpolate'
@@ -20,6 +20,7 @@ import miss from '../../../assets/miss.png'
 import scoreline from '../../../assets/scoreline.png'
 import comboline from '../../../assets/comboline.png'
 import overlay from '../../../assets/overlay.png'
+import playarealine from '../../../assets/playarealine.png'
 import scorebox from '../../../assets/scorebox.png'
 type Props = {
   game: GameState
@@ -116,7 +117,7 @@ export default function Display(props: Props) {
     title.y = 80
     title.width = 500
     title.name = 'title'
-    title.alpha = 0.2
+    title.alpha = 0
     title.tint = 0xff33d2
     title.anchor.set(0, 1)
     title.blendMode = BLEND_MODES.ADD_NPM
@@ -171,6 +172,22 @@ export default function Display(props: Props) {
         anchor={[0, 0]}
       />
       <Sprite
+        image={playarealine}
+        x={WIDTH/2 - CURSOR_AREA/2}
+        y={HEIGHT/2}
+        anchor={[0.5, 0.5]}
+        scale={HEIGHT*0.95/734}
+        alpha={1}
+      />
+      <Sprite
+        image={playarealine}
+        x={WIDTH/2 + CURSOR_AREA/2}
+        y={HEIGHT/2}
+        anchor={[0.5, 0.5]}
+        scale={HEIGHT*0.95/734}
+        alpha={1} 
+      />
+      <Sprite
         image={overlay}
         x={0}
         y={0}
@@ -178,30 +195,6 @@ export default function Display(props: Props) {
         width={WIDTH}
         anchor={[0, 0]}
       />
-
-      <Text
-        text={
-          props.game.beatmap.metadata.artist +
-          ' - ' +
-          props.game.beatmap.metadata.title
-        }
-        x={45}
-        alpha={0.5}
-        tint={0xff33d2}
-        width={300}
-        y={80}
-        anchor={[0, 1]}
-        blendMode={BLEND_MODES.COLOR_DODGE}
-        style={
-          new TextStyle({
-            fontFamily: MAINFONT,
-            fontWeight: 'bold',
-            align: 'center',
-            fill: '#ffffff',
-            fontSize: 36,
-          })
-        }
-      />
       <Text
         text={
           props.game.beatmap.metadata.artist +
@@ -209,9 +202,9 @@ export default function Display(props: Props) {
           props.game.beatmap.metadata.title
         }
         width={300}
-        x={50}
+        x={WIDTH/2}
         y={80}
-        anchor={[0, 1]}
+        anchor={[0.5, 1]}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
@@ -224,9 +217,9 @@ export default function Display(props: Props) {
       />
       <Text
         text={'Charted by ' + props.game.beatmap.metadata.creator}
-        x={360}
+        x={WIDTH/2}
         y={75}
-        anchor={[0, 1]}
+        anchor={[.5, 1]}
         width={100}
         alpha={0.5}
         blendMode={BLEND_MODES.ADD}
@@ -243,9 +236,9 @@ export default function Display(props: Props) {
       />
       <Text
         text={props.game.beatmap.metadata.difficult}
-        x={470}
+        x={WIDTH/2}
         y={75}
-        anchor={[0, 1]}
+        anchor={[.5, 1]}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
@@ -275,9 +268,9 @@ export default function Display(props: Props) {
       />
       <Text
         text={combo + ' COMBO'}
-        x={50}
+        x={WIDTH/2}
         y={170}
-        anchor={[0, 0]}
+        anchor={[.5, 0]}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
@@ -289,10 +282,10 @@ export default function Display(props: Props) {
       />
       <Text
         text={props.game.highestcombo + ' / ' + props.game.maxcombo}
-        x={50}
+        x={WIDTH/2}
         y={195}
         blendMode={BLEND_MODES.ADD}
-        anchor={[0, 0]}
+        anchor={[.5, 0]}
         alpha={0.5}
         style={
           new TextStyle({
@@ -307,10 +300,10 @@ export default function Display(props: Props) {
         text={Math.round(
           (props.game.score / props.game.maxscore) * 1000000
         ).toString()}
-        x={50}
+        x={WIDTH/2}
         y={132}
         alpha={1}
-        anchor={[0, 0]}
+        anchor={[.5, 0]}
         blendMode={BLEND_MODES.ADD}
         style={
           new TextStyle({
@@ -330,11 +323,11 @@ export default function Display(props: Props) {
           ).toString() +
           '% MAX)'
         }
-        x={50}
+        x={WIDTH/2}
         y={120}
         blendMode={BLEND_MODES.ADD}
         alpha={0.5}
-        anchor={[0, 0]}
+        anchor={[.5, 0]}
         style={
           new TextStyle({
             fontFamily: MAINFONT,

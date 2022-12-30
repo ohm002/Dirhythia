@@ -39,12 +39,12 @@ type PlayFieldProps = {
 const container = new CONTAINER()
 export default function PlayField(props: PlayFieldProps) {
   const app = useApp()
+  const bgimage = SPRITE.from(props.beatmap.bgPath)
+  if (app.stage.getChildByName('bgimage') == null) app.stage.addChild(bgimage)
   app.stage.addChild(container)
   const [active, setactive] = useState(0)
-  const bgimage = SPRITE.from(props.beatmap.bgPath)
   bgimage.alpha = 0
   bgimage.name = 'bgimage'
-  if (app.stage.getChildByName('bgimage') == null) app.stage.addChild(bgimage)
   // const app = useApp()
   // const observer = new ResizeObserver(([entry]) => {
   //   function getWidth() {
