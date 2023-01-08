@@ -9,11 +9,8 @@ import {
   Text as TEXT,
   TextStyle,
   Sprite as SPRITE,
-  TextureLoader,
-  Loader,
   Container as container,
   ObservablePoint,
-  Ticker,
   Graphics,
 } from 'pixi.js'
 import {

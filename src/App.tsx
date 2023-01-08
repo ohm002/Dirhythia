@@ -25,8 +25,9 @@ import Display from './components/game/play/Display'
 import css from './index.css'
 import { parseBeatmap } from './libs/parseBeatmap'
 import { Beatmap } from './types/Beatmap'
-import { Application, TextStyle, Container as CONTAINER } from 'pixi.js'
+import { Application, TextStyle, Container as CONTAINER, Filter } from 'pixi.js'
 import { Text } from 'pixi.js'
+import { BloomFilter } from 'pixi-filters'
 type AppProps = {
   chart: Beatmap
   menutime: number

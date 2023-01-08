@@ -3,8 +3,13 @@ import {
   BLEND_MODES,
   Texture,
   Sprite as SPRITE,
-  Graphics,
   Container as CONTAINER,
+  TextureLoader,
+  generateUniformBufferSync,
+  Renderer,
+  RenderTexture,
+  autoDetectRenderer,
+  Graphics,
 } from 'pixi.js'
 import { useEffect, useMemo, useState } from 'react'
 import { easeOutCubic, interpolate } from '../../../libs/interpolate'
@@ -36,6 +41,7 @@ import hitleft from '../../../assets/cursorhitleft.png'
 import arrowright from '../../../assets/arrowright.png'
 import arrowleft from '../../../assets/arrowleft.png'
 import { NoteSpeedModifier } from '../../../types/NoteSpeedModifier'
+import { BaseRenderTexture, GenerateTextureSystem } from '@pixi/core'
 
 type CursorNoteProps = {
   x: number
@@ -127,10 +133,11 @@ export default function CursorNote(props: CursorNoteProps) {
     (a, b) => a.startTime - b.startTime
   )
   const notex = props.x
-  let endTime =
-    props.beatmap.cursor[props.i + 1] != undefined
-      ? props.beatmap.cursor[props.i + 1].startTime
-      : props.game.audio.duration * 1000
+  let endTime = props.beatmap.cursor[props.i + 1]
+    ? props.beatmap.cursor[props.i + 1].startTime
+    : !Number.isNaN(props.game.audio.duration)
+    ? props.game.audio.duration * 1000
+    : 1000000
   let startTime = props.beatmap.cursor[props.i]
     ? props.beatmap.cursor[props.i].startTime
     : 0
@@ -183,17 +190,17 @@ export default function CursorNote(props: CursorNoteProps) {
   rowb.beginFill(0x000000)
   rowb.drawRect(0, 0, PLAYFIELD_WIDTH * 1.3, height)
   rowb.endFill()
-  let rowbg = new SPRITE(useApp().renderer.generateTexture(rowb))
+  let rowbg = rowb
   switchlineg.lineStyle(4, 0xffffff, 1)
   switchlineg.beginFill(color)
   switchlineg.drawRect(0, 0, Math.abs(lastpos - startpos) * CURSOR_AREA, 26)
   switchlineg.endFill()
-  let switchlinegg = useApp().renderer.generateTexture(switchlineg)
+  // let switchlinegg = useApp().renderer.generateTexture(switchlineg)
   // console.log(switchlinegg)
-  let switchline = new SPRITE(switchlinegg)
-  let line1 = SPRITE.from(Texture.WHITE)
-  let point = SPRITE.from(Texture.WHITE)
-  let point2 = SPRITE.from(Texture.WHITE)
+  let switchline = switchlineg
+  let line1 = new SPRITE(Texture.WHITE)
+  let point = new SPRITE(Texture.WHITE)
+  let point2 = new SPRITE(Texture.WHITE)
   let line2 = SPRITE.from(vertical)
   let line3 = SPRITE.from(vertical)
   if (container.getChildByName('switchline' + props.i) == null) {
@@ -205,12 +212,12 @@ export default function CursorNote(props: CursorNoteProps) {
     point.width = 10
     point.anchor.set(0.5)
     point.height = 10
-    point.angle = 45
+    point.rotation = (45 * 3.14) / 180
     point.name = 'point' + props.i
     point2.width = 10
     point2.anchor.set(0.5)
     point2.height = 10
-    point2.angle = 45
+    point2.rotation = (45 * 3.14) / 180
     point2.name = 'point2' + props.i
     point.alpha = point2.alpha = 0
     line1.anchor.set(0.5, 1)
@@ -249,16 +256,21 @@ export default function CursorNote(props: CursorNoteProps) {
     rowbg.x = interpolate(
       trackx,
       [0, 1],
-      [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+      [
+        WIDTH / 2 - CURSOR_AREA / 2 - rowbg.width / 2,
+        WIDTH / 2 + CURSOR_AREA / 2 - rowbg.width / 2,
+      ]
     )
-    rowbg.anchor.set(0.5, 1)
     rowbg.alpha = 1
     switchline.name = 'switchline' + props.i
-    switchline.anchor.set(lastpos > startpos ? 0 : 1, 1)
+    const anchor = lastpos > startpos ? 0 : -switchline.width
     switchline.x = interpolate(
       props.x,
       [0, 1],
-      [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+      [
+        WIDTH / 2 - CURSOR_AREA / 2 + anchor,
+        WIDTH / 2 + CURSOR_AREA / 2 + anchor,
+      ]
     )
     container.addChild(hiteffect)
     container.addChild(rowbg)
@@ -279,7 +291,6 @@ export default function CursorNote(props: CursorNoteProps) {
     hiteffect = container.getChildByName(props.i + 'cursorf')
   }
 
-  point.alpha = point2.alpha = active ? 1 : 0
   hiteffect.y = HEIGHT - JUDGEMENT_LINE_OFFSET_Y
   hiteffect.width = 300
   hiteffect.height = 50
@@ -300,8 +311,8 @@ export default function CursorNote(props: CursorNoteProps) {
   line2.height = height
   line1.height = height
   line3.height = height
-  switchline.y = y + height
-  rowbg.y = y + height
+  switchline.y = y + height - switchline.height
+  rowbg.y = y + height - rowbg.height
   line1.y = y + height
   line2.y = y + height
   line3.y = y + height
@@ -316,11 +327,11 @@ export default function CursorNote(props: CursorNoteProps) {
         [clicktime, clicktime + 300],
         [1, 0]
       )
-      // hiteffect.x = easeOutCubic(
-      //   currentTime,
-      //   [clicktime, clicktime + 300],
-      //   [offsetx, lastpos > startpos ? offsetx - 50 : offsetx + 50]
-      // )
+      hiteffect.x = easeOutCubic(
+        currentTime,
+        [clicktime, clicktime + 300],
+        [offsetx, lastpos > startpos ? offsetx - 50 : offsetx + 50]
+      )
     }
     // if (
     //   currentTime >=
@@ -328,11 +339,13 @@ export default function CursorNote(props: CursorNoteProps) {
     //       props.game.NOTE_TRAVEL_DURATION() +
     //       props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() &&
     //   currentTime <=
-    //     endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() && props.game.mode == 'play'
-    // ){
-    //   setactive(true)} else {
-    //     setactive(false)
-    //   }
+    //     endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() &&
+    //   props.game.mode == 'play'
+    // ) {
+    //   setactive(true)
+    // } else {
+    //   setactive(false)
+    // }
 
     if (
       (isPlaying &&
@@ -343,6 +356,9 @@ export default function CursorNote(props: CursorNoteProps) {
             +props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION()) ||
       props.game.mode == 'editor'
     ) {
+      // point.alpha = active ? alpha : 0
+      // point2.alpha = active ? alpha : 0
+      // console.log(point.alpha)
       if (props.game.hitlist.length > 0)
         props.game.hitlist.forEach((element: any) => {
           if (
@@ -356,7 +372,15 @@ export default function CursorNote(props: CursorNoteProps) {
           }
         })
 
-      if (currentTime > endTime + 300 && props.game.mode == 'play') {
+      if (
+        (currentTime >
+          endTime + props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION() ||
+          currentTime <
+            startTime -
+              props.game.NOTE_TRAVEL_DURATION() +
+              props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION()) &&
+        props.game.mode == 'play'
+      ) {
         setactive(false)
       }
 
@@ -382,8 +406,10 @@ export default function CursorNote(props: CursorNoteProps) {
           [1, 0]
         )
       )
-      switchline.alpha = rowbg.alpha = alpha
+      switchline.alpha = 0.7
+      rowbg.alpha = alpha
     }
   })
+
   return null
 }

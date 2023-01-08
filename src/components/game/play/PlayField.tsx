@@ -9,9 +9,8 @@ import {
   Text,
   TextStyle,
   Sprite as SPRITE,
-  TextureLoader,
-  Loader,
   Container as CONTAINER,
+  Filter,
 } from 'pixi.js'
 import Column from './Column'
 import {
@@ -30,15 +29,26 @@ import judgement from '../../../assets/judgement.png'
 import judgement2 from '../../../assets/judgement2.png'
 import { interpolate } from '../../../libs/interpolate'
 import { NoteSpeedModifier } from '../../../types/NoteSpeedModifier'
+import { BloomFilter, RGBSplitFilter } from 'pixi-filters'
 
 type PlayFieldProps = {
   beatmap: Beatmap
   game: GameState
 }
-
+const rgb = new RGBSplitFilter()
+const bloom = new BloomFilter()
 const container = new CONTAINER()
 export default function PlayField(props: PlayFieldProps) {
   const app = useApp()
+  let b = false
+  if (b == false) {
+    app.stage.filters = [rgb]
+    bloom.blur = 5
+    rgb.blue = [2, 0]
+    rgb.green = [0, 0]
+    rgb.red = [-2, 0]
+    b = true
+  }
   const bgimage = SPRITE.from(props.beatmap.bgPath)
   if (app.stage.getChildByName('bgimage') == null) app.stage.addChild(bgimage)
   app.stage.addChild(container)

@@ -7,11 +7,8 @@ import {
   Text as TEXT,
   TextStyle,
   Sprite as SPRITE,
-  TextureLoader,
-  Loader,
   Container as container,
   ObservablePoint,
-  Ticker,
 } from 'pixi.js'
 import {
   WIDTH,
@@ -54,7 +51,7 @@ export default function Menu(props: Props) {
     // useEffect(() => {
     const handlewheel = (e: WheelEvent) => {
       time +=  e.deltaY < 0 ? -Math.round(60000 / props.bpm / 4) : Math.round(60000 / props.bpm / 4)
-      play.text = time
+      play.text = time.toString()
       //   else if (e.dFeltaY < 0) settime(time - 50)
     }
     document.addEventListener('wheel', handlewheel)

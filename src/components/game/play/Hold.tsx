@@ -58,7 +58,7 @@ export default function Hold(props: HoldProps) {
   let color = COLCOLOR[props.keys - 1]
   let note = props.keys == 2 ? SPRITE.from(LNOTE) : props.keys == 3 ?  SPRITE.from(RNOTE) :  SPRITE.from(NOTE)  
   let hits = SPRITE.from(hit)
-  let hold = SPRITE.from(Texture.WHITE)
+  let hold = new SPRITE(Texture.WHITE)
   // <Sprite
   //       texture={}
   //       x={}

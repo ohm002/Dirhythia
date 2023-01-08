@@ -201,7 +201,6 @@ export default function Display(props: Props) {
           ' - ' +
           props.game.beatmap.metadata.title
         }
-        width={300}
         x={WIDTH/2}
         y={80}
         anchor={[0.5, 1]}
@@ -217,10 +216,9 @@ export default function Display(props: Props) {
       />
       <Text
         text={'Charted by ' + props.game.beatmap.metadata.creator}
-        x={WIDTH/2}
-        y={75}
-        anchor={[.5, 1]}
-        width={100}
+        x={WIDTH/2 - 20}
+        y={40}
+        anchor={[1, 1]}
         alpha={0.5}
         blendMode={BLEND_MODES.ADD}
         style={
@@ -236,9 +234,9 @@ export default function Display(props: Props) {
       />
       <Text
         text={props.game.beatmap.metadata.difficult}
-        x={WIDTH/2}
-        y={75}
-        anchor={[.5, 1]}
+        x={WIDTH/2+20}
+        y={40 }
+        anchor={[0, 1]}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
@@ -246,7 +244,7 @@ export default function Display(props: Props) {
             fontWeight: 'bold',
             fontStyle: 'italic',
             fill: '#ffffff',
-            fontSize: 25,
+            fontSize: 15,
           })
         }
       />
@@ -269,18 +267,18 @@ export default function Display(props: Props) {
       <Text
         text={combo + ' COMBO'}
         x={WIDTH/2}
-        y={170}
+        y={115}
         anchor={[.5, 0]}
         style={
           new TextStyle({
             fontFamily: MAINFONT,
             align: 'left',
             fill: '#ffffff',
-            fontSize: 20,
+            fontSize: 15,
           })
         }
       />
-      <Text
+      {/* <Text
         text={props.game.highestcombo + ' / ' + props.game.maxcombo}
         x={WIDTH/2}
         y={195}
@@ -295,7 +293,7 @@ export default function Display(props: Props) {
             fontSize: 15,
           })
         }
-      />
+      /> */}
       <Text
         text={Math.round(
           (props.game.score / props.game.maxscore) * 1000000
@@ -315,7 +313,7 @@ export default function Display(props: Props) {
           })
         }
       />
-      <Text
+      {/* <Text
         text={
           '(' +
           Math.round(
@@ -337,7 +335,7 @@ export default function Display(props: Props) {
             fontSize: 11,
           })
         }
-      />
+      /> */}
     </Container>
   )
 }

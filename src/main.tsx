@@ -23,7 +23,6 @@ document.getElementById('chartfile')?.addEventListener('change', () => {
     GAME.beatmap = beatmap
     ReactDOM.render(
       <React.StrictMode>
-        if 
         <App game={GAME} chart={beatmap} menutime={Date.now()}/>
       </React.StrictMode>,
       document.getElementById('root')
