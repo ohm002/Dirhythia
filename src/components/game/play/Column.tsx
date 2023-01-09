@@ -1,6 +1,7 @@
 import { Container, useTick, Text, useApp } from '@inlet/react-pixi'
 import { Container as CONTAINER } from 'pixi.js'
 import { useMemo, useState } from 'react'
+import { playHitSound, playhs } from '../../../libs/hitsounds'
 import {
   COL_1_KEY,
   COL_2_KEY,
@@ -16,6 +17,8 @@ import { HitObject } from '../../../types/HitObject'
 import { TimingPoint } from '../../../types/TimingPoint'
 import Hold from './Hold'
 import Note from './Note'
+import { Sample } from '../../../libs/audio/sample'
+import { AudioEngine } from '../../../libs/audio/engine'
 
 type ColumnProps = {
   /**
@@ -49,9 +52,9 @@ const getColKey = (i: number) => {
   }
 }
 // OD 8 equivalent
-const maxAcceptableOffset = 200-10*8 // ms
-const hitWindow300 = 80- 6*8 // ms
-const hitWindow100 = 140-8*8 // ms
+const maxAcceptableOffset = 200 - 10 * 8 // ms
+const hitWindow300 = 80 - 6 * 8 // ms
+const hitWindow100 = 140 - 8 * 8 // ms
 const hitWindow50 = maxAcceptableOffset // ms
 
 export default function Column(props: ColumnProps) {
@@ -92,6 +95,7 @@ export default function Column(props: ColumnProps) {
               : undefined
           if (clickedHitObject) {
             const offset = Math.abs(clickedHitObject.startTime - currentTime)
+            // console.log(offset)
             setNextObjIndex(nextObjIndex + 1)
             const check = async () => {
               if (offset <= hitWindow300) {
@@ -149,11 +153,13 @@ export default function Column(props: ColumnProps) {
       }
     }
   })
+  // }
   let x =
     (WIDTH - PLAYFIELD_WIDTH) / 2 + COL_WIDTH * (props.i - 1) + COL_WIDTH / 2
   // if (props.i < 3) x-=10;
   // if (props.i > 2) x+=10;
   return (
+    <>
     <Container position={[0, 0]}>
       {props.hitObjects.map((hitObject, i) =>
         hitObject.type == 'note' ? (
@@ -183,5 +189,6 @@ export default function Column(props: ColumnProps) {
         )
       )}
     </Container>
+    </>
   )
 }

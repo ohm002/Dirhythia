@@ -22,11 +22,10 @@
     "cors": "^2.8.5",
     "jquery": "^3.6.1",
     "pixi-filters": "^5.1.0",
-    "pixi.js": "^6.5.1",
+    "pixi.js": "^6.5.8",
     "prop-types": "^15.7.2",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-dom": "^17.0.2",
-    "react-pixi": "^0.9.19",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "settings": "^0.1.1"

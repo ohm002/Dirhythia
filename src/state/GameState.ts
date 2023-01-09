@@ -1,9 +1,13 @@
+import axios from 'axios'
 import { triggereffect } from '../components/game/play/Display'
+import { misseff } from '../components/game/play/PlayField'
+import { AudioEngine } from '../libs/audio/engine'
+import { playhs } from '../libs/hitsounds'
+// import { getaudio } from '../libs/audio/audiofuncs'
 import { HEIGHT, JUDGEMENT_LINE_OFFSET_Y, SCROLL_SPEED } from '../libs/options'
 import { getHeight, getWidth } from '../libs/screenhandler'
 import { Beatmap } from '../types/Beatmap'
 
-const audioctx = new AudioContext()
 const GAME_AUDIO = new Audio()
 export class GameState {
   // data: JSON
@@ -103,6 +107,7 @@ export class GameState {
       this.combo = 0
       this.hitlist.push(time.toString() + key.toString() + ',miss')
       triggereffect(this.currenttime, 'miss')
+      misseff(this.currenttime)
     }
   }
   async hit(score: string, time: number, key: number) {
@@ -116,18 +121,26 @@ export class GameState {
     }
     // TODO : MAKETHE CODE ABOVE ACTUALLY GOOD IM SO TIRED RN
 
+    playhs()
     this.hitlist.push(time.toString() + key.toString() + ',' + score)
     // this.hitwaitlist = this.hitwaitlist.filter((item) => item !== element)
     triggereffect(time, score)
   }
 
-  play() {
+  async play() {
     this.isPlaying = true
     this.score = 0
     this.combo = 0
     this.playStartTime = Date.now()
     this.hitlist = []
     this.mode = 'play'
+    // const hsResponse = await axios.get(this.audiopath, {
+    //   responseType: 'arraybuffer',
+    //   withCredentials: true,
+    // })
+    // const buffer = await hsResponse.data
+    // sound = await sengine.createSample(buffer)
+    // return sound
     if (this.mode == 'play') GAME_AUDIO.play()
   }
 

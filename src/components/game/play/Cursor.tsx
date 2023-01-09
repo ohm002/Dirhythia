@@ -67,7 +67,6 @@ export default function Cursor(props: Props) {
         ) {
           // find the hit object that player tried to click
           const clickedHitObject =
-            nextObj.startTime >= currentTime - maxAcceptableOffset &&
             nextObj.startTime <= currentTime + maxAcceptableOffset
               ? nextObj
               : undefined

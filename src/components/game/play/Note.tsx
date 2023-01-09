@@ -37,6 +37,8 @@ import { GameState } from '../../../state/GameState'
 import PlayField from './PlayField'
 import { triggereffect } from './Display'
 import { Beatmap } from '../../../types/Beatmap'
+import { AudioEngine } from '../../../libs/audio/engine'
+import axios from 'axios'
 
 type NoteProps = {
   x: number
@@ -170,6 +172,7 @@ export default function Note(props: NoteProps) {
           )
         )
       } else {
+        
         setEffAlpha(
           interpolate(currentTime, [clicktime, clicktime + 100], [1, 0])
         )

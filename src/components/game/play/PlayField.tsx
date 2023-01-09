@@ -27,9 +27,10 @@ import CursorNote, { BPMLine } from './CursorNote'
 import React from 'react'
 import judgement from '../../../assets/judgement.png'
 import judgement2 from '../../../assets/judgement2.png'
-import { interpolate } from '../../../libs/interpolate'
+import { easeOutCubic, interpolate } from '../../../libs/interpolate'
 import { NoteSpeedModifier } from '../../../types/NoteSpeedModifier'
 import { BloomFilter, RGBSplitFilter } from 'pixi-filters'
+import { BlurFilter } from '@pixi/filter-blur'
 
 type PlayFieldProps = {
   beatmap: Beatmap
@@ -37,12 +38,20 @@ type PlayFieldProps = {
 }
 const rgb = new RGBSplitFilter()
 const bloom = new BloomFilter()
+const blur = new BlurFilter(0)
 const container = new CONTAINER()
+
+let misstime = 0
+
+export function misseff(time: number) {
+  misstime = time
+}
+
 export default function PlayField(props: PlayFieldProps) {
   const app = useApp()
   let b = false
   if (b == false) {
-    app.stage.filters = [rgb]
+    app.stage.filters = [rgb, blur]
     bloom.blur = 5
     rgb.blue = [2, 0]
     rgb.green = [0, 0]
@@ -116,6 +125,9 @@ export default function PlayField(props: PlayFieldProps) {
 
   useTick(() => {
     if (props.game.mode == 'play') setactive(1)
+    rgb.blue = [easeOutCubic(props.game.currenttime, [misstime, misstime + 1000], [10, 2]), 0]
+    rgb.red = [-easeOutCubic(props.game.currenttime, [misstime, misstime + 1000], [10, 2]), 0]
+    blur.blurX = easeOutCubic(props.game.currenttime, [misstime, misstime + 1000], [1.5, 0])
   })
 
   return (

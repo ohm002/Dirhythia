@@ -195,14 +195,15 @@ export default function App(props: AppProps) {
       </div>
       <div id="display"></div>
       {/* <input type="range" id="range" onInput={rangehandler}></input> */}
-
-      <Stage width={WIDTH} height={HEIGHT}>
-        <Menu game={GAME} time={props.menutime} />
-        <Container>
-          <Display game={GAME} container={displaycontainer} />
-          <PlayField beatmap={beatmap} game={GAME} />
-        </Container>
-      </Stage>
+      {/* <> */}
+        <Stage width={WIDTH} height={HEIGHT}>
+          <Menu game={GAME} time={props.menutime} />
+          <Container>
+            <Display game={GAME} container={displaycontainer} />
+            <PlayField beatmap={beatmap} game={GAME} />
+          </Container>
+        </Stage>
+      {/* </> */}
       <div id="log"></div>
     </>
   )

@@ -107,19 +107,21 @@ export function BPMLine(props: BPMLineProps) {
     }
   })
   return (
-    <Sprite
-      texture={Texture.WHITE}
-      width={PLAYFIELD_WIDTH}
-      height={2}
-      anchor={[0.5, 1]}
-      alpha={alpha}
-      x={interpolate(
-        cursorx,
-        [0, 1],
-        [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
-      )}
-      y={y}
-    />
+    <>
+      <Sprite
+        texture={Texture.WHITE}
+        width={PLAYFIELD_WIDTH}
+        height={2}
+        anchor={[0.5, 1]}
+        alpha={alpha}
+        x={interpolate(
+          cursorx,
+          [0, 1],
+          [WIDTH / 2 - CURSOR_AREA / 2, WIDTH / 2 + CURSOR_AREA / 2]
+        )}
+        y={y}
+      />
+    </>
   )
 }
 
