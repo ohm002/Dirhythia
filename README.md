@@ -4,7 +4,7 @@
 
 # _DI-RHYTHIA_ 
 ## Playing 
-Try the demo [here](ohm002.github.io)
+Try the demo [here](https://ohm002.github.io)
 
 ## Building
 run ``pnpm i`` to install the dependencies
