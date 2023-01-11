@@ -32,6 +32,7 @@ export class GameState {
   notespeed: number
   WIDTH: number
   HEIGHT: number
+  mousedown: string
 
   constructor() {
     // this.data = [
@@ -71,7 +72,8 @@ export class GameState {
     this.HEIGHT = getHeight()
     this.WIDTH = getWidth()
     this.hitlist = []
-  }
+    this.mousedown = ''
+}
   init(
     volume: number,
     effect: number,
@@ -107,7 +109,7 @@ export class GameState {
       this.combo = 0
       this.hitlist.push(time.toString() + key.toString() + ',miss')
       triggereffect(this.currenttime, 'miss')
-      misseff(this.currenttime)
+      // misseff(this.currenttime)
     }
   }
   async hit(score: string, time: number, key: number) {
@@ -121,19 +123,19 @@ export class GameState {
     }
     // TODO : MAKETHE CODE ABOVE ACTUALLY GOOD IM SO TIRED RN
 
-    playhs()
+    // playhs()
     this.hitlist.push(time.toString() + key.toString() + ',' + score)
     // this.hitwaitlist = this.hitwaitlist.filter((item) => item !== element)
     triggereffect(time, score)
   }
 
-  async play() {
+  async play(mode : string) {
     this.isPlaying = true
     this.score = 0
     this.combo = 0
     this.playStartTime = Date.now()
     this.hitlist = []
-    this.mode = 'play'
+    this.mode = mode
     // const hsResponse = await axios.get(this.audiopath, {
     //   responseType: 'arraybuffer',
     //   withCredentials: true,

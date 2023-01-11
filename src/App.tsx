@@ -4,7 +4,6 @@ import PlayField from './components/game/play/PlayField'
 // import beatmap from './data/void(Mournfinale) - World Vanquisher/beatmap'
 // import beatmap from './data/Reona - Life is beautiful/beatmap'
 import { GameState } from './state/GameState'
-import MenuWindow from './MenuWindow'
 import Menu from './components/game/menu/Menu'
 import {
   HEIGHT,
@@ -28,6 +27,7 @@ import { Beatmap } from './types/Beatmap'
 import { Application, TextStyle, Container as CONTAINER, Filter } from 'pixi.js'
 import { Text } from 'pixi.js'
 import { BloomFilter } from 'pixi-filters'
+import Time from './components/game/edit/Time'
 type AppProps = {
   chart: Beatmap
   menutime: number
@@ -88,7 +88,7 @@ export default function App(props: AppProps) {
   }
   const handlePlay: MouseEventHandler = (e) => {
     GAME.setVolume(musicVolume / 100)
-    GAME.play()
+    GAME.play("play")
     clearCacheData()
   }
   const handleQuit: MouseEventHandler = (e) => {
@@ -154,56 +154,17 @@ export default function App(props: AppProps) {
       document.removeEventListener('keydown', handleRetry)
     }
   }, [])
-  // const rangehandler = (e) => {
-  //   if(GAME.mode == 'editor'){
-  //     GAME.currenttime = (e.target.value / 100) * beatmap.hitObjects[beatmap.hitObjects.length-1].startTime
-  //     console.log(GAME.currenttime)
-  //   }
-  // }
-  var displaycontainer = new CONTAINER()
   return (
     <>
-      <button className="border border-black py-2 px-3" onClick={handlePlay}>
-        Play
-      </button>
-      <button className="border border-black py-2 px-3" onClick={handleQuit}>
-        Quit
-      </button>
-      <div>
-        Music:{' '}
-        <input
-          type="number"
-          min={0}
-          max={100}
-          step={10}
-          value={musicVolume}
-          onChange={(e) => {
-            GAME.setVolume(parseInt(e.target.value) / 100)
-          }}
-        />
-      </div>
-      <div>
-        Effect:{' '}
-        <input
-          type="number"
-          min={0}
-          max={100}
-          step={10}
-          value={effectVolume}
-          onChange={(e) => GAME.setEffectVolume(parseInt(e.target.value))}
-        />
-      </div>
       <div id="display"></div>
-      {/* <input type="range" id="range" onInput={rangehandler}></input> */}
-      {/* <> */}
         <Stage width={WIDTH} height={HEIGHT}>
-          <Menu game={GAME} time={props.menutime} />
+          <Menu game={GAME} time={props.menutime} beatmap={beatmap} />
           <Container>
-            <Display game={GAME} container={displaycontainer} />
+            <Display game={GAME} />
             <PlayField beatmap={beatmap} game={GAME} />
+            <Time time={beatmap.timingPoints[0].time} bpm={beatmap.timingPoints[0].bpm} game={props.game}></Time>
           </Container>
         </Stage>
-      {/* </> */}
       <div id="log"></div>
     </>
   )

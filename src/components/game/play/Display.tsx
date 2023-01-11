@@ -24,7 +24,6 @@ import playarealine from '../../../assets/playarealine.png'
 import scorebox from '../../../assets/scorebox.png'
 type Props = {
   game: GameState
-  container: CONTAINER
 }
 const sprites = {
   '': miss,

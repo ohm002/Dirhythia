@@ -355,8 +355,7 @@ export default function CursorNote(props: CursorNoteProps) {
         currentTime >=
           startTime -
             props.game.NOTE_TRAVEL_DURATION() +
-            +props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION()) ||
-      props.game.mode == 'editor'
+            +props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION()) || props.game.mode == 'edit'
     ) {
       // point.alpha = active ? alpha : 0
       // point2.alpha = active ? alpha : 0
@@ -380,8 +379,7 @@ export default function CursorNote(props: CursorNoteProps) {
           currentTime <
             startTime -
               props.game.NOTE_TRAVEL_DURATION() +
-              props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION()) &&
-        props.game.mode == 'play'
+              props.game.NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION())
       ) {
         setactive(false)
       }
@@ -408,7 +406,7 @@ export default function CursorNote(props: CursorNoteProps) {
           [1, 0]
         )
       )
-      switchline.alpha = 0.7
+      switchline.alpha = 0.3
       rowbg.alpha = alpha
     }
   })

@@ -1,20 +1,22 @@
 export function interpolate(
   input: number,
   inputRange: [number, number],
-  outputRange: [number, number]
+  outputRange: [number, number],
+  nolimit?: boolean
 ): number {
   const [inputMin, inputMax] = inputRange
   const [outputMin, outputMax] = outputRange
 
-  if (input < inputMin) return outputMin
-  if (input > inputMax) return outputMax
-  if (outputMin === outputMax) return outputMin
+  if (input < inputMin && !nolimit) return outputMin
+  if (input > inputMax && !nolimit) return outputMax
+  if (outputMin === outputMax && !nolimit) return outputMin
 
   return (
     ((input - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) +
     outputMin
   )
 }
+
 export function easeOutCubic(
   input: number,
   inputRange: [number, number],

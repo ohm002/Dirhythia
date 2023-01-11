@@ -20,7 +20,7 @@ function getHeight() {
 
 export const COLCOLOR = [0xff6161, 0x3dd2ff, 0xff6161, 0x3dd2ff]
 export let WIDTH = getWidth()
-export let HEIGHT = getHeight()
+export let HEIGHT = getHeight() - 50
 export const COL_1_KEY = '4'
 export const COL_2_KEY = '5'
 export const COL_3_KEY = '6'
@@ -35,7 +35,7 @@ export const CURSOR_AREA = PLAYFIELD_WIDTH*4
 export const SCROLL_SPEED = 2.3*HEIGHT // px per sec
 export const NOTE_TRAVEL_DURATION = (HEIGHT / SCROLL_SPEED) * 1000
 export const JUDGEMENT_LINE_OFFSET_Y = 50
-export const OFFSET = 30  // ms ************** CHART OFFSET
+export const OFFSET = 0  // ms ************** CHART OFFSET
 // if you're early, adjust down
 // if you're late, adjust up
 export const NOTE_TRAVEL_FROM_LINE_TO_BOTTOM_DURATION =

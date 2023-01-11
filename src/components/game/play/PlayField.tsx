@@ -41,7 +41,7 @@ const bloom = new BloomFilter()
 const blur = new BlurFilter(0)
 const container = new CONTAINER()
 
-let misstime = 0
+let misstime = -1
 
 export function misseff(time: number) {
   misstime = time
@@ -99,7 +99,7 @@ export default function PlayField(props: PlayFieldProps) {
     }
     if (props.game.isPlaying) {
       if (props.game.mode == 'play') {
-        var currentTime = Date.now() - props.game.playStartTime
+        var currentTime = props.game.audio.currentTime * 1000
         currentbpm = timinglist.filter((e) => e.time <= currentTime)[0]
         props.game.currenttime = currentTime
       }
@@ -125,9 +125,29 @@ export default function PlayField(props: PlayFieldProps) {
 
   useTick(() => {
     if (props.game.mode == 'play') setactive(1)
-    rgb.blue = [easeOutCubic(props.game.currenttime, [misstime, misstime + 1000], [10, 2]), 0]
-    rgb.red = [-easeOutCubic(props.game.currenttime, [misstime, misstime + 1000], [10, 2]), 0]
-    blur.blurX = easeOutCubic(props.game.currenttime, [misstime, misstime + 1000], [1.5, 0])
+    if (misstime != -1) {
+      rgb.blue = [
+        easeOutCubic(
+          props.game.currenttime,
+          [misstime, misstime + 1000],
+          [10, 2]
+        ),
+        0,
+      ]
+      rgb.red = [
+        -easeOutCubic(
+          props.game.currenttime,
+          [misstime, misstime + 1000],
+          [10, 2]
+        ),
+        0,
+      ]
+      blur.blurX = easeOutCubic(
+        props.game.currenttime,
+        [misstime, misstime + 1000],
+        [1.5, 0]
+      )
+    }
   })
 
   return (
