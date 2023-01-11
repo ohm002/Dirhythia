@@ -1,5 +1,5 @@
-![image](https://user-images.githubusercontent.com/53414787/208062593-cc7f9f87-638c-4902-aa89-6a5480254b32.png)
-*////////// 0.3.0 BUILD*
+![image](https://user-images.githubusercontent.com/53414787/211802263-1146385e-ba43-43e4-a937-5deeb2ec25c8.png)
+*////////// 0.4.0 BUILD*
 
 
 # _DI-RHYTHIA_ 
